@@ -1,0 +1,87 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       String  @id @default(uuid())
+  username String  @unique
+  name     String  @db.VarChar(20)
+  image    String?
+  bio      String? @db.VarChar(100)
+  password String  @db.VarChar(255)
+  roleId   Int
+
+  Post      Post[]
+  Anonymous Anonymous?
+  Comment   Comment[]
+  Role      Role       @relation(fields: [roleId], references: [id])
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  User User[]
+}
+
+model Anonymous {
+  id       String @id @default(uuid())
+  userId   String @unique
+  username String
+
+  Post Post[]
+  User User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id String @id @default(uuid())
+
+  content String @db.VarChar(255)
+
+  userId      String?
+  anonymousId String?
+  reportedId  Int?
+  categoryId  Int
+
+  Anonymous Anonymous? @relation(fields: [anonymousId], references: [id], onDelete: Cascade)
+  User      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Category  Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  Comment   Comment[]
+  Reported  Reported[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reported {
+  id     Int    @id @default(autoincrement())
+  reason String
+
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  Post Post[]
+}
+
+model Comment {
+  id   Int    @id @default(autoincrement())
+  text String
+
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
