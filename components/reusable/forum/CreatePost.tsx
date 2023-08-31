@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronsRight } from "lucide-react";
+import { VenetianMask } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -62,6 +62,7 @@ const CreatePost: React.FC<TProps> = ({
 
   const { mutate: createPost, isLoading } = trpc.post.createPost.useMutation();
 
+  const [isAnonymousPost, setIsAnonymousPost] = useState(false);
   const [response, setReponse] = useState({
     message: "",
   });
@@ -71,13 +72,12 @@ const CreatePost: React.FC<TProps> = ({
       {
         userId,
         categoryId,
+        isAnonymousPost,
         content: values.content,
-        isAnonymousPost: false,
       },
       {
         onSuccess: (data) => {
           setReponse(data);
-          console.log(data);
 
           setCreatedPost(true);
         },
@@ -119,7 +119,13 @@ const CreatePost: React.FC<TProps> = ({
         <CardHeader>
           <CardTitle className="flex items-start justify-between">
             <span className="text-xl">Bikin Postingan</span>
-            <ChevronsRight className="w-5 aspect-square" />
+            <Button
+              variant={`${isAnonymousPost ? "destructive" : "outline"}`}
+              size="icon"
+              onClick={() => setIsAnonymousPost(!isAnonymousPost)}
+            >
+              <VenetianMask className="w-5 aspect-square" />
+            </Button>
           </CardTitle>
           <CardDescription>
             Tulis aja apa yang lu mau, <br />

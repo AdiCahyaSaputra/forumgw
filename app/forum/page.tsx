@@ -43,7 +43,7 @@ const Forum: React.FC<TProps> = ({}) => {
         setOpenCreateMenu={setOpenCreateMenu}
         setCreatedPost={setCreatedPost}
       />
-      <div className="py-4 flex w-full bg-white/60 border-b container backdrop-blur-md sticky z-10 top-0">
+      <div className="py-4 flex w-full bg-white supports-[backdrop-filter]:bg-white/60 border-b container supports-[backdrop-filter]:backdrop-blur-md sticky z-10 top-0">
         <Input
           className="w-full"
           placeholder="Apa sih yang lu pikirin?"
@@ -51,19 +51,19 @@ const Forum: React.FC<TProps> = ({}) => {
         />
       </div>
       <div className="container pt-4 pb-10 w-full space-y-4">
-        <LoadingState
-          data={postResponse?.data}
-          loadingFallback={<Skeleton className="w-full h-24 rounded-md" />}
+        <EmptyState
+          status={postResponse?.status}
+          message={postResponse?.message}
         >
-          <EmptyState
-            status={postResponse?.status!}
-            message={postResponse?.message!}
+          <LoadingState
+            data={postResponse?.data}
+            loadingFallback={<Skeleton className="w-full h-24 rounded-md" />}
           >
             {postResponse?.data?.map((post, idx) => (
               <CardForum key={idx} {...post} />
             ))}
-          </EmptyState>
-        </LoadingState>
+          </LoadingState>
+        </EmptyState>
       </div>
     </>
   );

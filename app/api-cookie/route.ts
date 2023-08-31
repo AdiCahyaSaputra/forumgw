@@ -5,7 +5,9 @@ export async function POST(request: Request) {
   const cookieStore = cookies();
   const body = await request.json();
 
-  cookieStore.set("token", body.token);
+  cookieStore.set("token", body.token, {
+    maxAge: 60 * 60 * 60 * 2, // 2 Hour
+  });
 
   return NextResponse.json({ message: "Berhasil", status: 200 });
 }

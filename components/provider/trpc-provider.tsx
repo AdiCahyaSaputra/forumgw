@@ -18,17 +18,6 @@ const TrpcProvider: React.FC<TProps> = ({ children, token }) => {
       links: [
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
-
-          async headers() {
-            // token should'nt be string 'undefined'
-            if (token) {
-              return {
-                authorization: `Bearer ${token}`,
-              };
-            }
-
-            return {};
-          },
         }),
       ],
     });

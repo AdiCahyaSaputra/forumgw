@@ -4,7 +4,8 @@ import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "./../prisma/db";
 
 export const createContext = async (opts: CreateNextContextOptions) => {
-  const token = opts.req.headers.authorization?.split(" ")[1] || null;
+  const cookie = opts.req.cookies;
+  const token = cookie.token || null;
 
   return {
     token,

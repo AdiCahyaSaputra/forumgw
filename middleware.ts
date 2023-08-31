@@ -4,7 +4,7 @@ import { getAuthUser } from "./lib/helper/auth.helper";
 export async function middleware(request: NextRequest) {
   const isGuest =
     request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/register");
+    request.nextUrl.pathname.startsWith("/daftar");
 
   const token = request.cookies.get("token");
 

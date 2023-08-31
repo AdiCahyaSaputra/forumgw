@@ -1,8 +1,8 @@
 import React from "react";
 
 type TProps = {
-  status: number;
-  message: string;
+  status?: number;
+  message?: string;
   children: React.ReactNode;
 };
 

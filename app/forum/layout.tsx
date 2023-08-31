@@ -13,14 +13,14 @@ const ForumLayout: React.FC<TProps> = async ({ children }) => {
   const token = cookieStore.get("token");
 
   const user = await getAuthUser(token?.value || null);
-  console.log(user);
 
+  // TODO: move to root layout
   return (
     <>
       <Navbar userImage={user?.image} username={user?.username} />
       <div className="flex relative items-start">
-        <AsideSection username={user?.username} />
-        <main className="h-[2000px] grow">{children}</main>
+        <AsideSection username={user?.username} image={user?.image} />
+        <main className="h-max pb-10 grow">{children}</main>
       </div>
     </>
   );

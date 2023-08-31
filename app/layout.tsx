@@ -3,7 +3,6 @@ import TrpcProvider from "@/components/provider/trpc-provider";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { cookies } from "next/headers";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,15 +17,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token");
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.className} selection:bg-foreground selection:text-background text-foreground bg-background`}
       >
-        <TrpcProvider token={token?.value}>
+        <TrpcProvider>
           <ThemeProvider>{children}</ThemeProvider>
         </TrpcProvider>
         <Toaster />

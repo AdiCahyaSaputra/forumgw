@@ -22,6 +22,7 @@ import { Button } from "../ui/button";
 
 type TProps = {
   username?: string;
+  image?: string | null;
 };
 
 const navCategoryItems = [
@@ -39,7 +40,7 @@ const navCategoryItems = [
 
 const navSettingItems = [
   {
-    url: "/me",
+    url: "/akun", // TODO: akun
     label: "Akun",
     Icon: User,
   },
@@ -50,7 +51,7 @@ const navSettingItems = [
   },
 ];
 
-const AsideSection: React.FC<TProps> = ({ username }) => {
+const AsideSection: React.FC<TProps> = ({ username, image }) => {
   const pathname = usePathname();
   const query = useSearchParams();
 
@@ -111,8 +112,10 @@ const AsideSection: React.FC<TProps> = ({ username }) => {
           <Separator className="mb-2" />
           <div className="flex items-start gap-2">
             <Avatar>
-              <AvatarImage />
-              <AvatarFallback>A</AvatarFallback>
+              <AvatarImage src={image ?? ""} />
+              <AvatarFallback>
+                {username && username[0].toUpperCase()}
+              </AvatarFallback>
             </Avatar>
 
             <div className="flex items-start grow justify-between">
@@ -155,8 +158,18 @@ const AsideSection: React.FC<TProps> = ({ username }) => {
             <span>Tutup Menu</span>
           </Button>
         </div>
+
+        <div className="fixed lg:hidden bottom-0 p-4 inset-x-0 z-10 bg-white supports-[backdrop-filter]:bg-white/60 border-t supports-[backdrop-filter]:backdrop-blur-md">
+          <Button
+            onClick={() => setOpenAside(true)}
+            className="w-full flex items-center justify-start space-x-2"
+          >
+            <Menu className="w-4 aspect-square" />
+            <span>Buka Menu</span>
+          </Button>
+        </div>
       </aside>
-      <div className="fixed lg:hidden bottom-0 p-4 inset-x-0 z-10 bg-white/60 border-t backdrop-blur-md">
+      <div className="fixed lg:hidden bottom-0 p-4 inset-x-0 z-10 bg-white supports-[backdrop-filter]:bg-white/60 border-t supports-[backdrop-filter]:backdrop-blur-md">
         <Button
           onClick={() => setOpenAside(true)}
           className="w-full flex items-center justify-start space-x-2"
