@@ -26,7 +26,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} selection:bg-foreground selection:text-background text-foreground bg-background`}
       >
-        <TrpcProvider token={token as unknown as string}>
+        <TrpcProvider token={token?.value}>
           <ThemeProvider>{children}</ThemeProvider>
         </TrpcProvider>
         <Toaster />

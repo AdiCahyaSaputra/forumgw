@@ -1,4 +1,5 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
+import { excludeField } from "@/lib/helper/obj.helper";
 import type { PrismaContext } from "@/server/trpc";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { SignJWT } from "jose";
@@ -103,7 +104,7 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
     });
   }
 
-  const authUser: Omit<typeof user, "password"> = user;
+  const authUser = excludeField(user, "password");
 
   const token = await new SignJWT(authUser)
     .setProtectedHeader({ alg: "HS256" })

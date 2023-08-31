@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import LoadingState from "../reusable/state/LoadingState";
 
 type TProps = {
-  userImage: string | null;
-  username: string;
+  userImage?: string | null;
+  username?: string;
 };
 
 const Navbar: React.FC<TProps> = ({ userImage, username }) => {
@@ -15,7 +16,16 @@ const Navbar: React.FC<TProps> = ({ userImage, username }) => {
 
         <Avatar>
           <AvatarImage src={userImage ?? ""} />
-          <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
+          <LoadingState
+            data={username}
+            loadingFallback={
+              <AvatarFallback className="animate-pulse"></AvatarFallback>
+            }
+          >
+            {username && (
+              <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
+            )}
+          </LoadingState>
         </Avatar>
       </div>
     </nav>

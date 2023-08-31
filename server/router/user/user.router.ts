@@ -21,7 +21,7 @@ export const userRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => signIn(ctx.prisma, input)),
-  getAuthUser: authProcedure.query(async ({ ctx, input }) => {
+  getAuthUser: authProcedure.query(async ({ ctx }) => {
     return sendTRPCResponse(
       {
         status: 200,

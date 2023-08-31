@@ -1,5 +1,15 @@
-import { User } from "@prisma/client";
 import { jwtVerify } from "jose";
+
+type TAuthUser = {
+  id: string;
+  name: string;
+  image: string | null;
+  username: string;
+  bio: string | null;
+  Role: {
+    name: string;
+  };
+};
 
 export const getAuthUser = async (token: string | null) => {
   if (!token) return null;
@@ -8,7 +18,7 @@ export const getAuthUser = async (token: string | null) => {
     token,
     new TextEncoder().encode(process.env.JWT_SECRET)
   )
-    .then((decoded) => decoded.payload as Omit<User, "password">)
+    .then((decoded) => decoded.payload as TAuthUser)
     .catch(() => null);
 
   return payload;

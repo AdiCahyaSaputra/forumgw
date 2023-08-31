@@ -17,10 +17,11 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import NavItem from "../reusable/layout/NavItem";
+import LoadingState from "../reusable/state/LoadingState";
 import { Button } from "../ui/button";
 
 type TProps = {
-  username: string;
+  username?: string;
 };
 
 const navCategoryItems = [
@@ -116,7 +117,16 @@ const AsideSection: React.FC<TProps> = ({ username }) => {
 
             <div className="flex items-start grow justify-between">
               <div>
-                <h3 className="text-sm leading-none font-bold">adicss</h3>
+                <LoadingState
+                  data={username}
+                  loadingFallback={
+                    <h3 className="text-sm leading-none font-bold p-1 rounded-md animate-pulse bg-muted text-muted">
+                      user
+                    </h3>
+                  }
+                >
+                  <h3 className="text-sm leading-none font-bold">{username}</h3>
+                </LoadingState>
                 <Link href="/profil" className="text-xs hover:underline">
                   Lihat Profil
                 </Link>

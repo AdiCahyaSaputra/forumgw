@@ -34,7 +34,8 @@ const isDeveloper = trpc.middleware(async (opts) => {
   const user = await getAuthUser(opts.ctx.token);
 
   if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
-  if (user.roleId !== 2) throw new TRPCError({ code: "FORBIDDEN" });
+  if (user.Role.name !== "developer")
+    throw new TRPCError({ code: "FORBIDDEN" });
 
   return opts.next({
     ctx: {

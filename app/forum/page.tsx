@@ -23,6 +23,7 @@ const Forum: React.FC<TProps> = ({}) => {
   });
 
   useEffect(() => {
+    console.log(query?.get("c"));
     if (createdPost) {
       refetch();
       setCreatedPost(false);

@@ -20,9 +20,14 @@ const TrpcProvider: React.FC<TProps> = ({ children, token }) => {
           url: `${getBaseUrl()}/api/trpc`,
 
           async headers() {
-            return {
-              authorization: `Bearer ${token}`,
-            };
+            // token should'nt be string 'undefined'
+            if (token) {
+              return {
+                authorization: `Bearer ${token}`,
+              };
+            }
+
+            return {};
           },
         }),
       ],
