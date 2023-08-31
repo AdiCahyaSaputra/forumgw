@@ -6,7 +6,7 @@ type TResponse = {
 export const sendTRPCResponse = <T = void>(response: TResponse, data?: T) => {
   return {
     ...response,
-    data: data || [],
+    data: data as T,
   };
 };
 

@@ -25,6 +25,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 type TProps = {
+  userId: string;
+  categoryId: "1" | "2";
   openCreateMenu: boolean;
   setOpenCreateMenu: (value: React.SetStateAction<boolean>) => void;
   setCreatedPost: (value: React.SetStateAction<boolean>) => void;
@@ -39,12 +41,11 @@ const formSchema = z.object({
     .max(255, {
       message: "Postingan lu kepanjangan max(255)",
     }),
-  // TODO: fix me :(
-  // userId: z.string(),
-  // categoryId: z.enum(['1', '2']),
 });
 
 const CreatePost: React.FC<TProps> = ({
+  userId,
+  categoryId,
   openCreateMenu,
   setOpenCreateMenu,
   setCreatedPost,
@@ -59,24 +60,25 @@ const CreatePost: React.FC<TProps> = ({
   const toastBtnRef = useRef<HTMLButtonElement | null>(null);
   const { toast } = useToast();
 
-  const { mutate: createPost } = trpc.post.createPost.useMutation();
+  const { mutate: createPost, isLoading } = trpc.post.createPost.useMutation();
 
   const [response, setReponse] = useState({
     message: "",
   });
 
   const submitHandler = async (values: z.infer<typeof formSchema>) => {
-    // TODO: Loading
     createPost(
       {
-        categoryId: "1",
-        userId: "absc",
+        userId,
+        categoryId,
         content: values.content,
         isAnonymousPost: false,
       },
       {
         onSuccess: (data) => {
           setReponse(data);
+          console.log(data);
+
           setCreatedPost(true);
         },
         onError: (error) => {
@@ -142,8 +144,8 @@ const CreatePost: React.FC<TProps> = ({
                   )}
                 />
                 <div className="mt-3 flex lg:flex-row flex-col lg:items-center lg:justify-start gap-2">
-                  <Button type="submit" className="grow">
-                    Buat Postingan
+                  <Button disabled={isLoading} type="submit" className="grow">
+                    {isLoading ? "Proses..." : "Buat Postingan"}
                   </Button>
                   <Button
                     onClick={() => setOpenCreateMenu(false)}

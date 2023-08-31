@@ -39,3 +39,15 @@ export const checkCurrentActiveUrl = (
 
   return pathname === url;
 };
+
+export const getMetaData = (createdAt: string) => {
+  const date = new Date(createdAt).toLocaleString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return date.replace(" pukul ", " - ");
+};

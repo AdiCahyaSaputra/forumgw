@@ -13,8 +13,9 @@ import {
 export const postRouter = router({
   getFeedByCategory: procedure
     .input(z.object({ categoryId: z.enum(["1", "2"]) }))
-    .query(async ({ ctx, input }) =>
-      getFeedByCategory(ctx.prisma, input.categoryId)
+    .query(
+      async ({ ctx, input }) =>
+        await getFeedByCategory(ctx.prisma, input.categoryId)
     ),
   getReportedPost: devProcedure.query(async ({ ctx }) =>
     getReportedPost(ctx.prisma)

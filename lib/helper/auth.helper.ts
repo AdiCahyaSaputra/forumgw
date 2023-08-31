@@ -1,6 +1,6 @@
 import { jwtVerify } from "jose";
 
-type TAuthUser = {
+export type TAuthUser = {
   id: string;
   name: string;
   image: string | null;

@@ -156,7 +156,7 @@ const AsideSection: React.FC<TProps> = ({ username }) => {
           </Button>
         </div>
       </aside>
-      <div className="fixed lg:hidden  bottom-0 p-4 inset-x-0 z-10 bg-white/60 border-t backdrop-blur-md">
+      <div className="fixed lg:hidden bottom-0 p-4 inset-x-0 z-10 bg-white/60 border-t backdrop-blur-md">
         <Button
           onClick={() => setOpenAside(true)}
           className="w-full flex items-center justify-start space-x-2"

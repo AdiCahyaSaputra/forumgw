@@ -13,6 +13,7 @@ const ForumLayout: React.FC<TProps> = async ({ children }) => {
   const token = cookieStore.get("token");
 
   const user = await getAuthUser(token?.value || null);
+  console.log(user);
 
   return (
     <>
