@@ -1,3 +1,4 @@
+import ProgressProvider from "@/components/provider/progress-provider";
 import { ThemeProvider } from "@/components/provider/themer-provider";
 import TrpcProvider from "@/components/provider/trpc-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -23,7 +24,9 @@ export default function RootLayout({
         className={`${inter.className} selection:bg-foreground selection:text-background text-foreground bg-background`}
       >
         <TrpcProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <ProgressProvider>{children}</ProgressProvider>
+          </ThemeProvider>
         </TrpcProvider>
         <Toaster />
       </body>

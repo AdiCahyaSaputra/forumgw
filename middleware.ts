@@ -38,7 +38,7 @@ export const config = {
     "/daftar",
     "/forum/:path*",
     "/profil/:path*",
-    "/me/:path*",
+    "/akun/:path*",
     "/kelola/:path*",
     "/reported-post/:path*",
   ],

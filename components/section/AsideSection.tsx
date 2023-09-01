@@ -40,7 +40,7 @@ const navCategoryItems = [
 
 const navSettingItems = [
   {
-    url: "/akun", // TODO: akun
+    url: "/akun",
     label: "Akun",
     Icon: User,
   },
@@ -156,16 +156,6 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
           >
             <Menu className="w-4 aspect-square" />
             <span>Tutup Menu</span>
-          </Button>
-        </div>
-
-        <div className="fixed lg:hidden bottom-0 p-4 inset-x-0 z-10 bg-white supports-[backdrop-filter]:bg-white/60 border-t supports-[backdrop-filter]:backdrop-blur-md">
-          <Button
-            onClick={() => setOpenAside(true)}
-            className="w-full flex items-center justify-start space-x-2"
-          >
-            <Menu className="w-4 aspect-square" />
-            <span>Buka Menu</span>
           </Button>
         </div>
       </aside>
