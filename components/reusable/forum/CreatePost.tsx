@@ -20,7 +20,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { VenetianMask } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -57,7 +57,6 @@ const CreatePost: React.FC<TProps> = ({
     },
   });
 
-  const toastBtnRef = useRef<HTMLButtonElement | null>(null);
   const { toast } = useToast();
 
   const { mutate: createPost, isLoading } = trpc.post.createPost.useMutation();
@@ -97,17 +96,18 @@ const CreatePost: React.FC<TProps> = ({
   useEffect(() => {
     if (openCreateMenu) form.setFocus("content");
 
-    const isServerResponded = !!response.message;
-
-    if (isServerResponded && toastBtnRef.current) {
-      toastBtnRef.current.click(); // after get a response, show the toast
+    if (!!response.message) {
+      toast({
+        title: "Notifikasi",
+        description: response.message,
+      });
 
       // set it to default again to avoid duplicate click
       setReponse({
         message: "",
       });
     }
-  }, [openCreateMenu, toastBtnRef, response]);
+  }, [openCreateMenu, response]);
 
   return (
     <div
@@ -164,18 +164,6 @@ const CreatePost: React.FC<TProps> = ({
                 </div>
               </form>
             </Form>
-            <Button
-              onClick={() =>
-                toast({
-                  title: "Notifikasi",
-                  description: response.message,
-                })
-              }
-              ref={toastBtnRef}
-              className="hidden"
-            >
-              Show Toast
-            </Button>
           </CardContent>
         </CardHeader>
       </Card>

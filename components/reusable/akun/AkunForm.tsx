@@ -107,6 +107,11 @@ const AkunForm: React.FC<TProps> = ({ id }) => {
         title: "Notifikasi",
         description: response.message,
       });
+
+      setResponse({
+        status: 0,
+        message: "",
+      });
     }
   }, [userResponse, response]);
 

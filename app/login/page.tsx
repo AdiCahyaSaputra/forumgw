@@ -24,7 +24,7 @@ import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -63,7 +63,6 @@ const Login: React.FC = () => {
     message: "",
   });
 
-  const toastBtnRef = useRef<HTMLButtonElement | null>(null);
   const { toast } = useToast();
 
   const router = useRouter();
@@ -93,17 +92,18 @@ const Login: React.FC = () => {
   };
 
   useEffect(() => {
-    const isServerResponded = !!response.message;
-
-    if (isServerResponded && toastBtnRef.current) {
-      toastBtnRef.current.click();
+    if (!!response.message) {
+      toast({
+        title: "Notifikasi",
+        description: response.message,
+      });
 
       setResponse({
         ...response,
         message: "",
       });
     }
-  }, [response, toastBtnRef]);
+  }, [response]);
 
   return (
     <>
@@ -111,18 +111,6 @@ const Login: React.FC = () => {
         <p>🤤</p>
         <p className="text-muted">Developer sedang melihatmu</p>
       </div>
-      <Button
-        className="hidden"
-        ref={toastBtnRef}
-        onClick={() =>
-          toast({
-            title: "Notifikasi",
-            description: response.message,
-          })
-        }
-      >
-        Show Toast
-      </Button>
       <Card className="w-max border-none shadow-none">
         <CardHeader>
           <CardTitle className="lg:text-xl">👋🏼 Login Dulu Bre</CardTitle>
