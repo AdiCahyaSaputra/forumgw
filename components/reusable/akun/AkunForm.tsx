@@ -1,6 +1,5 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import LoadingState from "../state/LoadingState";
+import UploadPPForm from "./UploadPPForm";
 
 type TProps = {
   id: string;
@@ -77,12 +77,11 @@ const AkunForm: React.FC<TProps> = ({ id }) => {
         name: values.name,
         username: values.username,
         bio: values.bio.length ? values.bio : null,
-        image: null, // TODO: image
+        image: userResponse?.data?.image || null, // TODO: image
       },
       {
         onSuccess: (data) => {
           setResponse(data);
-          refetch();
         },
         onError: (error) => {
           setResponse({
@@ -103,6 +102,8 @@ const AkunForm: React.FC<TProps> = ({ id }) => {
     }
 
     if (!!response.message) {
+      refetch();
+
       toast({
         title: "Notifikasi",
         description: response.message,
@@ -117,21 +118,8 @@ const AkunForm: React.FC<TProps> = ({ id }) => {
 
   return (
     <>
-      <div className="mt-4 flex items-start gap-4">
-        <Avatar className="rounded-md cursor-pointer w-16 h-16">
-          <AvatarImage />
-          <AvatarFallback className="rounded-md">
-            {userResponse?.data && userResponse.data.username[0].toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-
-        <div>
-          <h3 className="text-md font-bold">Ubah Foto Profil Lo</h3>
-          <p className="text-sm text-foreground/60">
-            PP kok Anime, Kartun, Idol ?
-          </p>
-        </div>
-      </div>
+      {/* TODO: send userResponse to UploadPPForm */}
+      <UploadPPForm user={userResponse?.data} setResponse={setResponse} />
 
       <div className="mt-6">
         <Form {...form}>

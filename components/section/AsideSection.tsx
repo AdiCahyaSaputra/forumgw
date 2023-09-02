@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { destroyAccessToken } from "@/lib/helper/api.helper";
+import { trpc } from "@/lib/trpc";
 import {
   Bug,
   GanttChartSquare,
@@ -23,6 +24,7 @@ import { Button } from "../ui/button";
 type TProps = {
   username?: string;
   image?: string | null;
+  id?: string;
 };
 
 const navCategoryItems = [
@@ -51,7 +53,7 @@ const navSettingItems = [
   },
 ];
 
-const AsideSection: React.FC<TProps> = ({ username, image }) => {
+const AsideSection: React.FC<TProps> = ({ username, image, id }) => {
   const pathname = usePathname();
   const query = useSearchParams();
 
@@ -59,6 +61,15 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
   const [logoutClicked, setLogoutClicked] = useState(false);
 
   const router = useRouter();
+  const [user, setUser] = useState({
+    username,
+    image,
+  });
+
+  const { data: userResponse } = trpc.user.getProfile.useQuery({
+    userId: id as string,
+    username: "",
+  });
 
   const logoutHandler = async () => {
     setLogoutClicked(true);
@@ -66,6 +77,13 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
 
     if (isSuccess) router.push("/login");
   };
+
+  useEffect(() => {
+    setUser({
+      username: userResponse?.data?.username,
+      image: userResponse?.data?.image,
+    });
+  }, [userResponse]);
 
   useEffect(() => {
     // When current url has change
@@ -112,9 +130,9 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
           <Separator className="mb-2" />
           <div className="flex items-start gap-2">
             <Avatar>
-              <AvatarImage src={image ?? ""} />
+              <AvatarImage src={user.image ?? ""} />
               <AvatarFallback>
-                {username && username[0].toUpperCase()}
+                {user.username && user.username[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
 

@@ -18,9 +18,13 @@ const AkunLayout: React.FC = async (props: PropsWithChildren) => {
 
   return (
     <>
-      <Navbar userImage={user?.image} username={user?.username} />
+      <Navbar userImage={user?.image} username={user?.username} id={user?.id} />
       <div className="flex relative items-start">
-        <AsideSection username={user?.username} image={user?.image} />
+        <AsideSection
+          username={user?.username}
+          image={user?.image}
+          id={user?.id}
+        />
         <main className="h-max pb-10 grow">
           <SubMenuHeader
             backUrl="/forum?c=fyp"

@@ -40,8 +40,10 @@ const CardForum: React.FC<TProps> = ({
       <CardTitle className="p-4 pb-0 group cursor-pointer">
         <div className="flex items-start gap-4">
           <Avatar className="rounded-md">
-            <AvatarImage />
-            <AvatarFallback className="rounded-md">PP</AvatarFallback>
+            <AvatarImage src={(User && User.image) ?? ""} />
+            <AvatarFallback className="rounded-md">
+              {(User && User.name[0].toUpperCase()) ?? "A"}
+            </AvatarFallback>
           </Avatar>
           <div className="space-y-1">
             <h2 className="group-hover:underline">
