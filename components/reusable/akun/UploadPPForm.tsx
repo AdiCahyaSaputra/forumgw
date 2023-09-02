@@ -52,47 +52,44 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
   };
 
   const fileUploadHandler = async () => {
+    if (!file || !user) return;
+
     const formData = new FormData();
+    formData.append("file", file);
 
-    if (file) {
-      formData.append("file", file);
+    setBeginUpload(true);
 
-      setBeginUpload(true);
+    const uploadResponse = await uploadFiles({
+      files: [file],
+      endpoint: "imageUploader",
+    });
 
-      const uploadResponse = await uploadFiles({
-        files: [file],
-        endpoint: "imageUploader",
-      });
-
-      if (user) {
-        editProfile(
-          {
-            name: user?.name,
-            username: user?.username,
-            bio: user?.bio,
-            image: uploadResponse[0].url,
-          },
-          {
-            onSuccess: (data) => {
-              setResponse(data);
-              setFile(null);
-              setFilePreview("");
-              setBeginUpload(false);
-            },
-            onError: (error) => {
-              setResponse({
-                status: 400,
-                message: "Duh error ni bre",
-              });
-              setFile(null);
-              setFilePreview("");
-              console.log(error);
-              setBeginUpload(false);
-            },
-          }
-        );
+    editProfile(
+      {
+        name: user?.name,
+        username: user?.username,
+        bio: user?.bio,
+        image: uploadResponse[0].url,
+      },
+      {
+        onSuccess: (data) => {
+          setResponse(data);
+          setFile(null);
+          setFilePreview("");
+          setBeginUpload(false);
+        },
+        onError: (error) => {
+          setResponse({
+            status: 400,
+            message: "Duh error ni bre",
+          });
+          setFile(null);
+          setFilePreview("");
+          console.log(error);
+          setBeginUpload(false);
+        },
       }
-    }
+    );
   };
 
   return (

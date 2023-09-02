@@ -77,7 +77,7 @@ const AkunForm: React.FC<TProps> = ({ id }) => {
         name: values.name,
         username: values.username,
         bio: values.bio.length ? values.bio : null,
-        image: userResponse?.data?.image || null, // TODO: image
+        image: userResponse?.data?.image || null,
       },
       {
         onSuccess: (data) => {
@@ -118,7 +118,6 @@ const AkunForm: React.FC<TProps> = ({ id }) => {
 
   return (
     <>
-      {/* TODO: send userResponse to UploadPPForm */}
       <UploadPPForm user={userResponse?.data} setResponse={setResponse} />
 
       <div className="mt-6">
