@@ -19,8 +19,8 @@ const SubMenuHeader: React.FC<TProps> = ({ backUrl, title, data }) => {
           <ChevronLeft className="w-4 aspect-square" />
         </Button>
       </Link>
-      <div className="flex items-center gap-2">
-        <p className="text-lg">{title}</p>
+      <div className="flex items-center justify-between gap-2 w-full">
+        <h1 className="text-lg font-bold">{title}</h1>
         {data && (
           <LoadingState
             data={data}

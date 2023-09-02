@@ -50,7 +50,7 @@ const navSettingItems = [
     url: "/kelola",
     label: "Kelola Post",
     Icon: GanttChartSquare,
-  },
+  }, // TODO: Kelola Post
 ];
 
 const AsideSection: React.FC<TProps> = ({ username, image, id }) => {
