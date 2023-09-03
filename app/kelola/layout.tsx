@@ -19,13 +19,9 @@ const KelolaLayout: React.FC = async (props: React.PropsWithChildren) => {
 
   return (
     <>
-      <Navbar userImage={user?.image} username={user?.username} id={user?.id} />
+      <Navbar userImage={user?.image} username={user?.username} />
       <div className="flex relative items-start">
-        <AsideSection
-          username={user?.username}
-          image={user?.image}
-          id={user?.id}
-        />
+        <AsideSection username={user?.username} image={user?.image} />
         <main className="h-max pb-10 grow">
           <SubMenuHeader
             backUrl="/forum?c=fyp"

@@ -24,7 +24,6 @@ import { Button } from "../ui/button";
 type TProps = {
   username?: string;
   image?: string | null;
-  id?: string;
 };
 
 const navCategoryItems = [
@@ -53,7 +52,7 @@ const navSettingItems = [
   }, // TODO: Kelola Post
 ];
 
-const AsideSection: React.FC<TProps> = ({ username, image, id }) => {
+const AsideSection: React.FC<TProps> = ({ username, image }) => {
   const pathname = usePathname();
   const query = useSearchParams();
 
@@ -67,7 +66,6 @@ const AsideSection: React.FC<TProps> = ({ username, image, id }) => {
   });
 
   const { data: userResponse } = trpc.user.getProfile.useQuery({
-    userId: id as string,
     username: "",
   });
 

@@ -8,17 +8,15 @@ import LoadingState from "../reusable/state/LoadingState";
 type TProps = {
   userImage?: string | null;
   username?: string;
-  id?: string;
 };
 
-const Navbar: React.FC<TProps> = ({ userImage, username, id }) => {
+const Navbar: React.FC<TProps> = ({ userImage, username }) => {
   const [user, setUser] = useState({
     username,
     image: userImage,
   });
 
   const { data: userResponse } = trpc.user.getProfile.useQuery({
-    userId: id as string,
     username: "",
   });
 
