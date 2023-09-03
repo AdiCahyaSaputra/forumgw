@@ -33,11 +33,13 @@ export const userRouter = router({
   getProfile: authProcedure
     .input(
       z.object({
-        userId: z.string().nullable(),
         username: z.string(),
+        withPosts: z.boolean().default(false),
       })
     )
-    .query(async ({ ctx, input }) => getProfile(ctx.prisma, input)),
+    .query(async ({ ctx, input }) =>
+      getProfile(ctx.prisma, ctx.user.id, input)
+    ),
   editProfile: authProcedure
     .input(
       z.object({

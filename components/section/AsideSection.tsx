@@ -79,6 +79,7 @@ const AsideSection: React.FC<TProps> = ({ username, image, id }) => {
   };
 
   useEffect(() => {
+    // Updated User data
     setUser({
       username: userResponse?.data?.username,
       image: userResponse?.data?.image,

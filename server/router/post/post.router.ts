@@ -23,12 +23,17 @@ export const postRouter = router({
   getUserPosts: authProcedure
     .input(
       z.object({
-        userId: z.string(),
         withAnonymousPosts: z.boolean().default(false),
+        withComments: z.boolean().default(false),
       })
     )
     .query(async ({ ctx, input }) =>
-      getUserPosts(ctx.prisma, input.userId, input.withAnonymousPosts)
+      getUserPosts(
+        ctx.prisma,
+        ctx.user.id,
+        input.withAnonymousPosts,
+        input.withComments
+      )
     ),
   getDetailedPost: procedure
     .input(

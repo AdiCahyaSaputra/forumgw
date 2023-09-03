@@ -20,10 +20,6 @@ import { z } from "zod";
 import LoadingState from "../state/LoadingState";
 import UploadPPForm from "./UploadPPForm";
 
-type TProps = {
-  id: string;
-};
-
 const formSchema = z.object({
   name: z
     .string()
@@ -46,7 +42,7 @@ const formSchema = z.object({
   }),
 });
 
-const AkunForm: React.FC<TProps> = ({ id }) => {
+const AkunForm: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,7 +60,6 @@ const AkunForm: React.FC<TProps> = ({ id }) => {
   const { toast } = useToast();
 
   const { data: userResponse, refetch } = trpc.user.getProfile.useQuery({
-    userId: id,
     username: "",
   });
 

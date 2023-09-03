@@ -114,10 +114,26 @@ export const getReportedPost = async (prisma: PrismaContext) => {
 export const getUserPosts = async (
   prisma: PrismaContext,
   userId: string,
-  withAnonymousPosts: boolean
+  withAnonymousPosts: boolean,
+  withComments: boolean
 ) => {
+  let anonymousUser = null;
+
+  if (withAnonymousPosts) {
+    anonymousUser = await prisma.anonymous.findUnique({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
   const existingPosts = await prisma.post.findMany({
-    where: { userId },
+    where: {
+      OR: [{ userId }, { anonymousId: anonymousUser?.id }],
+    },
     select: {
       id: true,
       content: true,
@@ -135,6 +151,9 @@ export const getUserPosts = async (
           id: true,
           username: true,
         },
+      },
+      Comment: withComments && {
+        select: { id: true },
       },
     },
     orderBy: {

@@ -23,6 +23,7 @@ const Navbar: React.FC<TProps> = ({ userImage, username, id }) => {
   });
 
   useEffect(() => {
+    // Updated User data
     setUser({
       username: userResponse?.data?.username,
       image: userResponse?.data?.image,

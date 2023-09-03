@@ -26,13 +26,22 @@ const FilterPostDropdown: React.FC<TProps> = ({ setFilter, filter }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent side="right" align="start">
         <DropdownMenuLabel>Filter Visibilitas Post</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => setFilter("Semua")}>
+        <DropdownMenuItem
+          onClick={() => setFilter("Semua")}
+          className="cursor-pointer"
+        >
           Semua
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setFilter("Public")}>
+        <DropdownMenuItem
+          onClick={() => setFilter("Public")}
+          className="cursor-pointer"
+        >
           Public
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setFilter("Anonymous")}>
+        <DropdownMenuItem
+          onClick={() => setFilter("Anonymous")}
+          className="cursor-pointer"
+        >
           Anonymous
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -14,7 +14,6 @@ type TSignUpUser = {
 type TSignInUser = Omit<TSignUpUser, "name">;
 
 type TUserUnique = {
-  userId: string | null;
   username: string;
 };
 
@@ -122,10 +121,14 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
   );
 };
 
-export const getProfile = async (prisma: PrismaContext, input: TUserUnique) => {
+export const getProfile = async (
+  prisma: PrismaContext,
+  userId: string,
+  input: TUserUnique & { withPosts: boolean }
+) => {
   const existingUser = await prisma.user.findUnique({
     where: {
-      id: input.userId ?? input.username, // Using userId for /akun and username for /profil/:username
+      id: userId ?? input.username, // Using userId for /akun and username for /profil/:username
     },
     select: {
       id: true,
@@ -133,6 +136,24 @@ export const getProfile = async (prisma: PrismaContext, input: TUserUnique) => {
       username: true,
       bio: true,
       image: true,
+      Post: input.withPosts && {
+        select: {
+          id: true,
+          content: true,
+          createdAt: true,
+          User: {
+            select: {
+              id: true,
+              username: true,
+              name: true,
+              image: true,
+            },
+          },
+          Comment: {
+            select: { id: true },
+          },
+        },
+      },
     },
   });
 

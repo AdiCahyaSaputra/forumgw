@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getMetaData } from "@/lib/helper/str.helper";
-import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
+import { Megaphone, Share2 } from "lucide-react";
 import React from "react";
 
 type TProps = {
@@ -20,20 +20,14 @@ type TProps = {
     username: string;
     id: string;
   } | null;
-  Comment:
-    | {
-        id: number;
-      }[]
-    | null;
 };
 
-const CardForum: React.FC<TProps> = ({
+const CardPost: React.FC<TProps> = ({
   id,
   content,
   createdAt,
   User,
   Anonymous,
-  Comment,
 }) => {
   return (
     <Card>
@@ -67,13 +61,10 @@ const CardForum: React.FC<TProps> = ({
         </div>
         <p className="mt-1">{content}</p>
       </CardContent>
+      {/* TODO: edit and delete post */}
       <CardFooter className="p-0 flex-col items-start pb-2">
         <Separator className="mb-2" />
         <div className="space-x-2 px-4">
-          <Button variant="ghost" size="default" className="space-x-2">
-            <MessagesSquare className="w-5 aspect-square" />
-            <span>{Comment?.length}</span>
-          </Button>
           <Button variant="ghost" size="icon">
             <Share2 className="w-5 aspect-square" />
           </Button>
@@ -86,4 +77,4 @@ const CardForum: React.FC<TProps> = ({
   );
 };
 
-export default CardForum;
+export default CardPost;
