@@ -1,12 +1,11 @@
 "use client";
 
 import CardForum from "@/components/reusable/forum/CardForum";
-import CreatePost from "@/components/reusable/forum/CreatePost";
+import CreatePostForm from "@/components/reusable/forum/CreatePostForm";
 import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -25,8 +24,6 @@ const Forum: React.FC<TProps> = ({}) => {
     categoryId,
   });
 
-  const { currentUser } = useAuth();
-
   useEffect(() => {
     if (createdPost) {
       refetch();
@@ -36,9 +33,8 @@ const Forum: React.FC<TProps> = ({}) => {
 
   return (
     <>
-      <CreatePost
-        userId={currentUser?.id}
-        categoryId={currentUser?.Role.name === "developer" ? categoryId : "1"}
+      <CreatePostForm
+        categoryId={categoryId}
         openCreateMenu={openCreateMenu}
         setOpenCreateMenu={setOpenCreateMenu}
         setCreatedPost={setCreatedPost}

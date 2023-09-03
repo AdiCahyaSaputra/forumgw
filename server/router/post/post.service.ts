@@ -4,9 +4,9 @@ import { PrismaContext } from "@/server/trpc";
 
 // Update or inSert
 type TUpSertPost = {
+  userId: string;
   content: string;
   categoryId: "1" | "2";
-  userId: string;
 };
 
 export const getFeedByCategory = async (
@@ -138,6 +138,7 @@ export const getUserPosts = async (
       id: true,
       content: true,
       createdAt: true,
+      categoryId: true,
       User: {
         select: {
           id: true,

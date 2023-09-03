@@ -115,7 +115,7 @@ const AkunForm: React.FC = () => {
     <>
       <UploadPPForm user={userResponse?.data} setResponse={setResponse} />
 
-      <div className="mt-6">
+      <div className="mt-6 pb-10">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submitHandler)}>
             <div className="space-y-2">

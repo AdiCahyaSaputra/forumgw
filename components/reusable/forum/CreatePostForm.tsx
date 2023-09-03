@@ -25,7 +25,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 type TProps = {
-  userId: string;
   categoryId: "1" | "2";
   openCreateMenu: boolean;
   setOpenCreateMenu: (value: React.SetStateAction<boolean>) => void;
@@ -43,8 +42,7 @@ const formSchema = z.object({
     }),
 });
 
-const CreatePost: React.FC<TProps> = ({
-  userId,
+const CreatePostForm: React.FC<TProps> = ({
   categoryId,
   openCreateMenu,
   setOpenCreateMenu,
@@ -69,7 +67,6 @@ const CreatePost: React.FC<TProps> = ({
   const submitHandler = async (values: z.infer<typeof formSchema>) => {
     createPost(
       {
-        userId,
         categoryId,
         isAnonymousPost,
         content: values.content,
@@ -171,4 +168,4 @@ const CreatePost: React.FC<TProps> = ({
   );
 };
 
-export default CreatePost;
+export default CreatePostForm;

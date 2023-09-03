@@ -47,12 +47,15 @@ export const postRouter = router({
       z.object({
         content: z.string(),
         categoryId: z.enum(["1", "2"]),
-        userId: z.string(),
         isAnonymousPost: z.boolean().default(false),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const data: Omit<typeof input, "isAnonymousPost"> = input;
+      const data: Omit<typeof input, "isAnonymousPost"> & { userId: string } = {
+        ...input,
+        userId: ctx.user.id,
+        categoryId: ctx.user.Role.name === "developer" ? input.categoryId : "1",
+      };
 
       return createPost(ctx.prisma, data, input.isAnonymousPost);
     }),
@@ -62,12 +65,16 @@ export const postRouter = router({
         postId: z.string(),
         content: z.string(),
         categoryId: z.enum(["1", "2"]),
-        userId: z.string(),
         visibilityTo: z.enum(["anonymous", "public"]),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const data: Omit<typeof input, "postId" | "visibilityTo"> = input;
+      const data: Omit<typeof input, "postId" | "visibilityTo"> & {
+        userId: string;
+      } = {
+        ...input,
+        userId: ctx.user.id,
+      };
 
       return updatePost(ctx.prisma, input.postId, data, input.visibilityTo);
     }),

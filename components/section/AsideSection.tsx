@@ -49,7 +49,7 @@ const navSettingItems = [
     url: "/kelola",
     label: "Kelola Post",
     Icon: GanttChartSquare,
-  }, // TODO: Kelola Post
+  },
 ];
 
 const AsideSection: React.FC<TProps> = ({ username, image }) => {
@@ -117,6 +117,7 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
             {navSettingItems.map((item, idx) => (
               <NavItem {...item} key={idx} />
             ))}
+            {/* TODO: Reported post */}
             <NavItem
               url="/reported-post"
               label="Reported Post"
@@ -147,6 +148,7 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
                 >
                   <h3 className="text-sm leading-none font-bold">{username}</h3>
                 </LoadingState>
+                {/* TODO: profil */}
                 <Link href="/profil" className="text-xs hover:underline">
                   Lihat Profil
                 </Link>
