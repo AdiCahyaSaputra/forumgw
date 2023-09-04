@@ -117,7 +117,6 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
             {navSettingItems.map((item, idx) => (
               <NavItem {...item} key={idx} />
             ))}
-            {/* TODO: Reported post */}
             <NavItem
               url="/reported-post"
               label="Reported Post"

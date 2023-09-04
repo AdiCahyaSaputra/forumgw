@@ -5,9 +5,12 @@ import {
   deletePost,
   getDetailedPost,
   getFeedByCategory,
+  getPostReportedReasons,
   getReportedPost,
   getUserPosts,
   reportPost,
+  safePost,
+  takeDown,
   updatePost,
 } from "./post.service";
 
@@ -17,6 +20,15 @@ export const postRouter = router({
     .query(
       async ({ ctx, input }) =>
         await getFeedByCategory(ctx.prisma, input.categoryId)
+    ),
+  getPostReportedReasons: devProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) =>
+      getPostReportedReasons(ctx.prisma, input.postId)
     ),
   getReportedPost: devProcedure.query(async ({ ctx }) =>
     getReportedPost(ctx.prisma)
@@ -96,4 +108,18 @@ export const postRouter = router({
     .mutation(async ({ ctx, input }) =>
       reportPost(ctx.prisma, input.postId, input.reason)
     ),
+  safePost: devProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => safePost(ctx.prisma, input.postId)),
+  takeDown: devProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => takeDown(ctx.prisma, input.postId)),
 });

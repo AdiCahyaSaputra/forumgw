@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getMetaData } from "@/lib/helper/str.helper";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 type TProps = {
@@ -77,10 +78,11 @@ const CardPostReport: React.FC<TProps> = ({ id, reason, Post }) => {
             Alasan:{" "}
             <span className="font-normal">{trimReason(15, reason)}</span>
           </p>
-          {/* TODO: detail report */}
-          <Button variant="ghost" size="icon">
-            <ChevronRight className="w-5 aspect-square" />
-          </Button>
+          <Link href={`/reported-post/detail/${Post?.id}`}>
+            <Button variant="ghost" size="icon">
+              <ChevronRight className="w-5 aspect-square" />
+            </Button>
+          </Link>
         </div>
       </CardFooter>
     </Card>

@@ -5,10 +5,14 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import React from "react";
+import React, { useEffect } from "react";
 
 const ReportedPost: React.FC = () => {
   const { data: postResponse, refetch } = trpc.post.getReportedPost.useQuery();
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return (
     <>

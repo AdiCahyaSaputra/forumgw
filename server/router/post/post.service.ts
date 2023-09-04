@@ -58,43 +58,37 @@ export const getFeedByCategory = async (
   );
 };
 
-export const getReportedPost = async (prisma: PrismaContext) => {
-  // const reportedPosts = await prisma.post.findMany({
-  //   where: {
-  //     reportedId: {
-  //       not: null,
-  //     },
-  //   },
-  //   select: {
-  //     id: true,
-  //     content: true,
-  //     createdAt: true,
-  //     User: {
-  //       select: {
-  //         id: true,
-  //         username: true,
-  //         name: true,
-  //         image: true,
-  //       },
-  //     },
-  //     Anonymous: {
-  //       select: {
-  //         id: true,
-  //         username: true,
-  //       },
-  //     },
-  //     Reported: {
-  //       select: {
-  //         id: true,
-  //         reason: true,
-  //       },
-  //     },
-  //   },
-  //   orderBy: {
-  //     createdAt: "desc",
-  //   },
-  // });
+export const getPostReportedReasons = async (
+  prisma: PrismaContext,
+  postId: string
+) => {
+  const reasons = await prisma.reported.findMany({
+    where: {
+      postId,
+    },
+    select: {
+      id: true,
+      reason: true,
+    },
+  });
 
+  if (!reasons.length) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Aman kok bang",
+    });
+  }
+
+  return sendTRPCResponse(
+    {
+      status: 200,
+      message: "Nih alasan nya",
+    },
+    reasons
+  );
+};
+
+export const getReportedPost = async (prisma: PrismaContext) => {
   const reportedPosts = await prisma.reported.findMany({
     select: {
       id: true,
@@ -490,4 +484,47 @@ export const reportPost = async (
     status: 201,
     message: "Thank You bre udah nge laporin, Ntar gua cek",
   });
+};
+
+export const safePost = async (prisma: PrismaContext, postId: string) => {
+  const deletedReport = await prisma.reported.deleteMany({
+    where: {
+      postId,
+    },
+  });
+
+  if (!deletedReport) {
+    return sendTRPCResponse({
+      status: 400,
+      message: "Gagal meloloskan postingan aman ini",
+    });
+  }
+
+  return sendTRPCResponse({
+    status: 201,
+    message: "Ok aman yah bre harus nya",
+  });
+};
+
+export const takeDown = async (prisma: PrismaContext, postId: string) => {
+  const deletedPost = await prisma.post.delete({
+    where: {
+      id: postId,
+    },
+  });
+
+  if (!deletedPost) {
+    return sendTRPCResponse({
+      status: 400,
+      message: "Gagal take-down postingan",
+    });
+  }
+
+  return sendTRPCResponse(
+    {
+      status: 201,
+      message: "Postingan ini berhasil gue take-down",
+    },
+    deletedPost
+  );
 };
