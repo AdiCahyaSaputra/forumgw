@@ -8,7 +8,7 @@ import LoadingState from "../state/LoadingState";
 type TProps = {
   backUrl: string;
   title: string;
-  data?: string;
+  data?: string | null;
 };
 
 const SubMenuHeader: React.FC<TProps> = ({ backUrl, title, data }) => {

@@ -7,6 +7,7 @@ import {
   getFeedByCategory,
   getReportedPost,
   getUserPosts,
+  reportPost,
   updatePost,
 } from "./post.service";
 
@@ -85,4 +86,14 @@ export const postRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => deletePost(ctx.prisma, input.postId)),
+  reportPost: authProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+        reason: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) =>
+      reportPost(ctx.prisma, input.postId, input.reason)
+    ),
 });

@@ -59,39 +59,67 @@ export const getFeedByCategory = async (
 };
 
 export const getReportedPost = async (prisma: PrismaContext) => {
-  const reportedPosts = await prisma.post.findMany({
-    where: {
-      reportedId: {
-        not: null,
-      },
-    },
+  // const reportedPosts = await prisma.post.findMany({
+  //   where: {
+  //     reportedId: {
+  //       not: null,
+  //     },
+  //   },
+  //   select: {
+  //     id: true,
+  //     content: true,
+  //     createdAt: true,
+  //     User: {
+  //       select: {
+  //         id: true,
+  //         username: true,
+  //         name: true,
+  //         image: true,
+  //       },
+  //     },
+  //     Anonymous: {
+  //       select: {
+  //         id: true,
+  //         username: true,
+  //       },
+  //     },
+  //     Reported: {
+  //       select: {
+  //         id: true,
+  //         reason: true,
+  //       },
+  //     },
+  //   },
+  //   orderBy: {
+  //     createdAt: "desc",
+  //   },
+  // });
+
+  const reportedPosts = await prisma.reported.findMany({
     select: {
       id: true,
-      content: true,
-      createdAt: true,
-      User: {
+      reason: true,
+      Post: {
         select: {
           id: true,
-          username: true,
-          name: true,
-          image: true,
+          content: true,
+          createdAt: true,
+          User: {
+            select: {
+              id: true,
+              username: true,
+              name: true,
+              image: true,
+            },
+          },
+          Anonymous: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
         },
       },
-      Anonymous: {
-        select: {
-          id: true,
-          username: true,
-        },
-      },
-      Reported: {
-        select: {
-          id: true,
-          reason: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
     },
   });
 
@@ -437,4 +465,29 @@ export const deletePost = async (prisma: PrismaContext, postId: string) => {
     },
     deletedPost
   );
+};
+
+export const reportPost = async (
+  prisma: PrismaContext,
+  postId: string,
+  reason: string
+) => {
+  const createdReport = await prisma.reported.create({
+    data: {
+      postId,
+      reason,
+    },
+  });
+
+  if (!createdReport) {
+    return sendTRPCResponse({
+      status: 400,
+      message: "Gagal nge-laporin postingan ini",
+    });
+  }
+
+  return sendTRPCResponse({
+    status: 201,
+    message: "Thank You bre udah nge laporin, Ntar gua cek",
+  });
 };
