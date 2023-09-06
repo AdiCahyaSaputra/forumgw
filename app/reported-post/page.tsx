@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import React, { useEffect } from "react";
 
+const name = "hello";
+
 const ReportedPost: React.FC = () => {
   const { data: postResponse, refetch } = trpc.post.getReportedPost.useQuery();
 

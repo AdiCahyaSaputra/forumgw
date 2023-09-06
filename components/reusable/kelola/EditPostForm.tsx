@@ -85,7 +85,7 @@ const EditPostForm: React.FC<TProps> = ({
           console.log(error);
           setOpenEditMenu(false);
         },
-      }
+      },
     );
   };
 

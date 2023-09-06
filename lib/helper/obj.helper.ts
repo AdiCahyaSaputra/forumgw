@@ -1,6 +1,6 @@
 export const excludeField = <O extends object, F extends keyof O>(
   object: O,
-  field: F
+  field: F,
 ): Omit<O, F> => {
   const newObject = { ...object };
 

@@ -67,7 +67,7 @@ const CardPost: React.FC<TProps> = ({
 
           console.log(error);
         },
-      }
+      },
     );
   };
 

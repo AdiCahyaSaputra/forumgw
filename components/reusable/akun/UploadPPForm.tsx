@@ -25,7 +25,7 @@ type TProps = {
     value: React.SetStateAction<{
       status: number;
       message: string;
-    }>
+    }>,
   ) => void;
 };
 
@@ -88,7 +88,7 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
           console.log(error);
           setBeginUpload(false);
         },
-      }
+      },
     );
   };
 
@@ -156,6 +156,7 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
               >
                 {beginUpload ? "Proses..." : "Upload"}
               </Button>
+              {/* TODO: add remove uploaded image to change it */}
               <Button
                 className="w-1/2"
                 variant="outline"

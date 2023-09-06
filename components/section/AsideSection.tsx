@@ -147,8 +147,10 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
                 >
                   <h3 className="text-sm leading-none font-bold">{username}</h3>
                 </LoadingState>
-                {/* TODO: profil */}
-                <Link href="/profil" className="text-xs hover:underline">
+                <Link
+                  href={`/profil/${username}`}
+                  className="text-xs hover:underline"
+                >
                   Lihat Profil
                 </Link>
               </div>

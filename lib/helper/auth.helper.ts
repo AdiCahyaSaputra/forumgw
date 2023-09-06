@@ -16,7 +16,7 @@ export const getAuthUser = async (token: string | null) => {
 
   const payload = await jwtVerify(
     token,
-    new TextEncoder().encode(process.env.JWT_SECRET)
+    new TextEncoder().encode(process.env.JWT_SECRET),
   )
     .then((decoded) => decoded.payload as TAuthUser)
     .catch(() => null);

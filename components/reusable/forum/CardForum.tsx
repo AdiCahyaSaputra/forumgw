@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getMetaData } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
 import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type TProps = {
@@ -23,7 +24,7 @@ type TProps = {
     username: string;
     id: string;
   } | null;
-  Comment:
+  Comment?:
     | {
         id: number;
       }[]
@@ -43,6 +44,8 @@ const CardForum: React.FC<TProps> = ({
   const [response, setResponse] = useState({
     message: "",
   });
+
+  const router = useRouter();
 
   const { toast } = useToast();
 
@@ -65,7 +68,7 @@ const CardForum: React.FC<TProps> = ({
 
           console.log(error);
         },
-      }
+      },
     );
   };
 
@@ -121,6 +124,7 @@ const CardForum: React.FC<TProps> = ({
       </div>
       <Card>
         <CardTitle
+          onClick={() => router.push(`/profil/${User?.username}`)}
           className={`p-4 pb-0 group ${!Anonymous && "cursor-pointer"}`}
         >
           <div className="flex items-start gap-4">

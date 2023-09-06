@@ -11,7 +11,7 @@ type TUpSertPost = {
 
 export const getFeedByCategory = async (
   prisma: PrismaContext,
-  categoryId: string
+  categoryId: string,
 ) => {
   const existingPosts = await prisma.post.findMany({
     where: { categoryId: +categoryId },
@@ -54,13 +54,13 @@ export const getFeedByCategory = async (
       status: 200,
       message: "Semua postingan berdasarkan Kategory",
     },
-    existingPosts
+    existingPosts,
   );
 };
 
 export const getPostReportedReasons = async (
   prisma: PrismaContext,
-  postId: string
+  postId: string,
 ) => {
   const reasons = await prisma.reported.findMany({
     where: {
@@ -84,7 +84,7 @@ export const getPostReportedReasons = async (
       status: 200,
       message: "Nih alasan nya",
     },
-    reasons
+    reasons,
   );
 };
 
@@ -129,7 +129,7 @@ export const getReportedPost = async (prisma: PrismaContext) => {
       status: 200,
       message: "Semua data postingan yang dilaporkan",
     },
-    reportedPosts
+    reportedPosts,
   );
 };
 
@@ -137,7 +137,7 @@ export const getUserPosts = async (
   prisma: PrismaContext,
   userId: string,
   withAnonymousPosts: boolean,
-  withComments: boolean
+  withComments: boolean,
 ) => {
   let anonymousUser = null;
 
@@ -196,13 +196,13 @@ export const getUserPosts = async (
       status: 200,
       message: "Semua postingan yangn orang ini posting",
     },
-    existingPosts
+    existingPosts,
   );
 };
 
 export const getDetailedPost = async (
   prisma: PrismaContext,
-  postId: string
+  postId: string,
 ) => {
   const existingPostWithComments = await prisma.post.findUnique({
     where: {
@@ -258,14 +258,14 @@ export const getDetailedPost = async (
       status: 200,
       message: "Postingan beserta komentar nya",
     },
-    existingPostWithComments
+    existingPostWithComments,
   );
 };
 
 export const createPost = async (
   prisma: PrismaContext,
   data: TUpSertPost,
-  isAnonymousPost: boolean
+  isAnonymousPost: boolean,
 ) => {
   if (isAnonymousPost) {
     let anonymousId: string | null = null;
@@ -335,7 +335,7 @@ export const createPost = async (
       status: 200,
       message: "Berhasil membuat postingan Public",
     },
-    createdPublicPost
+    createdPublicPost,
   );
 };
 
@@ -343,7 +343,7 @@ export const updatePost = async (
   prisma: PrismaContext,
   postId: string,
   data: TUpSertPost,
-  visibilityTo: "anonymous" | "public"
+  visibilityTo: "anonymous" | "public",
 ) => {
   if (visibilityTo === "anonymous") {
     let anonymousId = null;
@@ -399,7 +399,7 @@ export const updatePost = async (
         status: 201,
         message: "Berhasil mengubah postingan",
       },
-      updatedPost
+      updatedPost,
     );
   }
 
@@ -428,7 +428,7 @@ export const updatePost = async (
         status: 201,
         message: "Berhasil mengubah postingan",
       },
-      updatedPost
+      updatedPost,
     );
   }
 
@@ -457,14 +457,14 @@ export const deletePost = async (prisma: PrismaContext, postId: string) => {
       status: 201,
       message: "Postingan lu berhasil gue delete",
     },
-    deletedPost
+    deletedPost,
   );
 };
 
 export const reportPost = async (
   prisma: PrismaContext,
   postId: string,
-  reason: string
+  reason: string,
 ) => {
   const createdReport = await prisma.reported.create({
     data: {
@@ -525,6 +525,6 @@ export const takeDown = async (prisma: PrismaContext, postId: string) => {
       status: 201,
       message: "Postingan ini berhasil gue take-down",
     },
-    deletedPost
+    deletedPost,
   );
 };

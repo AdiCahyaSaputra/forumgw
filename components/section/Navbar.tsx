@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { trpc } from "@/lib/trpc";
 import { useEffect, useState } from "react";
 import LoadingState from "../reusable/state/LoadingState";
+import { useRouter } from "next/navigation";
 
 type TProps = {
   userImage?: string | null;
@@ -20,6 +21,8 @@ const Navbar: React.FC<TProps> = ({ userImage, username }) => {
     username: "",
   });
 
+  const router = useRouter();
+
   useEffect(() => {
     // Updated User data
     setUser({
@@ -35,7 +38,10 @@ const Navbar: React.FC<TProps> = ({ userImage, username }) => {
           Forum<span className="text-red-600">Gw</span>
         </h1>
 
-        <Avatar>
+        <Avatar
+          onClick={() => router.push(`/profil/${user.username}`)}
+          className="cursor-pointer"
+        >
           <AvatarImage src={user.image ?? ""} />
           <LoadingState
             data={user.username}

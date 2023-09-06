@@ -19,40 +19,40 @@ export const postRouter = router({
     .input(z.object({ categoryId: z.enum(["1", "2"]) }))
     .query(
       async ({ ctx, input }) =>
-        await getFeedByCategory(ctx.prisma, input.categoryId)
+        await getFeedByCategory(ctx.prisma, input.categoryId),
     ),
   getPostReportedReasons: devProcedure
     .input(
       z.object({
         postId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) =>
-      getPostReportedReasons(ctx.prisma, input.postId)
+      getPostReportedReasons(ctx.prisma, input.postId),
     ),
   getReportedPost: devProcedure.query(async ({ ctx }) =>
-    getReportedPost(ctx.prisma)
+    getReportedPost(ctx.prisma),
   ),
   getUserPosts: authProcedure
     .input(
       z.object({
         withAnonymousPosts: z.boolean().default(false),
         withComments: z.boolean().default(false),
-      })
+      }),
     )
     .query(async ({ ctx, input }) =>
       getUserPosts(
         ctx.prisma,
         ctx.user.id,
         input.withAnonymousPosts,
-        input.withComments
-      )
+        input.withComments,
+      ),
     ),
   getDetailedPost: procedure
     .input(
       z.object({
         postId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => getDetailedPost(ctx.prisma, input.postId)),
   createPost: authProcedure
@@ -61,7 +61,7 @@ export const postRouter = router({
         content: z.string(),
         categoryId: z.enum(["1", "2"]),
         isAnonymousPost: z.boolean().default(false),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const data: Omit<typeof input, "isAnonymousPost"> & { userId: string } = {
@@ -79,7 +79,7 @@ export const postRouter = router({
         content: z.string(),
         categoryId: z.enum(["1", "2"]),
         visibilityTo: z.enum(["anonymous", "public"]),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const data: Omit<typeof input, "postId" | "visibilityTo"> & {
@@ -95,7 +95,7 @@ export const postRouter = router({
     .input(
       z.object({
         postId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => deletePost(ctx.prisma, input.postId)),
   reportPost: authProcedure
@@ -103,23 +103,23 @@ export const postRouter = router({
       z.object({
         postId: z.string(),
         reason: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) =>
-      reportPost(ctx.prisma, input.postId, input.reason)
+      reportPost(ctx.prisma, input.postId, input.reason),
     ),
   safePost: devProcedure
     .input(
       z.object({
         postId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => safePost(ctx.prisma, input.postId)),
   takeDown: devProcedure
     .input(
       z.object({
         postId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => takeDown(ctx.prisma, input.postId)),
 });

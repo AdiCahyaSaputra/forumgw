@@ -62,7 +62,7 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
       status: 201,
       message: "Berhasil bikinin lu akun",
     },
-    createdUser
+    createdUser,
   );
 };
 
@@ -117,14 +117,14 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
       status: 200,
       message: "Ok, Selamat berdiskusi..",
     },
-    token
+    token,
   );
 };
 
 export const getProfile = async (
   prisma: PrismaContext,
   userId: string,
-  input: TUserUnique & { withPosts: boolean }
+  input: TUserUnique & { withPosts: boolean },
 ) => {
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -169,13 +169,13 @@ export const getProfile = async (
       status: 200,
       message: "Nih user yang lu cari",
     },
-    existingUser
+    existingUser,
   );
 };
 
 export const editProfile = async (
   prisma: PrismaContext,
-  input: TUpdateUser
+  input: TUpdateUser,
 ) => {
   const username = input.username.split(" ").join("");
   const updatedUser = await prisma.user.update({

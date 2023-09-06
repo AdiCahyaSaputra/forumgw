@@ -28,7 +28,7 @@ export const trimUserProfileName = (name: string) => {
 export const checkCurrentActiveUrl = (
   pathname: string | null,
   url: string,
-  query: ReadonlyURLSearchParams | null
+  query: ReadonlyURLSearchParams | null,
 ) => {
   if (!pathname && !query) return false;
 

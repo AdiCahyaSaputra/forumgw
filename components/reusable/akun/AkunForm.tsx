@@ -85,7 +85,7 @@ const AkunForm: React.FC = () => {
           });
           console.log(error);
         },
-      }
+      },
     );
   };
 

@@ -84,7 +84,7 @@ const CreatePostForm: React.FC<TProps> = ({
 
           console.log(error);
         },
-      }
+      },
     );
 
     form.reset();

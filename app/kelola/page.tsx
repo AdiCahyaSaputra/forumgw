@@ -32,7 +32,7 @@ type TProps = {
 
 const KelolaPostingan: React.FC<TProps> = ({ user }) => {
   const [filter, setFilter] = useState<"Public" | "Anonymous" | "Semua">(
-    "Semua"
+    "Semua",
   );
 
   const { data: postResponse, refetch } = trpc.post.getUserPosts.useQuery({
