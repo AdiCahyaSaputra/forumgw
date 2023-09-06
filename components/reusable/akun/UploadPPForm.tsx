@@ -112,9 +112,8 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
       </div>
 
       <div
-        className={`${
-          open ? "block" : "hidden"
-        } fixed inset-0 bg-black/50 z-10 flex justify-center items-center`}
+        className={`${open ? "block" : "hidden"
+          } fixed inset-0 bg-black/50 z-10 flex justify-center items-center`}
       >
         <Card className="lg:w-1/5 w-8/12">
           <CardHeader>
@@ -125,16 +124,28 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
             </CardDescription>
             <CardContent className="p-0 pt-4">
               <div
-                className="w-full aspect-square bg-muted relative bg-cover bg-center"
+                className="w-full aspect-square bg-muted relative bg-cover bg-center group"
                 style={{
                   backgroundImage: `url(${filePreview})`,
                 }}
               >
+                {filePreview && (
+                  <div className="absolute inset-0 bg-black/80 hidden transition-all flex items-center group-hover:flex justify-center">
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        setFile(null);
+                        setFilePreview("");
+                      }}
+                    >
+                      Hapus
+                    </Button>
+                  </div>
+                )}
                 <label
                   htmlFor="pp"
-                  className={`absolute inset-0 flex items-center justify-center cursor-pointer ${
-                    filePreview && "hidden"
-                  }`}
+                  className={`absolute inset-0 flex items-center justify-center cursor-pointer ${filePreview && "hidden"
+                    }`}
                 >
                   <Plus />
                 </label>
@@ -156,7 +167,6 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
               >
                 {beginUpload ? "Proses..." : "Upload"}
               </Button>
-              {/* TODO: add remove uploaded image to change it */}
               <Button
                 className="w-1/2"
                 variant="outline"
