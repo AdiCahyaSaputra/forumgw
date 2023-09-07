@@ -126,11 +126,10 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
         </div>
 
         <div>
-          <Separator className="mb-2" />
           <div className="flex items-start gap-2">
-            <Avatar>
+            <Avatar className="rounded-md">
               <AvatarImage src={user.image ?? ""} />
-              <AvatarFallback>
+              <AvatarFallback className="rounded-md">
                 {user.username && user.username[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>

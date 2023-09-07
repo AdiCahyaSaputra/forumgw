@@ -117,10 +117,10 @@ const CardPost: React.FC<TProps> = ({
         </CardContent>
         <CardFooter className="p-0 flex-col items-start pb-2">
           <Separator className="mb-2" />
-          <div className="space-x-2 px-4">
+          <div className="space-x-2 px-4 py-2">
             <Button
               onClick={() => setOpenEditMenu(true)}
-              variant="ghost"
+              variant="outline"
               size="icon"
             >
               <Pencil className="w-5 aspect-square" />

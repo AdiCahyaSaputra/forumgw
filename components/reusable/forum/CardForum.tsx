@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getMetaData } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
 import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -158,12 +159,14 @@ const CardForum: React.FC<TProps> = ({
         </CardContent>
         <CardFooter className="p-0 flex-col items-start pb-2">
           <Separator className="mb-2" />
-          <div className="space-x-2 px-4">
-            <Button variant="ghost" size="default" className="space-x-2">
-              <MessagesSquare className="w-5 aspect-square" />
-              <span>{Comment?.length}</span>
-            </Button>
-            <Button variant="ghost" size="icon">
+          <div className="space-x-2 px-4 py-2">
+            <Link href={`/forum/${id}`}>
+              <Button variant="outline" size="default" className="space-x-2">
+                <MessagesSquare className="w-5 aspect-square" />
+                <span>{Comment?.length}</span>
+              </Button>
+            </Link>
+            <Button variant="outline" size="icon">
               <Share2 className="w-5 aspect-square" />
             </Button>
             <Button

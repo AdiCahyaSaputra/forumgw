@@ -23,7 +23,7 @@ const NavItem: React.FC<TProps> = ({ url, Icon, label }) => {
     <li>
       <Link href={url}>
         <Button
-          variant={isActive ? "default" : "outline"}
+          variant={isActive ? "default" : "ghost"}
           className={`flex items-center justify-start space-x-2 w-full ${
             !isActive && "bg-white"
           }`}

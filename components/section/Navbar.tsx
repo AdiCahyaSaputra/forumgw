@@ -5,6 +5,7 @@ import { trpc } from "@/lib/trpc";
 import { useEffect, useState } from "react";
 import LoadingState from "../reusable/state/LoadingState";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type TProps = {
   userImage?: string | null;
@@ -38,22 +39,23 @@ const Navbar: React.FC<TProps> = ({ userImage, username }) => {
           Forum<span className="text-red-600">Gw</span>
         </h1>
 
-        <Avatar
-          onClick={() => router.push(`/profil/${user.username}`)}
-          className="cursor-pointer"
-        >
-          <AvatarImage src={user.image ?? ""} />
-          <LoadingState
-            data={user.username}
-            loadingFallback={
-              <AvatarFallback className="animate-pulse"></AvatarFallback>
-            }
-          >
-            {user.username && (
-              <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
-            )}
-          </LoadingState>
-        </Avatar>
+        <Link href={`/profil/${user.username}`}>
+          <Avatar className="cursor-pointer rounded-md">
+            <AvatarImage src={user.image ?? ""} />
+            <LoadingState
+              data={user.username}
+              loadingFallback={
+                <AvatarFallback className="animate-pulse rounded-md"></AvatarFallback>
+              }
+            >
+              {user.username && (
+                <AvatarFallback className="rounded-md">
+                  {user.username[0].toUpperCase()}
+                </AvatarFallback>
+              )}
+            </LoadingState>
+          </Avatar>
+        </Link>
       </div>
     </nav>
   );
