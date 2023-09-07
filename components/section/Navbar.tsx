@@ -18,9 +18,7 @@ const Navbar: React.FC<TProps> = ({ userImage, username }) => {
     image: userImage,
   });
 
-  const { data: userResponse } = trpc.user.getProfile.useQuery({
-    username: "",
-  });
+  const { data: userResponse } = trpc.user.getAuthUser.useQuery();
 
   const router = useRouter();
 

@@ -22,12 +22,30 @@ export const userRouter = router({
     )
     .mutation(async ({ ctx, input }) => signIn(ctx.prisma, input)),
   getAuthUser: authProcedure.query(async ({ ctx }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: {
+        id: ctx.user.id,
+      },
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        bio: true,
+        image: true,
+        Role: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
     return sendTRPCResponse(
       {
         status: 200,
         message: "Nih user yang telah login",
       },
-      ctx.user,
+      user,
     );
   }),
   getProfile: authProcedure

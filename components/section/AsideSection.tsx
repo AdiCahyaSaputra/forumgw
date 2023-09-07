@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import { destroyAccessToken } from "@/lib/helper/api.helper";
 import { trpc } from "@/lib/trpc";
 import {
@@ -65,9 +64,7 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
     image,
   });
 
-  const { data: userResponse } = trpc.user.getProfile.useQuery({
-    username: "",
-  });
+  const { data: userResponse } = trpc.user.getAuthUser.useQuery();
 
   const logoutHandler = async () => {
     setLogoutClicked(true);

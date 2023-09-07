@@ -40,14 +40,34 @@ export const checkCurrentActiveUrl = (
   return pathname === url;
 };
 
-export const getMetaData = (createdAt: string) => {
-  const date = new Date(createdAt).toLocaleString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+export const getMetaData = (createdAt: string | Date) => {
+  const date = createdAt instanceof Date ? createdAt : new Date(createdAt);
 
-  return date.replace(" pukul ", " - ");
+  const formatter = new Intl.RelativeTimeFormat("id");
+  const ranges = {
+    years: 3600 * 24 * 365,
+    months: 3600 * 24 * 30,
+    weeks: 3600 * 24 * 7,
+    days: 3600 * 24,
+    hours: 3600,
+    minutes: 60,
+    seconds: 1,
+  };
+
+  // EXPLAIN: detik yg sudah berlalu di jadiin Math.abs (jadi angka positif) xxx.123 (karena di bagi 1000 makannya ada 3 angka di belakang)
+  const secondsElapsed = (date.getTime() - Date.now()) / 1000;
+
+  // console.log('sebelum /1000 ' + (date.getTime() - Date.now()))
+  // console.log('sesudah /1000 ' + Math.abs(secondsElapsed))
+
+  type TRange = keyof typeof ranges;
+
+  for (let key in ranges) {
+    // EXPLAIN: apakah detik yang sudah berlalu tersebut melebihi dari ranges[key] ? jika iya maka range nya adalah ranges[key] contoh (secondsElapsed sudah melebihi 3600 / 1 jam lebih lah) maka range nya adalah hours / jam jika sudah melebihi 1 hari maka range nya day / hari dst..
+    if (ranges[key as TRange] < Math.abs(secondsElapsed)) {
+      // console.log(key, ranges[key as TRange])
+      const delta = secondsElapsed / ranges[key as TRange];
+      return formatter.format(Math.round(delta), key as TRange);
+    }
+  }
 };

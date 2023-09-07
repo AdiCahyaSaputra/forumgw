@@ -35,6 +35,7 @@ const CommentLoader = () => {
 /**
  * TODO: CRUD Comment
  */
+
 const PostDetail = ({ params }: { params: { postId: string } }) => {
   const { data: postResponse, refetch } = trpc.post.getDetailedPost.useQuery({
     postId: params.postId,
@@ -142,7 +143,7 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
             loadingFallback={<CommentLoader />}
           >
             {postResponse?.data?.Comment.map((comment) => (
-              <Comment {...comment} />
+              <Comment {...comment} key={comment.id} />
             ))}
           </LoadingState>
         </div>

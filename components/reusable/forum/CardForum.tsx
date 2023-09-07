@@ -151,7 +151,7 @@ const CardForum: React.FC<TProps> = ({
         </CardTitle>
         <CardContent className="p-4 pt-2">
           <div>
-            <small className="text-foreground/60 font-bold">
+            <small className="text-foreground/60 text-sm">
               Dibuat saat {getMetaData(createdAt)}
             </small>
           </div>
