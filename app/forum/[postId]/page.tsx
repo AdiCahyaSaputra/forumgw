@@ -143,7 +143,11 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
             loadingFallback={<CommentLoader />}
           >
             {postResponse?.data?.Comment.map((comment) => (
-              <Comment {...comment} key={comment.id} />
+              <Comment
+                setResponse={setResponse}
+                {...comment}
+                key={comment.id}
+              />
             ))}
           </LoadingState>
         </div>

@@ -124,31 +124,32 @@ const CardForum: React.FC<TProps> = ({
         </Card>
       </div>
       <Card>
-        <CardTitle
-          onClick={() => router.push(`/profil/${User?.username}`)}
-          className={`p-4 pb-0 group ${!Anonymous && "cursor-pointer"}`}
-        >
-          <div className="flex items-start gap-4">
-            <Avatar className="rounded-md">
-              <AvatarImage src={(User && User.image) ?? ""} />
-              <AvatarFallback className="rounded-md">
-                {(User && User.name[0].toUpperCase()) ?? "A"}
-              </AvatarFallback>
-            </Avatar>
-            <div className="space-y-1">
-              <h2 className={`${!Anonymous && "group-hover:underline"}`}>
-                {Anonymous ? "Anonymous" : User && User.name}
-              </h2>
-              <p
-                className={`text-foreground/60 ${
-                  !Anonymous && "group-hover:underline"
-                }`}
-              >
-                {Anonymous ? Anonymous.username : User && User.username}
-              </p>
+        <Link href={`/profil/${User?.username}`}>
+          <CardTitle
+            className={`p-4 pb-0 group ${!Anonymous && "cursor-pointer"}`}
+          >
+            <div className="flex items-start gap-4">
+              <Avatar className="rounded-md">
+                <AvatarImage src={(User && User.image) ?? ""} />
+                <AvatarFallback className="rounded-md">
+                  {(User && User.name[0].toUpperCase()) ?? "A"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="space-y-1">
+                <h2 className={`${!Anonymous && "group-hover:underline"}`}>
+                  {Anonymous ? "Anonymous" : User && User.name}
+                </h2>
+                <p
+                  className={`text-foreground/60 ${
+                    !Anonymous && "group-hover:underline"
+                  }`}
+                >
+                  {Anonymous ? Anonymous.username : User && User.username}
+                </p>
+              </div>
             </div>
-          </div>
-        </CardTitle>
+          </CardTitle>
+        </Link>
         <CardContent className="p-4 pt-2">
           <div>
             <small className="text-foreground/60 text-sm">

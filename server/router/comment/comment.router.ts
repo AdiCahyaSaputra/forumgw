@@ -1,6 +1,6 @@
 import { authProcedure, router } from "@/server/trpc";
 import { z } from "zod";
-import { createComment } from "./comment.service";
+import { createComment, editComment } from "./comment.service";
 
 export const commentRouter = router({
   createComment: authProcedure
@@ -12,4 +12,12 @@ export const commentRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => createComment(ctx.prisma, input)),
+  editComment: authProcedure
+    .input(
+      z.object({
+        commentId: z.number(),
+        text: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => editComment(ctx.prisma, input)),
 });
