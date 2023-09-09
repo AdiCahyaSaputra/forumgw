@@ -6,7 +6,6 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
-import { TAuthUser } from "@/lib/helper/auth.helper";
 import { trpc } from "@/lib/trpc";
 import { useEffect, useState } from "react";
 
@@ -26,13 +25,9 @@ type TPost = {
   } | null;
 };
 
-type TProps = {
-  user: TAuthUser;
-};
-
-const KelolaPostingan: React.FC<TProps> = ({ user }) => {
+const KelolaPostingan: React.FC = () => {
   const [filter, setFilter] = useState<"Public" | "Anonymous" | "Semua">(
-    "Semua",
+    "Semua"
   );
 
   const { data: postResponse, refetch } = trpc.post.getUserPosts.useQuery({
