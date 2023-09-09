@@ -14,7 +14,7 @@ type TUpdateComment = {
 
 export const createComment = async (
   prisma: PrismaContext,
-  input: TInsetComment,
+  input: TInsetComment
 ) => {
   const createdComment = await prisma.comment.create({
     data: input,
@@ -32,13 +32,13 @@ export const createComment = async (
       status: 201,
       message: "Berhasil mengomentari postingan ini",
     },
-    createdComment,
+    createdComment
   );
 };
 
 export const editComment = async (
   prisma: PrismaContext,
-  input: TUpdateComment,
+  input: TUpdateComment
 ) => {
   const editedComment = await prisma.comment.update({
     where: {
@@ -61,6 +61,29 @@ export const editComment = async (
       status: 201,
       message: "Berhasil mengubah komentar lu",
     },
-    editedComment,
+    editedComment
   );
+};
+
+export const deleteComment = async (
+  prisma: PrismaContext,
+  input: { commentId: number }
+) => {
+  const deletedComment = await prisma.comment.delete({
+    where: {
+      id: input.commentId,
+    },
+  });
+
+  if (!deletedComment) {
+    return sendTRPCResponse({
+      status: 400,
+      message: "Gagal menghapus komentar lu",
+    });
+  }
+
+  return sendTRPCResponse({
+    status: 201,
+    message: "Berhasil menghapus komentar",
+  });
 };

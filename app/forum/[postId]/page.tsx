@@ -1,18 +1,18 @@
 "use client";
 
 import CardForum from "@/components/reusable/forum/CardForum";
+import Comment from "@/components/reusable/forum/Comment";
 import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
-import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc";
-import React, { useEffect, useState } from "react";
 import LoadingState from "@/components/reusable/state/LoadingState";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAuth } from "@/lib/hook/auth.hook";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
-import Comment from "@/components/reusable/forum/Comment";
+import { useAuth } from "@/lib/hook/auth.hook";
+import { trpc } from "@/lib/trpc";
+import { Send } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 const CreateCommentLoader = () => {
   return (
@@ -72,7 +72,7 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
           setCommentText("");
           console.log(error);
         },
-      },
+      }
     );
   };
 

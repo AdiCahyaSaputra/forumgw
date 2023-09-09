@@ -3,6 +3,13 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -10,17 +17,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getMetaData } from "@/lib/helper/str.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
+import { trpc } from "@/lib/trpc";
 import { SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import EditCommentForm from "./EditCommentForm";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 type TProps = {
   id: number;
@@ -38,14 +39,38 @@ type TDeleteDialog = {
   commentId: number;
   openDeleteDialog: boolean;
   setOpenDeleteDialog: (value: React.SetStateAction<boolean>) => void;
+  setResponse: (value: React.SetStateAction<{ message: string }>) => void;
 };
 
 const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
   commentId,
   openDeleteDialog,
   setOpenDeleteDialog,
+  setResponse,
 }) => {
-  // TODO: delete handler
+  const { mutate: deleteComment, isLoading } =
+    trpc.comment.deleteComment.useMutation();
+
+  const deleteHandler = () => {
+    deleteComment(
+      {
+        commentId,
+      },
+      {
+        onSuccess: (data) => {
+          setResponse(data);
+          setOpenDeleteDialog(false);
+        },
+        onError: (error) => {
+          setResponse({
+            message: "Duh error bre",
+          });
+
+          console.log(error);
+        },
+      }
+    );
+  };
 
   return (
     <div
@@ -62,7 +87,13 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
         </CardHeader>
         <CardContent>
           <div className="flex justify-end gap-2">
-            <Button variant="destructive">Yaudh Sih</Button>
+            <Button
+              disabled={isLoading}
+              variant="destructive"
+              onClick={deleteHandler}
+            >
+              {isLoading ? "Proses..." : "Yaudah Sih"}
+            </Button>
             <Button
               variant="outline"
               onClick={() => setOpenDeleteDialog(false)}
@@ -98,6 +129,7 @@ const Comment: React.FC<TProps> = ({
         text={text}
       />
       <DeleteCommentDialog
+        setResponse={setResponse}
         openDeleteDialog={openDeleteDialog}
         setOpenDeleteDialog={setOpenDeleteDialog}
         commentId={id}

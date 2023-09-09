@@ -41,7 +41,7 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
           });
           console.log(error);
         },
-      },
+      }
     );
   };
 
@@ -61,7 +61,7 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
           });
           console.log(error);
         },
-      },
+      }
     );
   };
 
