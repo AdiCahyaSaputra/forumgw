@@ -62,6 +62,7 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
   const [user, setUser] = useState({
     username,
     image,
+    role: "common",
   });
 
   const { data: userResponse } = trpc.user.getAuthUser.useQuery();
@@ -78,6 +79,7 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
     setUser({
       username: userResponse?.data?.username,
       image: userResponse?.data?.image,
+      role: userResponse?.data?.Role.name || "common",
     });
   }, [userResponse]);
 
@@ -114,11 +116,13 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
             {navSettingItems.map((item, idx) => (
               <NavItem {...item} key={idx} />
             ))}
-            <NavItem
-              url="/reported-post"
-              label="Reported Post"
-              Icon={Megaphone}
-            />
+            {user.role === "developer" && (
+              <NavItem
+                url="/reported-post"
+                label="Reported Post"
+                Icon={Megaphone}
+              />
+            )}
           </ul>
         </div>
 

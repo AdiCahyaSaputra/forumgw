@@ -33,6 +33,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
   }
 
+  if (
+    request.nextUrl.pathname.startsWith("/reported-post") &&
+    payload.Role.name !== "developer"
+  ) {
+    return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
+  }
+
   return NextResponse.next();
 }
 
