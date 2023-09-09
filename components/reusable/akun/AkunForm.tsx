@@ -60,7 +60,7 @@ const AkunForm: React.FC = () => {
   const { toast } = useToast();
 
   const { data: userResponse, refetch } = trpc.user.getProfile.useQuery({
-    username: "",
+    username: null,
   });
 
   const { mutate: editProfile, isLoading } =
@@ -85,7 +85,7 @@ const AkunForm: React.FC = () => {
           });
           console.log(error);
         },
-      },
+      }
     );
   };
 

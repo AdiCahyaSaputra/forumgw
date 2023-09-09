@@ -1,13 +1,13 @@
 "use client";
 
 import CardForum from "@/components/reusable/forum/CardForum";
+import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { trpc } from "@/lib/trpc";
-import React, { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import EmptyState from "@/components/reusable/state/EmptyState";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { trpc } from "@/lib/trpc";
+import { useEffect, useState } from "react";
 
 const ProfilDetail = ({ params }: { params: { username: string } }) => {
   const { data: userResponse, refetch } = trpc.user.getProfile.useQuery({
@@ -18,6 +18,7 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
   const [previewImage, setPreviewImage] = useState(false);
 
   useEffect(() => {
+    console.log(userResponse, params.username);
     refetch();
   }, []);
 
