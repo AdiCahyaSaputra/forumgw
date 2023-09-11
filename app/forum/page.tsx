@@ -28,6 +28,7 @@ const Forum: React.FC<TProps> = ({}) => {
     if (createdPost) {
       refetch();
       setCreatedPost(false);
+      setOpenCreateMenu(false);
     }
   }, [createdPost, postResponse]);
 
