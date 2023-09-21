@@ -16,7 +16,7 @@ Bahasa yang tidak formal membuat gw dan user merasa lebih bebas disini (tapi g a
 - Prisma
 - Supabase
 
-** TODO **
+**TODO**
 
 - [ ] Markdown editor
 - [ ] Dark Mode
