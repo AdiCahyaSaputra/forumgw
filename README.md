@@ -15,3 +15,11 @@ Bahasa yang tidak formal membuat gw dan user merasa lebih bebas disini (tapi g a
 - tRPC
 - Prisma
 - Supabase
+
+** TODO **
+
+- [ ] Markdown editor
+- [ ] Dark Mode
+- [ ] Push Notification
+- [ ] BOT Moderator
+- [ ] Sirkel (Group Discussion)
