@@ -37,7 +37,7 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
   if (userExist) {
     return sendTRPCResponse({
       status: 400,
-      message: "User sudah terdaftar bre",
+      message: "User udah terdaftar bre!",
     });
   }
 
@@ -46,23 +46,23 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
       username,
       name,
       password: hashSync(password, 10),
-      roleId: username === "adicss" ? 2 : 1, // Role = common | developer
+      role_id: username === "adicss" ? 2 : 1, // Role = common | developer
     },
   });
 
   if (!createdUser) {
     return sendTRPCResponse({
       status: 400,
-      message: "Gagal pas bikin akun lu bre",
+      message: "Gagal nge-daftarin akun lu bre :(",
     });
   }
 
   return sendTRPCResponse(
     {
       status: 201,
-      message: "Berhasil bikinin lu akun",
+      message: "Akun lu berhasil terdaftar",
     },
-    createdUser
+    createdUser,
   );
 };
 
@@ -74,12 +74,8 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
     },
     select: {
       id: true,
-      name: true,
-      username: true,
       password: true,
-      bio: true,
-      image: true,
-      Role: {
+      role: {
         select: {
           name: true,
         },
@@ -90,7 +86,7 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
   if (!user) {
     return sendTRPCResponse({
       status: 400,
-      message: "Akun lu belum terdaftar",
+      message: "Akun ini belom terdaftar bre!",
     });
   }
 
@@ -99,11 +95,11 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
   if (!isPasswordCorrect) {
     return sendTRPCResponse({
       status: 401,
-      message: "Username dan Password lu gk match bre",
+      message: "Username dan Password gk match bre",
     });
   }
 
-  const authUser = excludeField(user, "password");
+  const authUser = excludeField(user, ["password"]);
 
   const token = await new SignJWT(authUser)
     .setProtectedHeader({ alg: "HS256" })
@@ -117,14 +113,14 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
       status: 200,
       message: "Ok, Selamat berdiskusi..",
     },
-    token
+    token,
   );
 };
 
 export const getProfile = async (
   prisma: PrismaContext,
   userId: string,
-  input: TUserUnique & { withPosts: boolean }
+  input: TUserUnique & { withPosts: boolean },
 ) => {
   const whereClause = input.username
     ? { username: input.username }
@@ -138,12 +134,12 @@ export const getProfile = async (
       username: true,
       bio: true,
       image: true,
-      Post: input.withPosts && {
+      posts: input.withPosts && {
         select: {
           id: true,
           content: true,
-          createdAt: true,
-          User: {
+          created_at: true,
+          user: {
             select: {
               id: true,
               username: true,
@@ -151,8 +147,10 @@ export const getProfile = async (
               image: true,
             },
           },
-          Comment: {
-            select: { id: true },
+          _count: {
+            select: {
+              comments: true,
+            },
           },
         },
       },
@@ -162,7 +160,7 @@ export const getProfile = async (
   if (!existingUser) {
     return sendTRPCResponse({
       status: 404,
-      message: "User yang lu cari gk ketemu di gw",
+      message: "User yang dicari tidak ketemu!",
     });
   }
 
@@ -171,25 +169,20 @@ export const getProfile = async (
       status: 200,
       message: "Nih user yang lu cari",
     },
-    existingUser
+    existingUser,
   );
 };
 
 export const editProfile = async (
   prisma: PrismaContext,
-  input: TUpdateUser
+  input: TUpdateUser,
 ) => {
   const username = input.username.split(" ").join("");
   const updatedUser = await prisma.user.update({
     where: {
       username,
     },
-    data: {
-      name: input.name,
-      username: input.username,
-      bio: input.bio,
-      image: input.image,
-    },
+    data: input,
   });
 
   if (!updatedUser) {

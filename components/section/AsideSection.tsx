@@ -20,11 +20,6 @@ import NavItem from "../reusable/layout/NavItem";
 import LoadingState from "../reusable/state/LoadingState";
 import { Button } from "../ui/button";
 
-type TProps = {
-  username?: string;
-  image?: string | null;
-};
-
 const navCategoryItems = [
   {
     url: "/forum?c=fyp",
@@ -51,7 +46,7 @@ const navSettingItems = [
   },
 ];
 
-const AsideSection: React.FC<TProps> = ({ username, image }) => {
+const AsideSection: React.FC = () => {
   const pathname = usePathname();
   const query = useSearchParams();
 
@@ -59,9 +54,13 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
   const [logoutClicked, setLogoutClicked] = useState(false);
 
   const router = useRouter();
-  const [user, setUser] = useState({
-    username,
-    image,
+  const [user, setUser] = useState<{
+    username: string;
+    image: null | string;
+    role: "common" | "developer" | string;
+  }>({
+    username: "",
+    image: null,
     role: "common",
   });
 
@@ -77,9 +76,9 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
   useEffect(() => {
     // Updated User data
     setUser({
-      username: userResponse?.data?.username,
-      image: userResponse?.data?.image,
-      role: userResponse?.data?.Role.name || "common",
+      username: userResponse?.data?.username || "",
+      image: userResponse?.data?.image || null,
+      role: userResponse?.data?.role?.name || "common",
     });
   }, [userResponse]);
 
@@ -138,17 +137,19 @@ const AsideSection: React.FC<TProps> = ({ username, image }) => {
             <div className="flex items-start grow justify-between">
               <div>
                 <LoadingState
-                  data={username}
+                  data={user.username}
                   loadingFallback={
                     <h3 className="text-sm leading-none font-bold p-1 rounded-md animate-pulse bg-muted text-muted">
                       user
                     </h3>
                   }
                 >
-                  <h3 className="text-sm leading-none font-bold">{username}</h3>
+                  <h3 className="text-sm leading-none font-bold">
+                    {user.username}
+                  </h3>
                 </LoadingState>
                 <Link
-                  href={`/profil/${username}`}
+                  href={`/profil/${user.username}`}
                   className="text-xs hover:underline"
                 >
                   Lihat Profil

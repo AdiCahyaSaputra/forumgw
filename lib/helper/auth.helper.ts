@@ -2,11 +2,7 @@ import { jwtVerify } from "jose";
 
 export type TAuthUser = {
   id: string;
-  name: string;
-  image: string | null;
-  username: string;
-  bio: string | null;
-  Role: {
+  role: {
     name: string;
   };
 };

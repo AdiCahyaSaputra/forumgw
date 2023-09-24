@@ -4,22 +4,22 @@ import { PrismaContext } from "@/server/trpc";
 
 // Update or inSert
 type TUpSertPost = {
-  userId: string;
+  user_id: string;
   content: string;
-  categoryId: "1" | "2";
+  category_id: "1" | "2";
 };
 
 export const getFeedByCategory = async (
   prisma: PrismaContext,
-  categoryId: string,
+  category_id: string,
 ) => {
   const existingPosts = await prisma.post.findMany({
-    where: { categoryId: +categoryId },
+    where: { category_id: +category_id },
     select: {
       id: true,
       content: true,
-      createdAt: true,
-      User: {
+      created_at: true,
+      user: {
         select: {
           id: true,
           username: true,
@@ -27,18 +27,20 @@ export const getFeedByCategory = async (
           image: true,
         },
       },
-      Anonymous: {
+      anonymous: {
         select: {
           id: true,
           username: true,
         },
       },
-      Comment: {
-        select: { id: true },
+      _count: {
+        select: {
+          comments: true,
+        },
       },
     },
     orderBy: {
-      createdAt: "desc",
+      created_at: "desc",
     },
   });
 
@@ -271,13 +273,13 @@ export const createPost = async (
     let anonymousId: string | null = null;
 
     const existingAnonymousUser = await prisma.anonymous.findUnique({
-      where: { userId: data.userId },
+      where: { user_id: data.user_id },
     });
 
     if (!existingAnonymousUser) {
       const createdAnonymousUser = await prisma.anonymous.create({
         data: {
-          userId: data.userId,
+          user_id: data.user_id,
           username: "si-" + generateAnonymousRandomString(4),
         },
       });
@@ -297,8 +299,8 @@ export const createPost = async (
     const createdAnonymousPost = await prisma.post.create({
       data: {
         content: data.content,
-        anonymousId: anonymousId,
-        categoryId: +data.categoryId,
+        anonymous_id: anonymousId,
+        category_id: +data.category_id,
       },
     });
 
@@ -318,8 +320,8 @@ export const createPost = async (
   const createdPublicPost = await prisma.post.create({
     data: {
       content: data.content,
-      userId: data.userId,
-      categoryId: +data.categoryId,
+      user_id: data.user_id,
+      category_id: +data.category_id,
     },
   });
 

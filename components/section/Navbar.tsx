@@ -4,29 +4,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { trpc } from "@/lib/trpc";
 import { useEffect, useState } from "react";
 import LoadingState from "../reusable/state/LoadingState";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-type TProps = {
-  userImage?: string | null;
-  username?: string;
-};
-
-const Navbar: React.FC<TProps> = ({ userImage, username }) => {
-  const [user, setUser] = useState({
-    username,
-    image: userImage,
+const Navbar: React.FC = () => {
+  const [user, setUser] = useState<{ username: string; image: null | string }>({
+    username: "",
+    image: null,
   });
 
   const { data: userResponse } = trpc.user.getAuthUser.useQuery();
 
-  const router = useRouter();
-
   useEffect(() => {
     // Updated User data
     setUser({
-      username: userResponse?.data?.username,
-      image: userResponse?.data?.image,
+      username: userResponse?.data?.username || "",
+      image: userResponse?.data?.image || null,
     });
   }, [userResponse]);
 

@@ -25,7 +25,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 type TProps = {
-  categoryId: "1" | "2";
+  category_id: "1" | "2";
   openCreateMenu: boolean;
   setOpenCreateMenu: (value: React.SetStateAction<boolean>) => void;
   setCreatedPost: (value: React.SetStateAction<boolean>) => void;
@@ -43,7 +43,7 @@ const formSchema = z.object({
 });
 
 const CreatePostForm: React.FC<TProps> = ({
-  categoryId,
+  category_id,
   openCreateMenu,
   setOpenCreateMenu,
   setCreatedPost,
@@ -67,7 +67,7 @@ const CreatePostForm: React.FC<TProps> = ({
   const submitHandler = async (values: z.infer<typeof formSchema>) => {
     createPost(
       {
-        categoryId,
+        category_id,
         isAnonymousPost,
         content: values.content,
       },
@@ -108,9 +108,8 @@ const CreatePostForm: React.FC<TProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
-        openCreateMenu ? "flex " : "hidden"
-      }`}
+      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openCreateMenu ? "flex " : "hidden"
+        }`}
     >
       <Card>
         <CardHeader>
