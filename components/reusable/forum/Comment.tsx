@@ -26,8 +26,8 @@ import EditCommentForm from "./EditCommentForm";
 type TProps = {
   id: number;
   text: string;
-  createdAt: string;
-  User?: {
+  created_at: string;
+  user?: {
     id: string;
     username: string;
     image: string | null;
@@ -36,14 +36,14 @@ type TProps = {
 };
 
 type TDeleteDialog = {
-  commentId: number;
+  comment_id: number;
   openDeleteDialog: boolean;
   setOpenDeleteDialog: (value: React.SetStateAction<boolean>) => void;
   setResponse: (value: React.SetStateAction<{ message: string }>) => void;
 };
 
 const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
-  commentId,
+  comment_id,
   openDeleteDialog,
   setOpenDeleteDialog,
   setResponse,
@@ -54,7 +54,7 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
   const deleteHandler = () => {
     deleteComment(
       {
-        commentId,
+        comment_id,
       },
       {
         onSuccess: (data) => {
@@ -68,7 +68,7 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
 
           console.log(error);
         },
-      }
+      },
     );
   };
 
@@ -110,8 +110,8 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
 const Comment: React.FC<TProps> = ({
   id,
   text,
-  createdAt,
-  User,
+  created_at,
+  user,
   setResponse,
 }) => {
   const { currentUser } = useAuth();
@@ -125,30 +125,33 @@ const Comment: React.FC<TProps> = ({
         setResponse={setResponse}
         openEditMenu={openEditMenu}
         setOpenEditMenu={setOpenEditMenu}
-        commentId={id}
+        comment_id={id}
         text={text}
       />
       <DeleteCommentDialog
         setResponse={setResponse}
         openDeleteDialog={openDeleteDialog}
         setOpenDeleteDialog={setOpenDeleteDialog}
-        commentId={id}
+        comment_id={id}
       />
       <Avatar className="w-10 h-10 rounded-md">
-        <AvatarImage src={User?.image ?? ""} />
+        <AvatarImage src={user?.image ?? ""} />
         <AvatarFallback className="rounded-md">
-          {User?.username[0].toUpperCase()}
+          {user?.username[0].toUpperCase()}
         </AvatarFallback>
       </Avatar>
       <div className="py-2 px-3 bg-white border rounded-md grow">
         <div className="flex justify-between items-start w-full">
-          <Link href={`/profil/${User?.username}`}>
-            <h4 className="text-lg font-bold hover:underline">
-              {User?.username}
-            </h4>
-          </Link>
+          <div>
+            <Link href={`/profil/${user?.username}`}>
+              <h4 className="font-bold hover:underline">{user?.username}</h4>
+            </Link>
+            <p className="text-sm text-foreground/60">
+              {getMetaData(created_at)}
+            </p>
+          </div>
 
-          {currentUser.username === User?.username && (
+          {currentUser.username === user?.username && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -176,7 +179,6 @@ const Comment: React.FC<TProps> = ({
             </DropdownMenu>
           )}
         </div>
-        <p className="text-sm text-foreground/60">{getMetaData(createdAt)}</p>
 
         <p className="mt-2">{text}</p>
       </div>

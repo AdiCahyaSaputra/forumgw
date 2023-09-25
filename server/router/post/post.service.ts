@@ -205,11 +205,11 @@ export const getUserPosts = async (
 
 export const getDetailedPost = async (
   prisma: PrismaContext,
-  postId: string,
+  post_id: string,
 ) => {
   const existingPostWithComments = await prisma.post.findUnique({
     where: {
-      id: postId,
+      id: post_id,
     },
     select: {
       id: true,

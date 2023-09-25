@@ -56,8 +56,8 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
     e.preventDefault();
     createComment(
       {
-        postId: params.postId,
-        userId: currentUser.id,
+        post_id: params.postId,
+        user_id: currentUser.id,
         text: commentText,
       },
       {
@@ -105,7 +105,14 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
             <Skeleton className="w-full h-24 rounded-md bg-muted" />
           }
         >
-          {postResponse?.data && <CardForum {...postResponse.data} />}
+          {postResponse?.data && (
+            <CardForum
+              {...postResponse.data}
+              _count={{
+                comments: postResponse.data.comments.length,
+              }}
+            />
+          )}
         </LoadingState>
         <LoadingState
           data={currentUser}
@@ -142,7 +149,7 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
             data={postResponse?.data}
             loadingFallback={<CommentLoader />}
           >
-            {postResponse?.data?.Comment.map((comment) => (
+            {postResponse?.data?.comments.map((comment) => (
               <Comment
                 setResponse={setResponse}
                 {...comment}
