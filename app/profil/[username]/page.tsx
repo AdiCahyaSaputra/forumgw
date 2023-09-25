@@ -108,7 +108,8 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
               data={userResponse?.data}
               loadingFallback={<Skeleton className="w-full h-24 rounded-md" />}
             >
-              {userResponse?.data?.Post.map((post) => (
+              {userResponse?.data?.posts.map((post) => (
+                /* @ts-ignore */
                 <CardForum {...post} key={post.id} />
               ))}
             </LoadingState>

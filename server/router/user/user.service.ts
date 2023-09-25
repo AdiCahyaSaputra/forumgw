@@ -119,12 +119,12 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
 
 export const getProfile = async (
   prisma: PrismaContext,
-  userId: string,
+  user_id: string,
   input: TUserUnique & { withPosts: boolean },
 ) => {
   const whereClause = input.username
     ? { username: input.username }
-    : { id: userId };
+    : { id: user_id };
 
   const existingUser = await prisma.user.findUnique({
     where: whereClause,
