@@ -12,22 +12,25 @@ import { useEffect, useState } from "react";
 type TPost = {
   id: string;
   content: string;
-  createdAt: string;
-  User?: {
+  created_at: string;
+  user?: {
     name: string;
     username: string;
     image: string | null;
     id: string;
   } | null;
-  Anonymous?: {
+  anonymous?: {
     username: string;
     id: string;
   } | null;
+  _count: {
+    comments: number;
+  };
 };
 
 const KelolaPostingan: React.FC = () => {
   const [filter, setFilter] = useState<"Public" | "Anonymous" | "Semua">(
-    "Semua"
+    "Semua",
   );
 
   const { data: postResponse, refetch } = trpc.post.getUserPosts.useQuery({
@@ -43,8 +46,8 @@ const KelolaPostingan: React.FC = () => {
   const getFilteredPost = (post: TPost) => {
     const filteredPostCond = {
       Semua: post,
-      Public: post.Anonymous === null,
-      Anonymous: post.User === null,
+      Public: post.anonymous === null,
+      Anonymous: post.user === null,
     };
 
     return filteredPostCond[filter];

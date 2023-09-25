@@ -137,16 +137,15 @@ export const getReportedPost = async (prisma: PrismaContext) => {
 
 export const getUserPosts = async (
   prisma: PrismaContext,
-  userId: string,
+  user_id: string,
   withAnonymousPosts: boolean,
-  withComments: boolean,
 ) => {
   let anonymousUser = null;
 
   if (withAnonymousPosts) {
     anonymousUser = await prisma.anonymous.findUnique({
       where: {
-        userId,
+        user_id,
       },
       select: {
         id: true,
@@ -156,14 +155,14 @@ export const getUserPosts = async (
 
   const existingPosts = await prisma.post.findMany({
     where: {
-      OR: [{ userId }, { anonymousId: anonymousUser?.id }],
+      OR: [{ user_id }, { anonymous_id: anonymousUser?.id }],
     },
     select: {
       id: true,
       content: true,
-      createdAt: true,
-      categoryId: true,
-      User: {
+      created_at: true,
+      category_id: true,
+      user: {
         select: {
           id: true,
           username: true,
@@ -171,18 +170,20 @@ export const getUserPosts = async (
           image: true,
         },
       },
-      Anonymous: withAnonymousPosts && {
+      anonymous: withAnonymousPosts && {
         select: {
           id: true,
           username: true,
         },
       },
-      Comment: withComments && {
-        select: { id: true },
+      _count: {
+        select: {
+          comments: true,
+        },
       },
     },
     orderBy: {
-      createdAt: "desc",
+      created_at: "desc",
     },
   });
 
@@ -343,16 +344,16 @@ export const createPost = async (
 
 export const updatePost = async (
   prisma: PrismaContext,
-  postId: string,
+  post_id: string,
   data: TUpSertPost,
   visibilityTo: "anonymous" | "public",
 ) => {
   if (visibilityTo === "anonymous") {
-    let anonymousId = null;
+    let anonymous_id = null;
 
     const existingAnonymousUser = await prisma.anonymous.findUnique({
       where: {
-        userId: data.userId,
+        user_id: data.user_id,
       },
       select: {
         id: true,
@@ -362,7 +363,7 @@ export const updatePost = async (
     if (!existingAnonymousUser) {
       const createdAnonymousUser = await prisma.anonymous.create({
         data: {
-          userId: data.userId,
+          user_id: data.user_id,
           username: "si-" + generateAnonymousRandomString(4),
         },
       });
@@ -374,18 +375,18 @@ export const updatePost = async (
         });
       }
 
-      anonymousId = createdAnonymousUser.id;
+      anonymous_id = createdAnonymousUser.id;
     } else {
-      anonymousId = existingAnonymousUser.id;
+      anonymous_id = existingAnonymousUser.id;
     }
 
     const updatedPost = await prisma.post.update({
-      where: { id: postId },
+      where: { id: post_id },
       data: {
         content: data.content,
-        categoryId: +data.categoryId,
-        userId: null,
-        anonymousId,
+        category_id: +data.category_id,
+        user_id: null,
+        anonymous_id,
       },
     });
 
@@ -408,13 +409,13 @@ export const updatePost = async (
   if (visibilityTo === "public") {
     const updatedPost = await prisma.post.update({
       where: {
-        id: postId,
+        id: post_id,
       },
       data: {
         content: data.content,
-        categoryId: +data.categoryId,
-        userId: data.userId,
-        anonymousId: null,
+        category_id: +data.category_id,
+        user_id: data.user_id,
+        anonymous_id: null,
       },
     });
 

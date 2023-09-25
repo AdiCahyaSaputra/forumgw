@@ -41,12 +41,7 @@ export const postRouter = router({
       }),
     )
     .query(async ({ ctx, input }) =>
-      getUserPosts(
-        ctx.prisma,
-        ctx.user.id,
-        input.withAnonymousPosts,
-        input.withComments,
-      ),
+      getUserPosts(ctx.prisma, ctx.user.id, input.withAnonymousPosts),
     ),
   getDetailedPost: procedure
     .input(
@@ -65,33 +60,33 @@ export const postRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const data: Omit<typeof input, "isAnonymousPost"> & { user_id: string } =
-      {
-        ...input,
-        user_id: ctx.user.id,
-        category_id:
-          ctx.user.role.name === "developer" ? input.category_id : "1",
-      };
+        {
+          ...input,
+          user_id: ctx.user.id,
+          category_id:
+            ctx.user.role.name === "developer" ? input.category_id : "1",
+        };
 
       return createPost(ctx.prisma, data, input.isAnonymousPost);
     }),
   updatePost: authProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
         content: z.string(),
-        categoryId: z.enum(["1", "2"]),
+        category_id: z.enum(["1", "2"]),
         visibilityTo: z.enum(["anonymous", "public"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const data: Omit<typeof input, "postId" | "visibilityTo"> & {
-        userId: string;
+      const data: Omit<typeof input, "post_id" | "visibilityTo"> & {
+        user_id: string;
       } = {
         ...input,
-        userId: ctx.user.id,
+        user_id: ctx.user.id,
       };
 
-      return updatePost(ctx.prisma, input.postId, data, input.visibilityTo);
+      return updatePost(ctx.prisma, input.post_id, data, input.visibilityTo);
     }),
   deletePost: authProcedure
     .input(
