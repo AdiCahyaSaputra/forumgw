@@ -17,7 +17,7 @@ model user {
   image String?
   bio   String? @db.VarChar(100)
 
-  role         role?         @relation(fields: [role_id], references: [id])
+  role         role?          @relation(fields: [role_id], references: [id])
   role_id      Int?
   anonymous    anonymous?
   posts        post[]
@@ -33,8 +33,8 @@ model post {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  category    category? @relation(fields: [category_id], references: [id])
-  category_id Int?
+  category    category @relation(fields: [category_id], references: [id])
+  category_id Int
 
   user         user?      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id      String?

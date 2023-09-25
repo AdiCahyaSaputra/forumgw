@@ -24,9 +24,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 type TProps = {
-  postId: string;
+  post_id: string;
   content: string;
-  categoryId: number;
+  category_id: number;
   isAnonymous: boolean;
   openEditMenu: boolean;
   setOpenEditMenu: (value: React.SetStateAction<boolean>) => void;
@@ -45,9 +45,9 @@ const formSchema = z.object({
 });
 
 const EditPostForm: React.FC<TProps> = ({
-  postId,
+  post_id,
   content,
-  categoryId,
+  category_id,
   isAnonymous,
   openEditMenu,
   setOpenEditMenu,
@@ -68,9 +68,9 @@ const EditPostForm: React.FC<TProps> = ({
     updatePost(
       {
         ...values,
-        categoryId: categoryId === 1 ? "1" : categoryId === 2 ? "2" : "1",
+        category_id: category_id === 1 ? "1" : category_id === 2 ? "2" : "1",
         visibilityTo: isAnonymousPost ? "anonymous" : "public",
-        postId,
+        post_id,
       },
       {
         onSuccess: (data) => {
@@ -91,9 +91,8 @@ const EditPostForm: React.FC<TProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
-        openEditMenu ? "flex " : "hidden"
-      }`}
+      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openEditMenu ? "flex " : "hidden"
+        }`}
     >
       <Card>
         <CardHeader>

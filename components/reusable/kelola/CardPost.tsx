@@ -77,10 +77,10 @@ const CardPost: React.FC<TProps> = ({
   return (
     <>
       <EditPostForm
-        categoryId={category_id}
+        category_id={category_id}
         openEditMenu={openEditMenu}
         setOpenEditMenu={setOpenEditMenu}
-        postId={id}
+        post_id={id}
         content={content}
         isAnonymous={!!anonymous}
         setResponse={setResponse}
@@ -101,9 +101,8 @@ const CardPost: React.FC<TProps> = ({
                 {anonymous ? "Anonymous" : user && user.name}
               </h2>
               <p
-                className={`text-foreground/60 ${
-                  !anonymous && "group-hover:underline"
-                }`}
+                className={`text-foreground/60 ${!anonymous && "group-hover:underline"
+                  }`}
               >
                 {anonymous ? anonymous.username : user && user.username}
               </p>
