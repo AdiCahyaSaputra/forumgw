@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { TAuthUser } from "@/lib/helper/auth.helper";
 import { OurFileRouter } from "@/lib/helper/uploadthing.helper";
+import { TCurrentAuthUser } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { generateReactHelpers } from "@uploadthing/react/hooks";
 import { Plus } from "lucide-react";
@@ -20,7 +20,7 @@ import React, { useState } from "react";
 const { uploadFiles } = generateReactHelpers<OurFileRouter>();
 
 type TProps = {
-  user?: Omit<TAuthUser, "Role">;
+  user?: Omit<TCurrentAuthUser, "role">;
   setResponse: (
     value: React.SetStateAction<{
       status: number;
