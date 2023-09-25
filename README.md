@@ -18,8 +18,4 @@ Bahasa yang tidak formal membuat gw dan user merasa lebih bebas disini (tapi g a
 
 **TODO**
 
-- [ ] Markdown editor
-- [ ] Dark Mode
-- [ ] Push Notification
-- [ ] BOT Moderator
-- [ ] Sirkel (Group Discussion)
+cek di branch [dev](https://github.com/AdiCahyaSaputra/forumgw/tree/dev)
