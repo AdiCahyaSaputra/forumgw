@@ -38,7 +38,7 @@ const CommentLoader = () => {
 
 const PostDetail = ({ params }: { params: { postId: string } }) => {
   const { data: postResponse, refetch } = trpc.post.getDetailedPost.useQuery({
-    postId: params.postId,
+    post_id: params.postId,
   });
 
   const { mutate: createComment, isLoading } =
@@ -72,7 +72,7 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
           setCommentText("");
           console.log(error);
         },
-      }
+      },
     );
   };
 

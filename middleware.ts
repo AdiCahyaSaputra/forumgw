@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
 
   if (
     request.nextUrl.pathname.startsWith("/reported-post") &&
-    payload.Role.name !== "developer"
+    payload.role.name !== "developer"
   ) {
     return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
   }

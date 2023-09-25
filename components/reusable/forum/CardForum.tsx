@@ -8,7 +8,6 @@ import { getMetaData } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
 import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type TProps = {
@@ -44,8 +43,6 @@ const CardForum: React.FC<TProps> = ({
     message: "",
   });
 
-  const router = useRouter();
-
   const { toast } = useToast();
 
   const { mutate: reportPost, isLoading } = trpc.post.reportPost.useMutation();
@@ -53,12 +50,14 @@ const CardForum: React.FC<TProps> = ({
   const reportHandler = () => {
     reportPost(
       {
-        postId: id,
+        post_id: id,
         reason,
       },
       {
         onSuccess: (data) => {
           setResponse(data);
+          setOpenReason(false);
+          setReason("");
         },
         onError: (error) => {
           setResponse({

@@ -10,24 +10,24 @@ import React from "react";
 type TProps = {
   id: number;
   reason: string;
-  Post?: {
+  post?: {
     id: string;
     content: string;
-    createdAt: string;
-    User?: {
+    created_at: string;
+    user?: {
       name: string;
       username: string;
       image: string | null;
       id: string;
     } | null;
-    Anonymous?: {
+    anonymous?: {
       username: string;
       id: string;
     } | null;
   } | null;
 };
 
-const CardPostReport: React.FC<TProps> = ({ id, reason, Post }) => {
+const CardPostReport: React.FC<TProps> = ({ id, reason, post }) => {
   const trimReason = (length: number, str: string) => {
     const splittedStr = str.split("");
     splittedStr.splice(length + 1, str.length - length + 1, "...");
@@ -38,27 +38,26 @@ const CardPostReport: React.FC<TProps> = ({ id, reason, Post }) => {
   return (
     <Card>
       <CardTitle
-        className={`p-4 pb-0 group ${!Post?.Anonymous && "cursor-pointer"}`}
+        className={`p-4 pb-0 group ${!post?.anonymous && "cursor-pointer"}`}
       >
         <div className="flex items-start gap-4">
           <Avatar className="rounded-md">
-            <AvatarImage src={(Post?.User && Post?.User?.image) ?? ""} />
+            <AvatarImage src={(post?.user && post?.user?.image) ?? ""} />
             <AvatarFallback className="rounded-md">
-              {(Post?.User && Post?.User?.name[0].toUpperCase()) ?? "A"}
+              {(post?.user && post?.user?.name[0].toUpperCase()) ?? "A"}
             </AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <h2 className={`${!Post?.Anonymous && "group-hover:underline"}`}>
-              {Post?.Anonymous ? "Anonymous" : Post?.User && Post?.User?.name}
+            <h2 className={`${!post?.anonymous && "group-hover:underline"}`}>
+              {post?.anonymous ? "Anonymous" : post?.user && post?.user?.name}
             </h2>
             <p
-              className={`text-foreground/60 ${
-                !Post?.Anonymous && "group-hover:underline"
-              }`}
+              className={`text-foreground/60 ${!post?.anonymous && "group-hover:underline"
+                }`}
             >
-              {Post?.Anonymous
-                ? Post?.Anonymous?.username
-                : Post?.User && Post?.User?.username}
+              {post?.anonymous
+                ? post?.anonymous?.username
+                : post?.user && post?.user?.username}
             </p>
           </div>
         </div>
@@ -66,10 +65,10 @@ const CardPostReport: React.FC<TProps> = ({ id, reason, Post }) => {
       <CardContent className="p-4 pt-2">
         <div>
           <small className="text-foreground/60 font-bold">
-            Dibuat saat {getMetaData(Post?.createdAt!)}
+            Dibuat saat {getMetaData(post?.created_at!)}
           </small>
         </div>
-        <p className="mt-1">{Post?.content}</p>
+        <p className="mt-1">{post?.content}</p>
       </CardContent>
       <CardFooter className="p-0 flex-col items-start">
         <Separator />
@@ -78,7 +77,7 @@ const CardPostReport: React.FC<TProps> = ({ id, reason, Post }) => {
             Alasan:{" "}
             <span className="font-normal">{trimReason(15, reason)}</span>
           </p>
-          <Link href={`/reported-post/detail/${Post?.id}`}>
+          <Link href={`/reported-post/detail/${post?.id}`}>
             <Button variant="ghost" size="icon">
               <ChevronRight className="w-5 aspect-square" />
             </Button>

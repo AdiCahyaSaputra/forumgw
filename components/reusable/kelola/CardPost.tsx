@@ -52,12 +52,12 @@ const CardPost: React.FC<TProps> = ({
   setResponse,
 }) => {
   const [openEditMenu, setOpenEditMenu] = useState(false);
-  const { mutate: deletePost, isLoading } = trpc.post.deletePost.useMutation();
+  const { mutate: deletePost } = trpc.post.deletePost.useMutation();
 
   const deleteHandler = () => {
     deletePost(
       {
-        postId: id,
+        post_id: id,
       },
       {
         onSuccess: (data) => {

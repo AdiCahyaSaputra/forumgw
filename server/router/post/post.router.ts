@@ -24,11 +24,11 @@ export const postRouter = router({
   getPostReportedReasons: devProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
     .query(async ({ ctx, input }) =>
-      getPostReportedReasons(ctx.prisma, input.postId),
+      getPostReportedReasons(ctx.prisma, input.post_id),
     ),
   getReportedPost: devProcedure.query(async ({ ctx }) =>
     getReportedPost(ctx.prisma),
@@ -46,10 +46,12 @@ export const postRouter = router({
   getDetailedPost: procedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => getDetailedPost(ctx.prisma, input.postId)),
+    .query(async ({ ctx, input }) =>
+      getDetailedPost(ctx.prisma, input.post_id),
+    ),
   createPost: authProcedure
     .input(
       z.object({
@@ -60,12 +62,12 @@ export const postRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const data: Omit<typeof input, "isAnonymousPost"> & { user_id: string } =
-        {
-          ...input,
-          user_id: ctx.user.id,
-          category_id:
-            ctx.user.role.name === "developer" ? input.category_id : "1",
-        };
+      {
+        ...input,
+        user_id: ctx.user.id,
+        category_id:
+          ctx.user.role.name === "developer" ? input.category_id : "1",
+      };
 
       return createPost(ctx.prisma, data, input.isAnonymousPost);
     }),
@@ -91,32 +93,32 @@ export const postRouter = router({
   deletePost: authProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => deletePost(ctx.prisma, input.postId)),
+    .mutation(async ({ ctx, input }) => deletePost(ctx.prisma, input.post_id)),
   reportPost: authProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
         reason: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) =>
-      reportPost(ctx.prisma, input.postId, input.reason),
+      reportPost(ctx.prisma, input.post_id, input.reason),
     ),
   safePost: devProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => safePost(ctx.prisma, input.postId)),
+    .mutation(async ({ ctx, input }) => safePost(ctx.prisma, input.post_id)),
   takeDown: devProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => takeDown(ctx.prisma, input.postId)),
+    .mutation(async ({ ctx, input }) => takeDown(ctx.prisma, input.post_id)),
 });
