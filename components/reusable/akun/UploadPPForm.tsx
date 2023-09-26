@@ -20,7 +20,7 @@ import React, { useState } from "react";
 const { uploadFiles } = generateReactHelpers<OurFileRouter>();
 
 type TProps = {
-  user?: Omit<TCurrentAuthUser, "role">;
+  user?: Omit<TCurrentAuthUser, "role"> | null;
   setResponse: (
     value: React.SetStateAction<{
       status: number;
@@ -112,9 +112,8 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
       </div>
 
       <div
-        className={`${
-          open ? "block" : "hidden"
-        } fixed inset-0 bg-black/50 z-10 flex justify-center items-center`}
+        className={`${open ? "block" : "hidden"
+          } fixed inset-0 bg-black/50 z-10 flex justify-center items-center`}
       >
         <Card className="lg:w-1/5 w-8/12">
           <CardHeader>
@@ -145,9 +144,8 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
                 )}
                 <label
                   htmlFor="pp"
-                  className={`absolute inset-0 flex items-center justify-center cursor-pointer ${
-                    filePreview && "hidden"
-                  }`}
+                  className={`absolute inset-0 flex items-center justify-center cursor-pointer ${filePreview && "hidden"
+                    }`}
                 >
                   <Plus />
                 </label>

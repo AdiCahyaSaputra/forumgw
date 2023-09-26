@@ -16,6 +16,21 @@ Bahasa yang tidak formal membuat gw dan user merasa lebih bebas disini (tapi g a
 - Prisma
 - Supabase
 
+**Run Locally**
+
+```bash
+git clone https://github.com/AdiCahyaSaputra/forumgw
+
+# this project use pnpm
+pnpm install
+
+# rename .env.example to .env
+# and setup .env
+
+# run local dev server
+pnpm dev
+```
+
 **TODO**
 
 - [ ] Markdown editor

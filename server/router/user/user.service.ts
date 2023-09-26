@@ -120,7 +120,7 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
 export const getProfile = async (
   prisma: PrismaContext,
   user_id: string,
-  input: TUserUnique & { withPosts: boolean },
+  input: TUserUnique,
 ) => {
   const whereClause = input.username
     ? { username: input.username }
@@ -134,26 +134,6 @@ export const getProfile = async (
       username: true,
       bio: true,
       image: true,
-      posts: input.withPosts && {
-        select: {
-          id: true,
-          content: true,
-          created_at: true,
-          user: {
-            select: {
-              id: true,
-              username: true,
-              name: true,
-              image: true,
-            },
-          },
-          _count: {
-            select: {
-              comments: true,
-            },
-          },
-        },
-      },
     },
   });
 
@@ -164,12 +144,31 @@ export const getProfile = async (
     });
   }
 
+  const existingUserPosts = await prisma.post.findMany({
+    where: {
+      user_id: existingUser?.id,
+    },
+    select: {
+      id: true,
+      content: true,
+      created_at: true,
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
+  });
+
   return sendTRPCResponse(
     {
       status: 200,
       message: "Nih user yang lu cari",
     },
-    existingUser,
+    {
+      user: existingUser,
+      posts: existingUserPosts,
+    },
   );
 };
 

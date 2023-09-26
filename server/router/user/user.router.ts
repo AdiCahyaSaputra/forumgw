@@ -52,7 +52,6 @@ export const userRouter = router({
     .input(
       z.object({
         username: z.string().nullable(),
-        withPosts: z.boolean().default(false),
       }),
     )
     .query(async ({ ctx, input }) =>

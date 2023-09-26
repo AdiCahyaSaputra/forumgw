@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 const ProfilDetail = ({ params }: { params: { username: string } }) => {
   const { data: userResponse, refetch } = trpc.user.getProfile.useQuery({
     username: params.username,
-    withPosts: true,
   });
 
   const [previewImage, setPreviewImage] = useState(false);
@@ -33,7 +32,7 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
           <div
             className="w-[300px] h-[300px] bg-muted bg-cover bg-center border"
             style={{
-              backgroundImage: `url(${userResponse?.data?.image})`,
+              backgroundImage: `url(${userResponse?.data?.user.image})`,
             }}
           />
           <Button className="mt-2" onClick={() => setPreviewImage(false)}>
@@ -51,7 +50,7 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
             onClick={() => setPreviewImage(true)}
             className="w-16 h-16 cursor-pointer -translate-y-[50%] rounded border shadow-md"
           >
-            <AvatarImage src={userResponse?.data?.image ?? ""} />
+            <AvatarImage src={userResponse?.data?.user.image ?? ""} />
             <AvatarFallback className="rounded"></AvatarFallback>
           </Avatar>
           <div className="-translate-y-[50%]">
@@ -61,7 +60,9 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
                 <Skeleton className="w-full h-10 bg-primary rounded-md" />
               }
             >
-              <h4 className="text-lg font-bold">{userResponse?.data?.name}</h4>
+              <h4 className="text-lg font-bold">
+                {userResponse?.data?.user.name}
+              </h4>
             </LoadingState>
             <LoadingState
               data={userResponse?.data}
@@ -70,7 +71,7 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
               }
             >
               <p className="text-foreground/60 font-bold">
-                {userResponse?.data?.username}
+                {userResponse?.data?.user.username}
               </p>
             </LoadingState>
           </div>
@@ -88,7 +89,7 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
           loadingFallback={<Skeleton className="w-24 h-8 rounded bg-muted" />}
         >
           <p className="text-sm text-foreground w-[80%]">
-            {userResponse?.data?.bio}
+            {userResponse?.data?.user.bio}
           </p>
         </LoadingState>
       </div>
@@ -101,16 +102,19 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
         </div>
         <div className="py-4 pb-10 pr-4 space-y-2 bg-transparent border-r border-r-primary">
           <EmptyState
-            status={userResponse?.status}
-            message={userResponse?.message}
+            status={!userResponse?.data?.posts.length ? 404 : 200}
+            message="User ini males posting"
           >
             <LoadingState
               data={userResponse?.data}
               loadingFallback={<Skeleton className="w-full h-24 rounded-md" />}
             >
               {userResponse?.data?.posts.map((post) => (
-                /* @ts-ignore */
-                <CardForum {...post} key={post.id} />
+                <CardForum
+                  {...post}
+                  user={userResponse.data.user}
+                  key={post.id}
+                />
               ))}
             </LoadingState>
           </EmptyState>
