@@ -66,7 +66,7 @@ export const postRouter = router({
         ...input,
         user_id: ctx.user.id,
         category_id:
-          ctx.user.role.name === "developer" ? input.category_id : "1",
+          ctx.user.role?.name === "developer" ? input.category_id : "1",
       };
 
       return createPost(ctx.prisma, data, input.isAnonymousPost);
