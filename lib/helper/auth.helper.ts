@@ -1,20 +1,18 @@
 import { jwtVerify } from "jose";
 
-export type TAuthUser = {
+export type TJWTPayload = {
   id: string;
-  role: {
-    name: string;
-  };
+  expired_in: string;
 };
 
-export const getAuthUser = async (token: string | null) => {
+export const getJWTPayload = async (token: string | null) => {
   if (!token) return null;
 
   const payload = await jwtVerify(
     token,
     new TextEncoder().encode(process.env.JWT_SECRET),
   )
-    .then((decoded) => decoded.payload as TAuthUser)
+    .then((decoded) => decoded.payload as TJWTPayload)
     .catch(() => null);
 
   return payload;

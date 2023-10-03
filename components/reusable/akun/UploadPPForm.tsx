@@ -77,6 +77,7 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
           setFile(null);
           setFilePreview("");
           setBeginUpload(false);
+          setOpen(false);
         },
         onError: (error) => {
           setResponse({

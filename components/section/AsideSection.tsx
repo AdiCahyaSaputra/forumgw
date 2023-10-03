@@ -19,6 +19,7 @@ import React, { useEffect, useState } from "react";
 import NavItem from "../reusable/layout/NavItem";
 import LoadingState from "../reusable/state/LoadingState";
 import { Button } from "../ui/button";
+import { useAuth } from "@/lib/hook/auth.hook";
 
 const navCategoryItems = [
   {
@@ -64,7 +65,7 @@ const AsideSection: React.FC = () => {
     role: "common",
   });
 
-  const { data: userResponse } = trpc.user.getAuthUser.useQuery();
+  const { currentUser } = useAuth();
 
   const logoutHandler = async () => {
     setLogoutClicked(true);
@@ -76,11 +77,11 @@ const AsideSection: React.FC = () => {
   useEffect(() => {
     // Updated User data
     setUser({
-      username: userResponse?.data?.username || "",
-      image: userResponse?.data?.image || null,
-      role: userResponse?.data?.role?.name || "common",
+      username: currentUser?.username || "",
+      image: currentUser?.image || null,
+      role: currentUser?.role?.name || "common",
     });
-  }, [userResponse]);
+  }, [currentUser]);
 
   useEffect(() => {
     // When current url has change

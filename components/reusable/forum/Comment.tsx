@@ -18,10 +18,12 @@ import {
 import { getMetaData } from "@/lib/helper/str.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
-import { SlidersHorizontal } from "lucide-react";
+import { CornerDownLeft } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import EditCommentForm from "./EditCommentForm";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 type TProps = {
   id: number;
@@ -74,9 +76,8 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-20 bg-white/60 justify-center items-center ${
-        openDeleteDialog ? "flex" : "hidden"
-      }`}
+      className={`fixed inset-0 z-20 bg-white/60 justify-center items-center ${openDeleteDialog ? "flex" : "hidden"
+        }`}
     >
       <Card>
         <CardHeader>
@@ -144,9 +145,17 @@ const Comment: React.FC<TProps> = ({
         <div className="flex justify-between items-start w-full">
           <div>
             <Link href={`/profil/${user?.username}`}>
-              <h4 className="font-bold hover:underline">{user?.username}</h4>
+              <Badge
+                variant={
+                  currentUser.username === user?.username
+                    ? "default"
+                    : "outline"
+                }
+              >
+                {user?.username}
+              </Badge>
             </Link>
-            <p className="text-sm text-foreground/60">
+            <p className="text-xs mt-1 text-foreground/60">
               {getMetaData(created_at)}
             </p>
           </div>
@@ -159,7 +168,7 @@ const Comment: React.FC<TProps> = ({
                   variant="outline"
                   size="sm"
                 >
-                  <SlidersHorizontal className="w-4 aspect-square" />
+                  <CornerDownLeft className="w-4 aspect-square" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="right" align="start">

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { Send } from "lucide-react";
@@ -32,10 +33,6 @@ const CommentLoader = () => {
   );
 };
 
-/**
- * TODO: CRUD Comment
- */
-
 const PostDetail = ({ params }: { params: { postId: string } }) => {
   const { data: postResponse, refetch } = trpc.post.getDetailedPost.useQuery({
     post_id: params.postId,
@@ -58,7 +55,7 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
       {
         post_id: params.postId,
         user_id: currentUser.id,
-        text: commentText,
+        text: filterBadWord(commentText),
       },
       {
         onSuccess: (data) => {

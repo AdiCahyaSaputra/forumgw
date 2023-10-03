@@ -1,5 +1,6 @@
-import { TAuthUser } from "../helper/auth.helper";
+import { destroyAccessToken } from "../helper/api.helper";
 import { trpc } from "../trpc";
+import { useRouter } from "next/navigation";
 
 export type TCurrentAuthUser = {
   role: {
@@ -13,7 +14,12 @@ export type TCurrentAuthUser = {
 };
 
 export const useAuth = () => {
-  const { data: userResponse } = trpc.user.getAuthUser.useQuery();
+  const { data: userResponse, isError } = trpc.user.getAuthUser.useQuery();
+  const router = useRouter();
+
+  if (isError) {
+    destroyAccessToken().then((res) => res.isSuccess && router.push("/login"));
+  }
 
   return {
     currentUser: userResponse?.data as TCurrentAuthUser,

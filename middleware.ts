@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuthUser } from "./lib/helper/auth.helper";
+import { getJWTPayload } from "./lib/helper/auth.helper";
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === "/") {
@@ -19,9 +19,9 @@ export async function middleware(request: NextRequest) {
   }
 
   // When the Token exist
-  const payload = await getAuthUser(token.value);
+  const jwtPayload = await getJWTPayload(token.value);
 
-  if (!payload) {
+  if (!jwtPayload) {
     if (isGuest) return NextResponse.next();
 
     request.cookies.set("token", "");
@@ -33,12 +33,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
   }
 
-  if (
-    request.nextUrl.pathname.startsWith("/reported-post") &&
-    payload.role.name !== "developer"
-  ) {
-    return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
-  }
+  // TODO: implement it on client later
+
+  // if (
+  //   request.nextUrl.pathname.startsWith("/reported-post") &&
+  //   payload.role.name !== "developer"
+  // ) {
+  //   return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
+  // }
 
   return NextResponse.next();
 }
@@ -52,6 +54,5 @@ export const config = {
     "/profil/:path*",
     "/akun/:path*",
     "/kelola/:path*",
-    "/reported-post/:path*",
   ],
 };

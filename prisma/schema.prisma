@@ -23,6 +23,7 @@ model user {
   posts        post[]
   comments     comment[]
   notification notification[]
+  jwt          jwt[]
 }
 
 model post {
@@ -102,4 +103,11 @@ model notification {
 
   post    post   @relation(fields: [post_id], references: [id])
   post_id String
+}
+
+model jwt {
+  id         String   @id @default(uuid())
+  expired_in DateTime
+  user       user     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String
 }

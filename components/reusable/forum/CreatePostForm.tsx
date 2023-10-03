@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { VenetianMask } from "lucide-react";
@@ -69,7 +70,7 @@ const CreatePostForm: React.FC<TProps> = ({
       {
         category_id,
         isAnonymousPost,
-        content: values.content,
+        content: filterBadWord(values.content),
       },
       {
         onSuccess: (data) => {
@@ -124,8 +125,8 @@ const CreatePostForm: React.FC<TProps> = ({
             </Button>
           </CardTitle>
           <CardDescription>
-            Tulis aja apa yang lu mau, <br />
-            <span className="font-bold">selagi gk ngerugiin gw mah</span>
+            Tulis aja apa yang lu pikirin, <br />
+            <span className="font-bold">jangan xss juga tapi</span>
           </CardDescription>
           <CardContent className="p-0 pt-2">
             <Form {...form}>

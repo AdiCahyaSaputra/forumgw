@@ -99,9 +99,24 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
     });
   }
 
-  const authUser = excludeField(user, ["password"]);
+  const jwt = await prisma.jwt.create({
+    data: {
+      user_id: user.id,
+      expired_in: new Date(Date.now() + 2 * (60 * 60 * 1000)), // 2hr
+    },
+  });
 
-  const token = await new SignJWT(authUser)
+  if (!jwt) {
+    return sendTRPCResponse({
+      status: 400,
+      message: "SignIn Error",
+    });
+  }
+
+  const token = await new SignJWT({
+    id: jwt.id,
+    expired_in: jwt.expired_in,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setJti(nanoid())
     .setIssuedAt()

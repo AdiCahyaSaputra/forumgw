@@ -1,10 +1,10 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { trpc } from "@/lib/trpc";
 import { useEffect, useState } from "react";
 import LoadingState from "../reusable/state/LoadingState";
 import Link from "next/link";
+import { useAuth } from "@/lib/hook/auth.hook";
 
 const Navbar: React.FC = () => {
   const [user, setUser] = useState<{ username: string; image: null | string }>({
@@ -12,15 +12,15 @@ const Navbar: React.FC = () => {
     image: null,
   });
 
-  const { data: userResponse } = trpc.user.getAuthUser.useQuery();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     // Updated User data
     setUser({
-      username: userResponse?.data?.username || "",
-      image: userResponse?.data?.image || null,
+      username: currentUser?.username || "",
+      image: currentUser?.image || null,
     });
-  }, [userResponse]);
+  }, [currentUser]);
 
   return (
     <nav className="py-4 border-b">

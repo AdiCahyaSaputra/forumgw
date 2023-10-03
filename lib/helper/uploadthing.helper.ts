@@ -1,5 +1,5 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { getAuthUser } from "./auth.helper";
+import { getJWTPayload } from "./auth.helper";
 
 const f = createUploadthing();
 
@@ -8,14 +8,14 @@ export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "4MB" } })
     .middleware(async ({ req }) => {
       const token = req.cookies.get("token")?.value;
-      const payload = await getAuthUser(token ?? "");
+      const jwtPayload = await getJWTPayload(token ?? "");
 
-      if (!payload) throw new Error("Unauthorized");
+      if (!jwtPayload) throw new Error("Unauthorized");
 
-      return { userId: payload?.id };
+      return { jwt: jwtPayload?.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata.userId);
+      console.log("Upload complete for :", metadata.jwt);
 
       console.log("file url", file.url);
     }),

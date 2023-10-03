@@ -1,4 +1,4 @@
-import { getAuthUser } from "@/lib/helper/auth.helper";
+import { getJWTPayload } from "@/lib/helper/auth.helper";
 import { TRPCError, inferAsyncReturnType, initTRPC } from "@trpc/server";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { prisma } from "./../prisma/db";
@@ -19,29 +19,65 @@ export type Context = inferAsyncReturnType<typeof createContext>;
 const trpc = initTRPC.context<Context>().create();
 
 const isAuthenticated = trpc.middleware(async (opts) => {
-  const user = await getAuthUser(opts.ctx.token);
+  const jwtPayload = await getJWTPayload(opts.ctx.token);
 
-  if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
+  const data = await prisma.jwt.findUnique({
+    where: {
+      id: jwtPayload?.id,
+    },
+    select: {
+      user: {
+        select: {
+          id: true,
+          role: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!data?.user) throw new TRPCError({ code: "UNAUTHORIZED" });
 
   return opts.next({
     ctx: {
       ...opts.ctx,
-      user,
+      user: data?.user,
     },
   });
 });
 
 const isDeveloper = trpc.middleware(async (opts) => {
-  const user = await getAuthUser(opts.ctx.token);
+  const jwtPayload = await getJWTPayload(opts.ctx.token);
 
-  if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
-  if (user.role.name !== "developer")
+  const data = await prisma.jwt.findUnique({
+    where: {
+      id: jwtPayload?.id,
+    },
+    select: {
+      user: {
+        select: {
+          id: true,
+          role: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!data?.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (data?.user.role?.name !== "developer")
     throw new TRPCError({ code: "FORBIDDEN" });
 
   return opts.next({
     ctx: {
       ...opts.ctx,
-      user,
+      user: data?.user,
     },
   });
 });
