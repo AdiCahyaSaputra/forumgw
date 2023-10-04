@@ -98,11 +98,16 @@ model notification {
   type    String // report, comment
   is_read Boolean @default(false)
 
+  to_user String
+
   user    user   @relation(fields: [user_id], references: [id])
   user_id String
 
   post    post   @relation(fields: [post_id], references: [id])
   post_id String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model jwt {

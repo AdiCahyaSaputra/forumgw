@@ -56,6 +56,7 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
         post_id: params.postId,
         user_id: currentUser.id,
         text: filterBadWord(commentText),
+        author_id: postResponse?.data?.user?.id!,
       },
       {
         onSuccess: (data) => {

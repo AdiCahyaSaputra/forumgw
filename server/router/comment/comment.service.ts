@@ -1,10 +1,13 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
+import { NotificationType } from "@/lib/helper/enum.helper";
+import { excludeField } from "@/lib/helper/obj.helper";
 import { PrismaContext } from "@/server/trpc";
 
 type TInsetComment = {
   post_id: string;
   user_id: string;
   text: string;
+  author_id: string;
 };
 
 type TUpdateComment = {
@@ -16,9 +19,22 @@ export const createComment = async (
   prisma: PrismaContext,
   input: TInsetComment,
 ) => {
-  const createdComment = await prisma.comment.create({
-    data: input,
-  });
+  const data = excludeField(input, ["author_id"]);
+
+  const createdComment = await prisma.$transaction([
+    prisma.comment.create({
+      data,
+    }),
+    prisma.notification.create({
+      data: {
+        post_id: input.post_id,
+        user_id: input.user_id,
+        type: NotificationType.comment,
+        is_read: false,
+        to_user: input.author_id,
+      },
+    }),
+  ]);
 
   if (!createdComment) {
     return sendTRPCResponse({

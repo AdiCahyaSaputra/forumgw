@@ -9,6 +9,7 @@ export const commentRouter = router({
         post_id: z.string(),
         user_id: z.string(),
         text: z.string(),
+        author_id: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => createComment(ctx.prisma, input)),

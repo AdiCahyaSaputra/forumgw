@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { destroyAccessToken } from "@/lib/helper/api.helper";
 import { trpc } from "@/lib/trpc";
 import {
+  BellRing,
   Bug,
   GanttChartSquare,
   Loader2,
@@ -67,6 +68,9 @@ const AsideSection: React.FC = () => {
 
   const { currentUser } = useAuth();
 
+  const { data: notificationResponse } =
+    trpc.notification.getNotification.useQuery();
+
   const logoutHandler = async () => {
     setLogoutClicked(true);
     const { isSuccess } = await destroyAccessToken();
@@ -116,6 +120,14 @@ const AsideSection: React.FC = () => {
             {navSettingItems.map((item, idx) => (
               <NavItem {...item} key={idx} />
             ))}
+            <NavItem
+              url="/notifikasi"
+              label={`${
+                notificationResponse?.data.filter((notif) => !notif.is_read)
+                  .length || ""
+              } Notifikasi`}
+              Icon={BellRing}
+            />
             {user.role === "developer" && (
               <NavItem
                 url="/reported-post"

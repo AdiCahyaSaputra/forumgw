@@ -93,11 +93,9 @@ export const filterBadWord = (
   txt: string = "***",
   dictionary: string[] = _badWord,
 ) => {
-  str = str.toLowerCase();
-
   for (const word of dictionary) {
     const lowerCaseBadWord = word.toLowerCase();
-    const badWordFound = str.search(lowerCaseBadWord);
+    const badWordFound = str.search(new RegExp(lowerCaseBadWord, "i"));
 
     if (badWordFound != -1) {
       str = str.split(lowerCaseBadWord).join(txt);
