@@ -7,81 +7,112 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id       String  @id @default(uuid())
-  username String  @unique
-  name     String  @db.VarChar(20)
-  image    String?
-  bio      String? @db.VarChar(100)
-  password String  @db.VarChar(255)
-  roleId   Int
+model user {
+  id String @id @default(uuid()) // kirim ke jwt
 
-  Post      Post[]
-  Anonymous Anonymous?
-  Comment   Comment[]
-  Role      Role       @relation(fields: [roleId], references: [id])
+  username String @unique
+  password String @db.VarChar(255)
+
+  name  String  @db.VarChar(20)
+  image String?
+  bio   String? @db.VarChar(100)
+
+  role         role?          @relation(fields: [role_id], references: [id])
+  role_id      Int?
+  anonymous    anonymous?
+  posts        post[]
+  comments     comment[]
+  notification notification[]
+  jwt          jwt[]
 }
 
-model Role {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  User User[]
-}
-
-model Anonymous {
-  id       String @id @default(uuid())
-  userId   String @unique
-  username String
-
-  Post Post[]
-  User User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Post {
+model post {
   id String @id @default(uuid())
 
   content String @db.VarChar(255)
 
-  userId      String?
-  anonymousId String?
-  reportedId  Int?
-  categoryId  Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  Anonymous Anonymous? @relation(fields: [anonymousId], references: [id], onDelete: Cascade)
-  User      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Category  Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  Comment   Comment[]
-  Reported  Reported[]
+  category    category @relation(fields: [category_id], references: [id])
+  category_id Int
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  user         user?      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      String?
+  anonymous    anonymous? @relation(fields: [anonymous_id], references: [id], onDelete: Cascade)
+  anonymous_id String?
+
+  reports      report[]
+  comments     comment[]
+  notification notification[]
 }
 
-model Reported {
-  id     Int    @id @default(autoincrement())
-  reason String
-
-  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String
-}
-
-model Category {
+model category {
   id   Int    @id @default(autoincrement())
   name String
 
-  Post Post[]
+  posts post[]
 }
 
-model Comment {
+model role {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  users user[]
+}
+
+model anonymous {
+  id       String @id @default(uuid())
+  username String
+
+  user_id String @unique
+  user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post    post[]
+}
+
+model report {
+  id     Int    @id @default(autoincrement())
+  reason String
+
+  post    post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id String
+}
+
+model comment {
   id   Int    @id @default(autoincrement())
   text String
 
-  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId String
+  post    post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id String
 
-  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model notification {
+  id String @id @default(uuid())
+
+  type    String // report, comment
+  is_read Boolean @default(false)
+
+  to_user String
+
+  user    user   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  post    post   @relation(fields: [post_id], references: [id])
+  post_id String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model jwt {
+  id         String   @id @default(uuid())
+  expired_in DateTime
+  user       user     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String
 }

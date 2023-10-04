@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { Send } from "lucide-react";
@@ -32,13 +33,9 @@ const CommentLoader = () => {
   );
 };
 
-/**
- * TODO: CRUD Comment
- */
-
 const PostDetail = ({ params }: { params: { postId: string } }) => {
   const { data: postResponse, refetch } = trpc.post.getDetailedPost.useQuery({
-    postId: params.postId,
+    post_id: params.postId,
   });
 
   const { mutate: createComment, isLoading } =
@@ -56,9 +53,10 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
     e.preventDefault();
     createComment(
       {
-        postId: params.postId,
-        userId: currentUser.id,
-        text: commentText,
+        post_id: params.postId,
+        user_id: currentUser.id,
+        text: filterBadWord(commentText),
+        author_id: postResponse?.data?.user?.id!,
       },
       {
         onSuccess: (data) => {
@@ -72,7 +70,7 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
           setCommentText("");
           console.log(error);
         },
-      }
+      },
     );
   };
 
@@ -105,7 +103,14 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
             <Skeleton className="w-full h-24 rounded-md bg-muted" />
           }
         >
-          {postResponse?.data && <CardForum {...postResponse.data} />}
+          {postResponse?.data && (
+            <CardForum
+              {...postResponse.data}
+              _count={{
+                comments: postResponse.data.comments.length,
+              }}
+            />
+          )}
         </LoadingState>
         <LoadingState
           data={currentUser}
@@ -142,7 +147,7 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
             data={postResponse?.data}
             loadingFallback={<CommentLoader />}
           >
-            {postResponse?.data?.Comment.map((comment) => (
+            {postResponse?.data?.comments.map((comment) => (
               <Comment
                 setResponse={setResponse}
                 {...comment}

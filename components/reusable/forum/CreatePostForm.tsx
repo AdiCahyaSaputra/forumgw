@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { VenetianMask } from "lucide-react";
@@ -25,7 +26,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 type TProps = {
-  categoryId: "1" | "2";
+  category_id: "1" | "2";
   openCreateMenu: boolean;
   setOpenCreateMenu: (value: React.SetStateAction<boolean>) => void;
   setCreatedPost: (value: React.SetStateAction<boolean>) => void;
@@ -43,7 +44,7 @@ const formSchema = z.object({
 });
 
 const CreatePostForm: React.FC<TProps> = ({
-  categoryId,
+  category_id,
   openCreateMenu,
   setOpenCreateMenu,
   setCreatedPost,
@@ -67,9 +68,9 @@ const CreatePostForm: React.FC<TProps> = ({
   const submitHandler = async (values: z.infer<typeof formSchema>) => {
     createPost(
       {
-        categoryId,
+        category_id,
         isAnonymousPost,
-        content: values.content,
+        content: filterBadWord(values.content),
       },
       {
         onSuccess: (data) => {
@@ -108,9 +109,8 @@ const CreatePostForm: React.FC<TProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
-        openCreateMenu ? "flex " : "hidden"
-      }`}
+      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openCreateMenu ? "flex " : "hidden"
+        }`}
     >
       <Card>
         <CardHeader>
@@ -125,8 +125,8 @@ const CreatePostForm: React.FC<TProps> = ({
             </Button>
           </CardTitle>
           <CardDescription>
-            Tulis aja apa yang lu mau, <br />
-            <span className="font-bold">selagi gk ngerugiin gw mah</span>
+            Tulis aja apa yang lu pikirin, <br />
+            <span className="font-bold">jangan xss juga tapi</span>
           </CardDescription>
           <CardContent className="p-0 pt-2">
             <Form {...form}>

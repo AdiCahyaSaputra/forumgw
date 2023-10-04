@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -35,6 +36,9 @@ const formSchema = z.object({
     })
     .max(255, {
       message: "Jangan asal ngisi bre max(255)",
+    })
+    .refine((data) => !filterBadWord(data).includes("***"), {
+      message: "Gak boleh toxic ya bre",
     }),
   username: z
     .string()
@@ -43,6 +47,9 @@ const formSchema = z.object({
     })
     .max(20, {
       message: "Username lu kepanjangan bre max(20)",
+    })
+    .refine((data) => !filterBadWord(data).includes("***"), {
+      message: "Gak boleh toxic ya bre",
     }),
   password: z
     .string()
@@ -122,9 +129,8 @@ const Daftar: React.FC = () => {
       <CardHeader>
         <CardTitle className="lg:text-xl">Bikin Akun Dulu Bre 🤗</CardTitle>
         <CardDescription>
-          Lu anggota baru <br />
-          atau mau bikin akun fake dah ?<br />
-          <span className="font-bold">Cobain fitur Anonymous Post 😎</span>
+          Mo bikin akun fake atau beneran <br />
+          anggota baru nih ?<br />
         </CardDescription>
         <CardContent className="px-0 py-0 pt-4">
           {response.status === 201 ? (
@@ -200,9 +206,8 @@ const Daftar: React.FC = () => {
           )}
         </CardContent>
         <CardFooter
-          className={`px-0 py-0 pt-4 flex-col ${
-            response.status === 201 && "hidden"
-          }`}
+          className={`px-0 py-0 pt-4 flex-col ${response.status === 201 && "hidden"
+            }`}
         >
           <Separator className="mb-4" />
           <Link href="/login" className="w-full">

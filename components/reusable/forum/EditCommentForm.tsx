@@ -16,7 +16,7 @@ type TProps = {
   openEditMenu: boolean;
   setOpenEditMenu: (value: React.SetStateAction<boolean>) => void;
   setResponse: (value: React.SetStateAction<{ message: string }>) => void;
-  commentId: number;
+  comment_id: number;
   text: string;
 };
 
@@ -24,7 +24,7 @@ const EditCommentForm: React.FC<TProps> = ({
   openEditMenu,
   setOpenEditMenu,
   setResponse,
-  commentId,
+  comment_id,
   text,
 }) => {
   const [commentText, setCommentText] = useState(text);
@@ -37,7 +37,7 @@ const EditCommentForm: React.FC<TProps> = ({
 
     editComment(
       {
-        commentId,
+        comment_id,
         text: commentText,
       },
       {

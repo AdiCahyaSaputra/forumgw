@@ -8,45 +8,40 @@ import { getMetaData } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
 import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type TProps = {
   id: string;
   content: string;
-  createdAt: string;
-  User?: {
+  created_at: string;
+  user?: {
     name: string;
     username: string;
     image: string | null;
     id: string;
   } | null;
-  Anonymous?: {
+  anonymous?: {
     username: string;
     id: string;
   } | null;
-  Comment?:
-    | {
-        id: number;
-      }[]
-    | null;
+  _count: {
+    comments: number;
+  };
 };
 
 const CardForum: React.FC<TProps> = ({
   id,
   content,
-  createdAt,
-  User,
-  Anonymous,
-  Comment,
+  created_at,
+  user,
+  anonymous,
+  _count,
 }) => {
   const [reason, setReason] = useState("");
   const [openReason, setOpenReason] = useState(false);
   const [response, setResponse] = useState({
     message: "",
   });
-
-  const router = useRouter();
 
   const { toast } = useToast();
 
@@ -55,12 +50,14 @@ const CardForum: React.FC<TProps> = ({
   const reportHandler = () => {
     reportPost(
       {
-        postId: id,
+        post_id: id,
         reason,
       },
       {
         onSuccess: (data) => {
           setResponse(data);
+          setOpenReason(false);
+          setReason("");
         },
         onError: (error) => {
           setResponse({
@@ -89,9 +86,8 @@ const CardForum: React.FC<TProps> = ({
   return (
     <>
       <div
-        className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
-          openReason ? "flex" : "hidden"
-        }`}
+        className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openReason ? "flex" : "hidden"
+          }`}
       >
         <Card>
           <CardTitle className="font-bold p-4">Apa alasan lo bre ?</CardTitle>
@@ -124,27 +120,26 @@ const CardForum: React.FC<TProps> = ({
         </Card>
       </div>
       <Card>
-        <Link href={`/profil/${User?.username}`}>
+        <Link href={`/profil/${user?.username}`}>
           <CardTitle
-            className={`p-4 pb-0 group ${!Anonymous && "cursor-pointer"}`}
+            className={`p-4 pb-0 group ${!anonymous && "cursor-pointer"}`}
           >
             <div className="flex items-start gap-4">
               <Avatar className="rounded-md">
-                <AvatarImage src={(User && User.image) ?? ""} />
+                <AvatarImage src={(user && user.image) ?? ""} />
                 <AvatarFallback className="rounded-md">
-                  {(User && User.name[0].toUpperCase()) ?? "A"}
+                  {(user && user.name[0].toUpperCase()) ?? "A"}
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-1">
-                <h2 className={`${!Anonymous && "group-hover:underline"}`}>
-                  {Anonymous ? "Anonymous" : User && User.name}
+                <h2 className={`${!anonymous && "group-hover:underline"}`}>
+                  {anonymous ? "Anonymous" : user && user.name}
                 </h2>
                 <p
-                  className={`text-foreground/60 ${
-                    !Anonymous && "group-hover:underline"
-                  }`}
+                  className={`text-foreground/60 ${!anonymous && "group-hover:underline"
+                    }`}
                 >
-                  {Anonymous ? Anonymous.username : User && User.username}
+                  {anonymous ? anonymous.username : user && user.username}
                 </p>
               </div>
             </div>
@@ -153,7 +148,7 @@ const CardForum: React.FC<TProps> = ({
         <CardContent className="p-4 pt-2">
           <div>
             <small className="text-foreground/60 text-sm">
-              Dibuat saat {getMetaData(createdAt)}
+              Dibuat saat {getMetaData(created_at)}
             </small>
           </div>
           <p className="mt-1">{content}</p>
@@ -164,7 +159,7 @@ const CardForum: React.FC<TProps> = ({
             <Link href={`/forum/${id}`}>
               <Button variant="outline" size="default" className="space-x-2">
                 <MessagesSquare className="w-5 aspect-square" />
-                <span>{Comment?.length}</span>
+                <span>{_count.comments}</span>
               </Button>
             </Link>
             <Button variant="outline" size="icon">

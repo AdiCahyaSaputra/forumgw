@@ -4,22 +4,22 @@ import { PrismaContext } from "@/server/trpc";
 
 // Update or inSert
 type TUpSertPost = {
-  userId: string;
+  user_id: string;
   content: string;
-  categoryId: "1" | "2";
+  category_id: "1" | "2";
 };
 
 export const getFeedByCategory = async (
   prisma: PrismaContext,
-  categoryId: string,
+  category_id: string,
 ) => {
   const existingPosts = await prisma.post.findMany({
-    where: { categoryId: +categoryId },
+    where: { category_id: +category_id },
     select: {
       id: true,
       content: true,
-      createdAt: true,
-      User: {
+      created_at: true,
+      user: {
         select: {
           id: true,
           username: true,
@@ -27,18 +27,20 @@ export const getFeedByCategory = async (
           image: true,
         },
       },
-      Anonymous: {
+      anonymous: {
         select: {
           id: true,
           username: true,
         },
       },
-      Comment: {
-        select: { id: true },
+      _count: {
+        select: {
+          comments: true,
+        },
       },
     },
     orderBy: {
-      createdAt: "desc",
+      created_at: "desc",
     },
   });
 
@@ -60,11 +62,11 @@ export const getFeedByCategory = async (
 
 export const getPostReportedReasons = async (
   prisma: PrismaContext,
-  postId: string,
+  post_id: string,
 ) => {
-  const reasons = await prisma.reported.findMany({
+  const reasons = await prisma.report.findMany({
     where: {
-      postId,
+      post_id,
     },
     select: {
       id: true,
@@ -89,16 +91,16 @@ export const getPostReportedReasons = async (
 };
 
 export const getReportedPost = async (prisma: PrismaContext) => {
-  const reportedPosts = await prisma.reported.findMany({
+  const reportedPosts = await prisma.report.findMany({
     select: {
       id: true,
       reason: true,
-      Post: {
+      post: {
         select: {
           id: true,
           content: true,
-          createdAt: true,
-          User: {
+          created_at: true,
+          user: {
             select: {
               id: true,
               username: true,
@@ -106,7 +108,7 @@ export const getReportedPost = async (prisma: PrismaContext) => {
               image: true,
             },
           },
-          Anonymous: {
+          anonymous: {
             select: {
               id: true,
               username: true,
@@ -135,16 +137,15 @@ export const getReportedPost = async (prisma: PrismaContext) => {
 
 export const getUserPosts = async (
   prisma: PrismaContext,
-  userId: string,
+  user_id: string,
   withAnonymousPosts: boolean,
-  withComments: boolean,
 ) => {
   let anonymousUser = null;
 
   if (withAnonymousPosts) {
     anonymousUser = await prisma.anonymous.findUnique({
       where: {
-        userId,
+        user_id,
       },
       select: {
         id: true,
@@ -154,14 +155,14 @@ export const getUserPosts = async (
 
   const existingPosts = await prisma.post.findMany({
     where: {
-      OR: [{ userId }, { anonymousId: anonymousUser?.id }],
+      OR: [{ user_id }, { anonymous_id: anonymousUser?.id }],
     },
     select: {
       id: true,
       content: true,
-      createdAt: true,
-      categoryId: true,
-      User: {
+      created_at: true,
+      category_id: true,
+      user: {
         select: {
           id: true,
           username: true,
@@ -169,18 +170,20 @@ export const getUserPosts = async (
           image: true,
         },
       },
-      Anonymous: withAnonymousPosts && {
+      anonymous: withAnonymousPosts && {
         select: {
           id: true,
           username: true,
         },
       },
-      Comment: withComments && {
-        select: { id: true },
+      _count: {
+        select: {
+          comments: true,
+        },
       },
     },
     orderBy: {
-      createdAt: "desc",
+      created_at: "desc",
     },
   });
 
@@ -202,17 +205,17 @@ export const getUserPosts = async (
 
 export const getDetailedPost = async (
   prisma: PrismaContext,
-  postId: string,
+  post_id: string,
 ) => {
   const existingPostWithComments = await prisma.post.findUnique({
     where: {
-      id: postId,
+      id: post_id,
     },
     select: {
       id: true,
       content: true,
-      createdAt: true,
-      User: {
+      created_at: true,
+      user: {
         select: {
           id: true,
           username: true,
@@ -220,18 +223,18 @@ export const getDetailedPost = async (
           image: true,
         },
       },
-      Anonymous: {
+      anonymous: {
         select: {
           id: true,
           username: true,
         },
       },
-      Comment: {
+      comments: {
         select: {
           id: true,
           text: true,
-          createdAt: true,
-          User: {
+          created_at: true,
+          user: {
             select: {
               id: true,
               username: true,
@@ -240,7 +243,7 @@ export const getDetailedPost = async (
           },
         },
         orderBy: {
-          createdAt: "desc",
+          created_at: "desc",
         },
       },
     },
@@ -271,13 +274,13 @@ export const createPost = async (
     let anonymousId: string | null = null;
 
     const existingAnonymousUser = await prisma.anonymous.findUnique({
-      where: { userId: data.userId },
+      where: { user_id: data.user_id },
     });
 
     if (!existingAnonymousUser) {
       const createdAnonymousUser = await prisma.anonymous.create({
         data: {
-          userId: data.userId,
+          user_id: data.user_id,
           username: "si-" + generateAnonymousRandomString(4),
         },
       });
@@ -297,8 +300,8 @@ export const createPost = async (
     const createdAnonymousPost = await prisma.post.create({
       data: {
         content: data.content,
-        anonymousId: anonymousId,
-        categoryId: +data.categoryId,
+        anonymous_id: anonymousId,
+        category_id: +data.category_id,
       },
     });
 
@@ -318,8 +321,8 @@ export const createPost = async (
   const createdPublicPost = await prisma.post.create({
     data: {
       content: data.content,
-      userId: data.userId,
-      categoryId: +data.categoryId,
+      user_id: data.user_id,
+      category_id: +data.category_id,
     },
   });
 
@@ -341,16 +344,16 @@ export const createPost = async (
 
 export const updatePost = async (
   prisma: PrismaContext,
-  postId: string,
+  post_id: string,
   data: TUpSertPost,
   visibilityTo: "anonymous" | "public",
 ) => {
   if (visibilityTo === "anonymous") {
-    let anonymousId = null;
+    let anonymous_id = null;
 
     const existingAnonymousUser = await prisma.anonymous.findUnique({
       where: {
-        userId: data.userId,
+        user_id: data.user_id,
       },
       select: {
         id: true,
@@ -360,7 +363,7 @@ export const updatePost = async (
     if (!existingAnonymousUser) {
       const createdAnonymousUser = await prisma.anonymous.create({
         data: {
-          userId: data.userId,
+          user_id: data.user_id,
           username: "si-" + generateAnonymousRandomString(4),
         },
       });
@@ -372,18 +375,18 @@ export const updatePost = async (
         });
       }
 
-      anonymousId = createdAnonymousUser.id;
+      anonymous_id = createdAnonymousUser.id;
     } else {
-      anonymousId = existingAnonymousUser.id;
+      anonymous_id = existingAnonymousUser.id;
     }
 
     const updatedPost = await prisma.post.update({
-      where: { id: postId },
+      where: { id: post_id },
       data: {
         content: data.content,
-        categoryId: +data.categoryId,
-        userId: null,
-        anonymousId,
+        category_id: +data.category_id,
+        user_id: null,
+        anonymous_id,
       },
     });
 
@@ -406,13 +409,13 @@ export const updatePost = async (
   if (visibilityTo === "public") {
     const updatedPost = await prisma.post.update({
       where: {
-        id: postId,
+        id: post_id,
       },
       data: {
         content: data.content,
-        categoryId: +data.categoryId,
-        userId: data.userId,
-        anonymousId: null,
+        category_id: +data.category_id,
+        user_id: data.user_id,
+        anonymous_id: null,
       },
     });
 
@@ -438,10 +441,10 @@ export const updatePost = async (
   });
 };
 
-export const deletePost = async (prisma: PrismaContext, postId: string) => {
+export const deletePost = async (prisma: PrismaContext, post_id: string) => {
   const deletedPost = await prisma.post.delete({
     where: {
-      id: postId,
+      id: post_id,
     },
   });
 
@@ -463,12 +466,12 @@ export const deletePost = async (prisma: PrismaContext, postId: string) => {
 
 export const reportPost = async (
   prisma: PrismaContext,
-  postId: string,
+  post_id: string,
   reason: string,
 ) => {
-  const createdReport = await prisma.reported.create({
+  const createdReport = await prisma.report.create({
     data: {
-      postId,
+      post_id,
       reason,
     },
   });
@@ -486,10 +489,10 @@ export const reportPost = async (
   });
 };
 
-export const safePost = async (prisma: PrismaContext, postId: string) => {
-  const deletedReport = await prisma.reported.deleteMany({
+export const safePost = async (prisma: PrismaContext, post_id: string) => {
+  const deletedReport = await prisma.report.deleteMany({
     where: {
-      postId,
+      post_id,
     },
   });
 
@@ -506,10 +509,10 @@ export const safePost = async (prisma: PrismaContext, postId: string) => {
   });
 };
 
-export const takeDown = async (prisma: PrismaContext, postId: string) => {
+export const takeDown = async (prisma: PrismaContext, post_id: string) => {
   const deletedPost = await prisma.post.delete({
     where: {
-      id: postId,
+      id: post_id,
     },
   });
 

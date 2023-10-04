@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 const DetailReport = ({ params }: { params: { postId: string } }) => {
   const { data: postResponse } = trpc.post.getPostReportedReasons.useQuery({
-    postId: params.postId,
+    post_id: params.postId,
   });
 
   const router = useRouter();
@@ -28,7 +28,7 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
   const safePostHandler = () => {
     safePost(
       {
-        postId: params.postId,
+        post_id: params.postId,
       },
       {
         onSuccess: (data) => {
@@ -41,14 +41,14 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
           });
           console.log(error);
         },
-      }
+      },
     );
   };
 
   const takeDownHandler = () => {
     takeDown(
       {
-        postId: params.postId,
+        post_id: params.postId,
       },
       {
         onSuccess: (data) => {
@@ -61,7 +61,7 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
           });
           console.log(error);
         },
-      }
+      },
     );
   };
 
@@ -80,8 +80,8 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
 
   return (
     <>
-      <h2 className="text-lg text-destructive py-2 px-4 bg-destructive/20 w-max rounded-md font-bold mt-4">
-        Kenapa Postingan Ini Di Report Netizen?
+      <h2 className="text-destructive py-2 px-4 bg-destructive/20 w-max rounded-md font-bold mt-4">
+        Kenapa Post Ini Di Report?
       </h2>
       <div className="mt-2 pb-10">
         <EmptyState
@@ -92,11 +92,13 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
             data={postResponse?.data}
             loadingFallback={<Skeleton className="w-full h-10 rounded-md" />}
           >
-            {postResponse?.data?.map((report, idx) => (
-              <p className="text-foreground/60 mt-2 break-all" key={idx}>
-                {report.reason}
-              </p>
-            ))}
+            <ul className="space-y-2 list-disc pl-4">
+              {postResponse?.data?.map((report, idx) => (
+                <li className="text-foreground break-all" key={idx}>
+                  {report.reason}
+                </li>
+              ))}
+            </ul>
             <div className="mt-4 flex gap-2">
               <Button
                 variant="destructive"

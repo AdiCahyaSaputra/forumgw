@@ -1,48 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuthUser } from "./lib/helper/auth.helper";
+import { getJWTPayload } from "./lib/helper/auth.helper";
 
 export async function middleware(request: NextRequest) {
-  return NextResponse.redirect(new URL("/sorry", request.url));
+  const isGuest =
+    request.nextUrl.pathname.startsWith("/login") ||
+    request.nextUrl.pathname.startsWith("/daftar");
 
-  // if (request.nextUrl.pathname === "/") {
-  //   return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
-  // }
-  //
-  // const isGuest =
-  //   request.nextUrl.pathname.startsWith("/login") ||
-  //   request.nextUrl.pathname.startsWith("/daftar");
-  //
-  // const token = request.cookies.get("token");
-  //
-  // if (!token?.value) {
-  //   if (isGuest) return NextResponse.next();
-  //
-  //   return NextResponse.redirect(new URL("/login", request.url));
-  // }
-  //
-  // // When the Token exist
-  // const payload = await getAuthUser(token.value);
-  //
-  // if (!payload) {
-  //   if (isGuest) return NextResponse.next();
-  //
-  //   request.cookies.set("token", "");
-  //   return NextResponse.redirect(new URL("/login", request.url));
-  // }
-  //
-  // // When the Payload is returning the auth user
-  // if (isGuest || request.nextUrl.pathname === "/") {
-  //   return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
-  // }
-  //
+  const token = request.cookies.get("token");
+
+  if (!token?.value) {
+    if (isGuest) return NextResponse.next();
+
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // When the Token exist
+  const jwtPayload = await getJWTPayload(token.value);
+
+  if (!jwtPayload) {
+    if (isGuest) return NextResponse.next();
+
+    request.cookies.set("token", "");
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // When the Payload is returning the auth user
+  if (isGuest || request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
+  }
+
+  // TODO: implement it on client later
+
   // if (
   //   request.nextUrl.pathname.startsWith("/reported-post") &&
-  //   payload.Role.name !== "developer"
+  //   payload.role.name !== "developer"
   // ) {
   //   return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
   // }
-  //
-  // return NextResponse.next();
+
+  return NextResponse.next();
 }
 
 export const config = {
@@ -54,6 +50,5 @@ export const config = {
     "/profil/:path*",
     "/akun/:path*",
     "/kelola/:path*",
-    "/reported-post/:path*",
   ],
 };

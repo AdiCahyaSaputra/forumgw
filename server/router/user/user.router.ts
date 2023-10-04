@@ -10,7 +10,7 @@ export const userRouter = router({
         username: z.string().min(3).trim().toLowerCase(),
         name: z.string(),
         password: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => signUp(ctx.prisma, input)),
   signIn: procedure
@@ -18,7 +18,7 @@ export const userRouter = router({
       z.object({
         username: z.string().min(3).trim().toLowerCase(),
         password: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => signIn(ctx.prisma, input)),
   getAuthUser: authProcedure.query(async ({ ctx }) => {
@@ -32,7 +32,7 @@ export const userRouter = router({
         name: true,
         bio: true,
         image: true,
-        Role: {
+        role: {
           select: {
             name: true,
           },
@@ -45,18 +45,17 @@ export const userRouter = router({
         status: 200,
         message: "Nih user yang telah login",
       },
-      user
+      user,
     );
   }),
   getProfile: authProcedure
     .input(
       z.object({
         username: z.string().nullable(),
-        withPosts: z.boolean().default(false),
-      })
+      }),
     )
     .query(async ({ ctx, input }) =>
-      getProfile(ctx.prisma, ctx.user.id, input)
+      getProfile(ctx.prisma, ctx.user.id, input),
     ),
   editProfile: authProcedure
     .input(
@@ -65,7 +64,7 @@ export const userRouter = router({
         username: z.string().min(3).trim().toLowerCase(),
         bio: z.string().max(100).nullable(),
         image: z.string().nullable(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => editProfile(ctx.prisma, input)),
 });

@@ -1,24 +1,40 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
+import { NotificationType } from "@/lib/helper/enum.helper";
+import { excludeField } from "@/lib/helper/obj.helper";
 import { PrismaContext } from "@/server/trpc";
 
 type TInsetComment = {
-  postId: string;
-  userId: string;
+  post_id: string;
+  user_id: string;
   text: string;
+  author_id: string;
 };
 
 type TUpdateComment = {
-  commentId: number;
+  comment_id: number;
   text: string;
 };
 
 export const createComment = async (
   prisma: PrismaContext,
-  input: TInsetComment
+  input: TInsetComment,
 ) => {
-  const createdComment = await prisma.comment.create({
-    data: input,
-  });
+  const data = excludeField(input, ["author_id"]);
+
+  const createdComment = await prisma.$transaction([
+    prisma.comment.create({
+      data,
+    }),
+    prisma.notification.create({
+      data: {
+        post_id: input.post_id,
+        user_id: input.user_id,
+        type: NotificationType.comment,
+        is_read: false,
+        to_user: input.author_id,
+      },
+    }),
+  ]);
 
   if (!createdComment) {
     return sendTRPCResponse({
@@ -32,17 +48,17 @@ export const createComment = async (
       status: 201,
       message: "Berhasil mengomentari postingan ini",
     },
-    createdComment
+    createdComment,
   );
 };
 
 export const editComment = async (
   prisma: PrismaContext,
-  input: TUpdateComment
+  input: TUpdateComment,
 ) => {
   const editedComment = await prisma.comment.update({
     where: {
-      id: input.commentId,
+      id: input.comment_id,
     },
     data: {
       text: input.text,
@@ -61,17 +77,17 @@ export const editComment = async (
       status: 201,
       message: "Berhasil mengubah komentar lu",
     },
-    editedComment
+    editedComment,
   );
 };
 
 export const deleteComment = async (
   prisma: PrismaContext,
-  input: { commentId: number }
+  input: { comment_id: number },
 ) => {
   const deletedComment = await prisma.comment.delete({
     where: {
-      id: input.commentId,
+      id: input.comment_id,
     },
   });
 

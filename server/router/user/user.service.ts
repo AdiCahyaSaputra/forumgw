@@ -37,7 +37,7 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
   if (userExist) {
     return sendTRPCResponse({
       status: 400,
-      message: "User sudah terdaftar bre",
+      message: "User udah terdaftar bre!",
     });
   }
 
@@ -46,23 +46,23 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
       username,
       name,
       password: hashSync(password, 10),
-      roleId: username === "adicss" ? 2 : 1, // Role = common | developer
+      role_id: username === "adicss" ? 2 : 1, // Role = common | developer
     },
   });
 
   if (!createdUser) {
     return sendTRPCResponse({
       status: 400,
-      message: "Gagal pas bikin akun lu bre",
+      message: "Gagal nge-daftarin akun lu bre :(",
     });
   }
 
   return sendTRPCResponse(
     {
       status: 201,
-      message: "Berhasil bikinin lu akun",
+      message: "Akun lu berhasil terdaftar",
     },
-    createdUser
+    createdUser,
   );
 };
 
@@ -74,12 +74,8 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
     },
     select: {
       id: true,
-      name: true,
-      username: true,
       password: true,
-      bio: true,
-      image: true,
-      Role: {
+      role: {
         select: {
           name: true,
         },
@@ -90,7 +86,7 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
   if (!user) {
     return sendTRPCResponse({
       status: 400,
-      message: "Akun lu belum terdaftar",
+      message: "Akun ini belom terdaftar bre!",
     });
   }
 
@@ -99,13 +95,28 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
   if (!isPasswordCorrect) {
     return sendTRPCResponse({
       status: 401,
-      message: "Username dan Password lu gk match bre",
+      message: "Username dan Password gk match bre",
     });
   }
 
-  const authUser = excludeField(user, "password");
+  const jwt = await prisma.jwt.create({
+    data: {
+      user_id: user.id,
+      expired_in: new Date(Date.now() + 2 * (60 * 60 * 1000)), // 2hr
+    },
+  });
 
-  const token = await new SignJWT(authUser)
+  if (!jwt) {
+    return sendTRPCResponse({
+      status: 400,
+      message: "SignIn Error",
+    });
+  }
+
+  const token = await new SignJWT({
+    id: jwt.id,
+    expired_in: jwt.expired_in,
+  })
     .setProtectedHeader({ alg: "HS256" })
     .setJti(nanoid())
     .setIssuedAt()
@@ -117,18 +128,18 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
       status: 200,
       message: "Ok, Selamat berdiskusi..",
     },
-    token
+    token,
   );
 };
 
 export const getProfile = async (
   prisma: PrismaContext,
-  userId: string,
-  input: TUserUnique & { withPosts: boolean }
+  user_id: string,
+  input: TUserUnique,
 ) => {
   const whereClause = input.username
     ? { username: input.username }
-    : { id: userId };
+    : { id: user_id };
 
   const existingUser = await prisma.user.findUnique({
     where: whereClause,
@@ -138,58 +149,54 @@ export const getProfile = async (
       username: true,
       bio: true,
       image: true,
-      Post: input.withPosts && {
-        select: {
-          id: true,
-          content: true,
-          createdAt: true,
-          User: {
-            select: {
-              id: true,
-              username: true,
-              name: true,
-              image: true,
-            },
-          },
-          Comment: {
-            select: { id: true },
-          },
-        },
-      },
     },
   });
 
   if (!existingUser) {
     return sendTRPCResponse({
       status: 404,
-      message: "User yang lu cari gk ketemu di gw",
+      message: "User yang dicari tidak ketemu!",
     });
   }
+
+  const existingUserPosts = await prisma.post.findMany({
+    where: {
+      user_id: existingUser?.id,
+    },
+    select: {
+      id: true,
+      content: true,
+      created_at: true,
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
+  });
 
   return sendTRPCResponse(
     {
       status: 200,
       message: "Nih user yang lu cari",
     },
-    existingUser
+    {
+      user: existingUser,
+      posts: existingUserPosts,
+    },
   );
 };
 
 export const editProfile = async (
   prisma: PrismaContext,
-  input: TUpdateUser
+  input: TUpdateUser,
 ) => {
   const username = input.username.split(" ").join("");
   const updatedUser = await prisma.user.update({
     where: {
       username,
     },
-    data: {
-      name: input.name,
-      username: input.username,
-      bio: input.bio,
-      image: input.image,
-    },
+    data: input,
   });
 
   if (!updatedUser) {

@@ -24,37 +24,40 @@ import EditPostForm from "./EditPostForm";
 type TProps = {
   id: string;
   content: string;
-  createdAt: string;
-  categoryId: number;
-  User?: {
+  category_id: number;
+  created_at: string;
+  user?: {
     name: string;
     username: string;
     image: string | null;
     id: string;
   } | null;
-  Anonymous?: {
+  anonymous?: {
     username: string;
     id: string;
   } | null;
+  _count: {
+    comments: number;
+  };
   setResponse: (value: React.SetStateAction<{ message: string }>) => void;
 };
 
 const CardPost: React.FC<TProps> = ({
   id,
   content,
-  createdAt,
-  categoryId,
-  User,
-  Anonymous,
+  created_at,
+  category_id,
+  user,
+  anonymous,
   setResponse,
 }) => {
   const [openEditMenu, setOpenEditMenu] = useState(false);
-  const { mutate: deletePost, isLoading } = trpc.post.deletePost.useMutation();
+  const { mutate: deletePost } = trpc.post.deletePost.useMutation();
 
   const deleteHandler = () => {
     deletePost(
       {
-        postId: id,
+        post_id: id,
       },
       {
         onSuccess: (data) => {
@@ -74,35 +77,34 @@ const CardPost: React.FC<TProps> = ({
   return (
     <>
       <EditPostForm
-        categoryId={categoryId}
+        category_id={category_id}
         openEditMenu={openEditMenu}
         setOpenEditMenu={setOpenEditMenu}
-        postId={id}
+        post_id={id}
         content={content}
-        isAnonymous={!!Anonymous}
+        isAnonymous={!!anonymous}
         setResponse={setResponse}
       />
       <Card>
         <CardTitle
-          className={`p-4 pb-0 group ${!Anonymous && "cursor-pointer"}`}
+          className={`p-4 pb-0 group ${!anonymous && "cursor-pointer"}`}
         >
           <div className="flex items-start gap-4">
             <Avatar className="rounded-md">
-              <AvatarImage src={(User && User.image) ?? ""} />
+              <AvatarImage src={(user && user.image) ?? ""} />
               <AvatarFallback className="rounded-md">
-                {(User && User.name[0].toUpperCase()) ?? "A"}
+                {(user && user.name[0].toUpperCase()) ?? "A"}
               </AvatarFallback>
             </Avatar>
             <div className="space-y-1">
-              <h2 className={`${!Anonymous && "group-hover:underline"}`}>
-                {Anonymous ? "Anonymous" : User && User.name}
+              <h2 className={`${!anonymous && "group-hover:underline"}`}>
+                {anonymous ? "Anonymous" : user && user.name}
               </h2>
               <p
-                className={`text-foreground/60 ${
-                  !Anonymous && "group-hover:underline"
-                }`}
+                className={`text-foreground/60 ${!anonymous && "group-hover:underline"
+                  }`}
               >
-                {Anonymous ? Anonymous.username : User && User.username}
+                {anonymous ? anonymous.username : user && user.username}
               </p>
             </div>
           </div>
@@ -110,7 +112,7 @@ const CardPost: React.FC<TProps> = ({
         <CardContent className="p-4 pt-2">
           <div>
             <small className="text-foreground/60 font-bold">
-              Dibuat saat {getMetaData(createdAt)}
+              Dibuat saat {getMetaData(created_at)}
             </small>
           </div>
           <p className="mt-1">{content}</p>

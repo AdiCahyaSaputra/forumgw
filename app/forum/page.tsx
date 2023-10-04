@@ -12,16 +12,16 @@ import React, { useEffect, useState } from "react";
 
 type TProps = {};
 
-const Forum: React.FC<TProps> = ({}) => {
+const Forum: React.FC<TProps> = ({ }) => {
   const query = useSearchParams();
   const category = query?.get("c");
-  const categoryId = category === "fyp" ? "1" : category === "dev" ? "2" : "1";
+  const category_id = category === "fyp" ? "1" : category === "dev" ? "2" : "1";
 
   const [openCreateMenu, setOpenCreateMenu] = useState(false);
   const [createdPost, setCreatedPost] = useState(false);
 
   const { data: postResponse, refetch } = trpc.post.getFeedByCategory.useQuery({
-    categoryId,
+    category_id,
   });
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const Forum: React.FC<TProps> = ({}) => {
   return (
     <>
       <CreatePostForm
-        categoryId={categoryId}
+        category_id={category_id}
         openCreateMenu={openCreateMenu}
         setOpenCreateMenu={setOpenCreateMenu}
         setCreatedPost={setCreatedPost}

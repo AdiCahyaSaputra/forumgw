@@ -7,6 +7,8 @@ export async function POST(request: Request) {
 
   cookieStore.set("token", body.token, {
     maxAge: 60 * 60 * 60 * 2, // 2 Hour
+    sameSite: true,
+    secure: true,
   });
 
   return NextResponse.json({ message: "Berhasil", status: 200 });

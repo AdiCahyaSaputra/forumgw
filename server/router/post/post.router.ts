@@ -16,19 +16,19 @@ import {
 
 export const postRouter = router({
   getFeedByCategory: procedure
-    .input(z.object({ categoryId: z.enum(["1", "2"]) }))
+    .input(z.object({ category_id: z.enum(["1", "2"]) }))
     .query(
       async ({ ctx, input }) =>
-        await getFeedByCategory(ctx.prisma, input.categoryId),
+        await getFeedByCategory(ctx.prisma, input.category_id),
     ),
   getPostReportedReasons: devProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
     .query(async ({ ctx, input }) =>
-      getPostReportedReasons(ctx.prisma, input.postId),
+      getPostReportedReasons(ctx.prisma, input.post_id),
     ),
   getReportedPost: devProcedure.query(async ({ ctx }) =>
     getReportedPost(ctx.prisma),
@@ -41,33 +41,32 @@ export const postRouter = router({
       }),
     )
     .query(async ({ ctx, input }) =>
-      getUserPosts(
-        ctx.prisma,
-        ctx.user.id,
-        input.withAnonymousPosts,
-        input.withComments,
-      ),
+      getUserPosts(ctx.prisma, ctx.user.id, input.withAnonymousPosts),
     ),
   getDetailedPost: procedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => getDetailedPost(ctx.prisma, input.postId)),
+    .query(async ({ ctx, input }) =>
+      getDetailedPost(ctx.prisma, input.post_id),
+    ),
   createPost: authProcedure
     .input(
       z.object({
         content: z.string(),
-        categoryId: z.enum(["1", "2"]),
+        category_id: z.enum(["1", "2"]),
         isAnonymousPost: z.boolean().default(false),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const data: Omit<typeof input, "isAnonymousPost"> & { userId: string } = {
+      const data: Omit<typeof input, "isAnonymousPost"> & { user_id: string } =
+      {
         ...input,
-        userId: ctx.user.id,
-        categoryId: ctx.user.Role.name === "developer" ? input.categoryId : "1",
+        user_id: ctx.user.id,
+        category_id:
+          ctx.user.role?.name === "developer" ? input.category_id : "1",
       };
 
       return createPost(ctx.prisma, data, input.isAnonymousPost);
@@ -75,51 +74,51 @@ export const postRouter = router({
   updatePost: authProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
         content: z.string(),
-        categoryId: z.enum(["1", "2"]),
+        category_id: z.enum(["1", "2"]),
         visibilityTo: z.enum(["anonymous", "public"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const data: Omit<typeof input, "postId" | "visibilityTo"> & {
-        userId: string;
+      const data: Omit<typeof input, "post_id" | "visibilityTo"> & {
+        user_id: string;
       } = {
         ...input,
-        userId: ctx.user.id,
+        user_id: ctx.user.id,
       };
 
-      return updatePost(ctx.prisma, input.postId, data, input.visibilityTo);
+      return updatePost(ctx.prisma, input.post_id, data, input.visibilityTo);
     }),
   deletePost: authProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => deletePost(ctx.prisma, input.postId)),
+    .mutation(async ({ ctx, input }) => deletePost(ctx.prisma, input.post_id)),
   reportPost: authProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
         reason: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) =>
-      reportPost(ctx.prisma, input.postId, input.reason),
+      reportPost(ctx.prisma, input.post_id, input.reason),
     ),
   safePost: devProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => safePost(ctx.prisma, input.postId)),
+    .mutation(async ({ ctx, input }) => safePost(ctx.prisma, input.post_id)),
   takeDown: devProcedure
     .input(
       z.object({
-        postId: z.string(),
+        post_id: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => takeDown(ctx.prisma, input.postId)),
+    .mutation(async ({ ctx, input }) => takeDown(ctx.prisma, input.post_id)),
 });
