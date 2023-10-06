@@ -18,7 +18,11 @@ export const getNotification = async (
       id: true,
       type: true,
       is_read: true,
-      post_id: true,
+      post: {
+        select: {
+          public_id: true,
+        },
+      },
       user: {
         select: {
           username: true,
@@ -69,11 +73,8 @@ export const notificationIsReaded = async (
     );
   }
 
-  return sendTRPCResponse(
-    {
-      status: 201,
-      message: "Ok bre, Rajin banget baca notif :)",
-    },
-    updatedNotif,
-  );
+  return sendTRPCResponse({
+    status: 201,
+    message: "Ok bre, Rajin banget baca notif :)",
+  });
 };

@@ -33,9 +33,9 @@ const CommentLoader = () => {
   );
 };
 
-const PostDetail = ({ params }: { params: { postId: string } }) => {
+const PostDetail = ({ params }: { params: { publicId: string } }) => {
   const { data: postResponse, refetch } = trpc.post.getDetailedPost.useQuery({
-    post_id: params.postId,
+    public_id: params.publicId,
   });
 
   const { mutate: createComment, isLoading } =
@@ -53,10 +53,9 @@ const PostDetail = ({ params }: { params: { postId: string } }) => {
     e.preventDefault();
     createComment(
       {
-        post_id: params.postId,
+        public_id: params.publicId,
         user_id: currentUser.id,
         text: filterBadWord(commentText),
-        author_id: postResponse?.data?.user?.id!,
       },
       {
         onSuccess: (data) => {

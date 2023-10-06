@@ -11,18 +11,16 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 type TProps = {
-  id: string;
+  public_id: string;
   content: string;
   created_at: string;
   user?: {
     name: string;
     username: string;
     image: string | null;
-    id: string;
   } | null;
   anonymous?: {
     username: string;
-    id: string;
   } | null;
   _count: {
     comments: number;
@@ -30,7 +28,7 @@ type TProps = {
 };
 
 const CardForum: React.FC<TProps> = ({
-  id,
+  public_id,
   content,
   created_at,
   user,
@@ -50,7 +48,7 @@ const CardForum: React.FC<TProps> = ({
   const reportHandler = () => {
     reportPost(
       {
-        post_id: id,
+        public_id,
         reason,
       },
       {
@@ -86,8 +84,9 @@ const CardForum: React.FC<TProps> = ({
   return (
     <>
       <div
-        className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openReason ? "flex" : "hidden"
-          }`}
+        className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
+          openReason ? "flex" : "hidden"
+        }`}
       >
         <Card>
           <CardTitle className="font-bold p-4">Apa alasan lo bre ?</CardTitle>
@@ -136,8 +135,9 @@ const CardForum: React.FC<TProps> = ({
                   {anonymous ? "Anonymous" : user && user.name}
                 </h2>
                 <p
-                  className={`text-foreground/60 ${!anonymous && "group-hover:underline"
-                    }`}
+                  className={`text-foreground/60 ${
+                    !anonymous && "group-hover:underline"
+                  }`}
                 >
                   {anonymous ? anonymous.username : user && user.username}
                 </p>
@@ -156,7 +156,7 @@ const CardForum: React.FC<TProps> = ({
         <CardFooter className="p-0 flex-col items-start pb-2">
           <Separator className="mb-2" />
           <div className="space-x-2 px-4 py-2">
-            <Link href={`/forum/${id}`}>
+            <Link href={`/forum/${public_id}`}>
               <Button variant="outline" size="default" className="space-x-2">
                 <MessagesSquare className="w-5 aspect-square" />
                 <span>{_count.comments}</span>

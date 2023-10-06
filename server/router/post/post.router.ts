@@ -46,11 +46,11 @@ export const postRouter = router({
   getDetailedPost: procedure
     .input(
       z.object({
-        post_id: z.string(),
+        public_id: z.string(),
       }),
     )
     .query(async ({ ctx, input }) =>
-      getDetailedPost(ctx.prisma, input.post_id),
+      getDetailedPost(ctx.prisma, input.public_id),
     ),
   createPost: authProcedure
     .input(
@@ -62,12 +62,12 @@ export const postRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const data: Omit<typeof input, "isAnonymousPost"> & { user_id: string } =
-      {
-        ...input,
-        user_id: ctx.user.id,
-        category_id:
-          ctx.user.role?.name === "developer" ? input.category_id : "1",
-      };
+        {
+          ...input,
+          user_id: ctx.user.id,
+          category_id:
+            ctx.user.role?.name === "developer" ? input.category_id : "1",
+        };
 
       return createPost(ctx.prisma, data, input.isAnonymousPost);
     }),
@@ -100,12 +100,12 @@ export const postRouter = router({
   reportPost: authProcedure
     .input(
       z.object({
-        post_id: z.string(),
+        public_id: z.string(),
         reason: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) =>
-      reportPost(ctx.prisma, input.post_id, input.reason),
+      reportPost(ctx.prisma, input.public_id, input.reason),
     ),
   safePost: devProcedure
     .input(

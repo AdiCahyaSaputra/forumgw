@@ -28,6 +28,7 @@ model user {
 
 model post {
   id String @id @default(uuid())
+  public_id String @unique @default(uuid())
 
   content String @db.VarChar(255)
 
@@ -100,10 +101,10 @@ model notification {
 
   to_user String
 
-  user    user   @relation(fields: [user_id], references: [id])
+  user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String
 
-  post    post   @relation(fields: [post_id], references: [id])
+  post    post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
   post_id String
 
   created_at DateTime @default(now())

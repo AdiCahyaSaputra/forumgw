@@ -1,13 +1,11 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { NotificationType } from "@/lib/helper/enum.helper";
-import { excludeField } from "@/lib/helper/obj.helper";
 import { PrismaContext } from "@/server/trpc";
 
 type TInsetComment = {
-  post_id: string;
+  public_id: string;
   user_id: string;
   text: string;
-  author_id: string;
 };
 
 type TUpdateComment = {
@@ -19,19 +17,58 @@ export const createComment = async (
   prisma: PrismaContext,
   input: TInsetComment,
 ) => {
-  const data = excludeField(input, ["author_id"]);
+  const currentPost = await prisma.post.findUnique({
+    where: {
+      public_id: input.public_id,
+    },
+    select: {
+      id: true,
+      user_id: true,
+      anonymous: {
+        select: {
+          user_id: true,
+        },
+      },
+    },
+  });
+
+  let user_id = "";
+
+  if (!currentPost) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Gak usah aneh aneh deh",
+    });
+  }
+
+  if (!currentPost.user_id) {
+    if (!currentPost.anonymous) {
+      return sendTRPCResponse({
+        status: 404,
+        message: "Gak usah aneh aneh deh",
+      });
+    } else {
+      user_id = currentPost.anonymous.user_id; // FIXME: Bisa deng wkwkwk
+    }
+  } else {
+    user_id = currentPost.user_id;
+  }
 
   const createdComment = await prisma.$transaction([
     prisma.comment.create({
-      data,
+      data: {
+        post_id: currentPost.id,
+        user_id: input.user_id,
+        text: input.text,
+      },
     }),
     prisma.notification.create({
       data: {
-        post_id: input.post_id,
+        post_id: currentPost.id,
         user_id: input.user_id,
         type: NotificationType.comment,
         is_read: false,
-        to_user: input.author_id,
+        to_user: user_id,
       },
     }),
   ]);
@@ -43,13 +80,10 @@ export const createComment = async (
     });
   }
 
-  return sendTRPCResponse(
-    {
-      status: 201,
-      message: "Berhasil mengomentari postingan ini",
-    },
-    createdComment,
-  );
+  return sendTRPCResponse({
+    status: 201,
+    message: "Berhasil mengomentari postingan ini",
+  });
 };
 
 export const editComment = async (

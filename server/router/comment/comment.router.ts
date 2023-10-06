@@ -6,10 +6,9 @@ export const commentRouter = router({
   createComment: authProcedure
     .input(
       z.object({
-        post_id: z.string(),
+        public_id: z.string(),
         user_id: z.string(),
         text: z.string(),
-        author_id: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => createComment(ctx.prisma, input)),
