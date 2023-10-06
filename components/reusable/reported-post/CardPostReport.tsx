@@ -8,7 +8,6 @@ import Link from "next/link";
 import React from "react";
 
 type TProps = {
-  id: number;
   reason: string;
   post?: {
     id: string;
@@ -18,16 +17,14 @@ type TProps = {
       name: string;
       username: string;
       image: string | null;
-      id: string;
     } | null;
     anonymous?: {
       username: string;
-      id: string;
     } | null;
   } | null;
 };
 
-const CardPostReport: React.FC<TProps> = ({ id, reason, post }) => {
+const CardPostReport: React.FC<TProps> = ({ reason, post }) => {
   const trimReason = (length: number, str: string) => {
     const splittedStr = str.split("");
     splittedStr.splice(length + 1, str.length - length + 1, "...");
@@ -37,9 +34,7 @@ const CardPostReport: React.FC<TProps> = ({ id, reason, post }) => {
 
   return (
     <Card>
-      <CardTitle
-        className={`p-4 pb-0 group ${!post?.anonymous && "cursor-pointer"}`}
-      >
+      <CardTitle className={`p-4 pb-0`}>
         <div className="flex items-start gap-4">
           <Avatar className="rounded-md">
             <AvatarImage src={(post?.user && post?.user?.image) ?? ""} />
@@ -48,13 +43,10 @@ const CardPostReport: React.FC<TProps> = ({ id, reason, post }) => {
             </AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <h2 className={`${!post?.anonymous && "group-hover:underline"}`}>
+            <h2>
               {post?.anonymous ? "Anonymous" : post?.user && post?.user?.name}
             </h2>
-            <p
-              className={`text-foreground/60 ${!post?.anonymous && "group-hover:underline"
-                }`}
-            >
+            <p className="text-foreground/60">
               {post?.anonymous
                 ? post?.anonymous?.username
                 : post?.user && post?.user?.username}

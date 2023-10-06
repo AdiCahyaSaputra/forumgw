@@ -8,16 +8,24 @@ import { useState } from "react";
 
 type TProps = {
   children: React.ReactNode;
-  token?: string;
 };
 
-const TrpcProvider: React.FC<TProps> = ({ children, token }) => {
+const TrpcProvider: React.FC<TProps> = ({ children }) => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() => {
     return trpc.createClient({
       links: [
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          async headers() {
+            return {
+              "Strict-Transport-Security":
+                "max-age=63072000; includeSubDomains; preload",
+              "X-Content-Type-Options": "nosniff",
+              "X-Frame-Options": "SAMEORIGIN",
+              "X-XSS-Protection": "1; mode=block",
+            };
+          },
         }),
       ],
     });

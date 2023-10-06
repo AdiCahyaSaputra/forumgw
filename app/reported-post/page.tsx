@@ -11,7 +11,6 @@ const ReportedPost: React.FC = () => {
   const { data: postResponse, refetch } = trpc.post.getReportedPost.useQuery();
 
   useEffect(() => {
-    console.log(postResponse);
     refetch();
   }, []);
 

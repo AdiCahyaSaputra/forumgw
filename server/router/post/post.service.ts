@@ -16,12 +16,11 @@ export const getFeedByCategory = async (
   const existingPosts = await prisma.post.findMany({
     where: { category_id: +category_id },
     select: {
-      id: true,
+      public_id: true,
       content: true,
       created_at: true,
       user: {
         select: {
-          id: true,
           username: true,
           name: true,
           image: true,
@@ -29,7 +28,6 @@ export const getFeedByCategory = async (
       },
       anonymous: {
         select: {
-          id: true,
           username: true,
         },
       },
@@ -102,7 +100,6 @@ export const getReportedPost = async (prisma: PrismaContext) => {
           created_at: true,
           user: {
             select: {
-              id: true,
               username: true,
               name: true,
               image: true,
@@ -110,7 +107,6 @@ export const getReportedPost = async (prisma: PrismaContext) => {
           },
           anonymous: {
             select: {
-              id: true,
               username: true,
             },
           },
@@ -205,19 +201,18 @@ export const getUserPosts = async (
 
 export const getDetailedPost = async (
   prisma: PrismaContext,
-  post_id: string,
+  public_id: string,
 ) => {
   const existingPostWithComments = await prisma.post.findUnique({
     where: {
-      id: post_id,
+      public_id,
     },
     select: {
-      id: true,
+      public_id: true,
       content: true,
       created_at: true,
       user: {
         select: {
-          id: true,
           username: true,
           name: true,
           image: true,
@@ -225,7 +220,6 @@ export const getDetailedPost = async (
       },
       anonymous: {
         select: {
-          id: true,
           username: true,
         },
       },
@@ -333,13 +327,10 @@ export const createPost = async (
     });
   }
 
-  return sendTRPCResponse(
-    {
-      status: 200,
-      message: "Berhasil membuat postingan Public",
-    },
-    createdPublicPost,
-  );
+  return sendTRPCResponse({
+    status: 200,
+    message: "Berhasil membuat postingan Public",
+  });
 };
 
 export const updatePost = async (
@@ -466,12 +457,28 @@ export const deletePost = async (prisma: PrismaContext, post_id: string) => {
 
 export const reportPost = async (
   prisma: PrismaContext,
-  post_id: string,
+  public_id: string,
   reason: string,
 ) => {
+  const post = await prisma.post.findUnique({
+    where: {
+      public_id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!post) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Gausah aneh aneh deh",
+    });
+  }
+
   const createdReport = await prisma.report.create({
     data: {
-      post_id,
+      post_id: post.id,
       reason,
     },
   });
@@ -523,11 +530,8 @@ export const takeDown = async (prisma: PrismaContext, post_id: string) => {
     });
   }
 
-  return sendTRPCResponse(
-    {
-      status: 201,
-      message: "Postingan ini berhasil gue take-down",
-    },
-    deletedPost,
-  );
+  return sendTRPCResponse({
+    status: 201,
+    message: "Postingan ini berhasil gue take-down",
+  });
 };

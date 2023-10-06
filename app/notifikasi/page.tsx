@@ -88,15 +88,15 @@ const Notifikasi = () => {
                   key={idx}
                 >
                   <Link
-                    href={`/forum/${notif.post_id}`}
-                    onClick={() => makeItReaded(notif.id)}
+                    href={`/forum/${notif.post.public_id}`}
+                    onClick={() => !notif.is_read && makeItReaded(notif.id)}
                   >
                     <span className="font-bold">{notif.user.username}</span>{" "}
                     {getNotifMessage(notif.type)}
                   </Link>
                   {!notif.is_read && (
                     <Button size="sm" onClick={() => makeItReaded(notif.id)}>
-                      Udah Liat
+                      Dilihat
                     </Button>
                   )}
                 </li>

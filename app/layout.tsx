@@ -11,6 +11,14 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "ForumGw",
   description: "Forum non-formal buat tempat diskusi lu pada",
+  generator: "Next.js",
+  applicationName: "ForumGW",
+  referrer: "origin-when-cross-origin",
+  keywords: ["Next.js", "React", "JavaScript", "ForumGW"],
+  authors: [{ name: "Adics", url: "https://adics.xyz/" }],
+  colorScheme: "dark",
+  creator: "Adi Cahya Saputra",
+  publisher: "Adi Cahya Saputra",
 };
 
 export default function RootLayout({

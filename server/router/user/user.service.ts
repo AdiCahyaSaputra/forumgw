@@ -144,7 +144,7 @@ export const getProfile = async (
   const existingUser = await prisma.user.findUnique({
     where: whereClause,
     select: {
-      id: true,
+      id: true, // TODO: hehe
       name: true,
       username: true,
       bio: true,
@@ -164,7 +164,7 @@ export const getProfile = async (
       user_id: existingUser?.id,
     },
     select: {
-      id: true,
+      public_id: true,
       content: true,
       created_at: true,
       _count: {
@@ -181,7 +181,7 @@ export const getProfile = async (
       message: "Nih user yang lu cari",
     },
     {
-      user: existingUser,
+      user: excludeField(existingUser, ["id"]),
       posts: existingUserPosts,
     },
   );
