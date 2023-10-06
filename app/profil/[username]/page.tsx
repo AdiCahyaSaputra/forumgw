@@ -24,9 +24,8 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black/60 z-20 ${
-          previewImage ? "flex" : "hidden"
-        } items-center justify-center`}
+        className={`fixed inset-0 bg-black/60 z-20 ${previewImage ? "flex" : "hidden"
+          } items-center justify-center`}
       >
         <div>
           <div
@@ -109,12 +108,8 @@ const ProfilDetail = ({ params }: { params: { username: string } }) => {
               data={userResponse?.data}
               loadingFallback={<Skeleton className="w-full h-24 rounded-md" />}
             >
-              {userResponse?.data?.posts.map((post) => (
-                <CardForum
-                  {...post}
-                  user={userResponse.data.user}
-                  key={post.id}
-                />
+              {userResponse?.data?.posts.map((post, idx) => (
+                <CardForum {...post} user={userResponse.data.user} key={idx} />
               ))}
             </LoadingState>
           </EmptyState>
