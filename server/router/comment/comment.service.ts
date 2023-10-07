@@ -4,7 +4,6 @@ import { PrismaContext } from "@/server/trpc";
 
 type TInsetComment = {
   public_id: string;
-  user_id: string;
   text: string;
 };
 
@@ -15,6 +14,7 @@ type TUpdateComment = {
 
 export const createComment = async (
   prisma: PrismaContext,
+  current_user_id: string,
   input: TInsetComment,
 ) => {
   const currentPost = await prisma.post.findUnique({
@@ -48,7 +48,7 @@ export const createComment = async (
         message: "Gak usah aneh aneh deh",
       });
     } else {
-      user_id = currentPost.anonymous.user_id; // FIXME: Bisa deng wkwkwk
+      user_id = currentPost.anonymous.user_id;
     }
   } else {
     user_id = currentPost.user_id;
@@ -58,14 +58,14 @@ export const createComment = async (
     prisma.comment.create({
       data: {
         post_id: currentPost.id,
-        user_id: input.user_id,
+        user_id: current_user_id,
         text: input.text,
       },
     }),
     prisma.notification.create({
       data: {
         post_id: currentPost.id,
-        user_id: input.user_id,
+        user_id: current_user_id,
         type: NotificationType.comment,
         is_read: false,
         to_user: user_id,
@@ -88,8 +88,25 @@ export const createComment = async (
 
 export const editComment = async (
   prisma: PrismaContext,
+  current_user_id: string,
   input: TUpdateComment,
 ) => {
+  const currentComment = await prisma.comment.findUnique({
+    where: {
+      id: input.comment_id,
+    },
+    select: {
+      user_id: true,
+    },
+  });
+
+  if (currentComment?.user_id !== current_user_id) {
+    return sendTRPCResponse({
+      status: 405,
+      message: "Gak usah aneh aneh deh",
+    });
+  }
+
   const editedComment = await prisma.comment.update({
     where: {
       id: input.comment_id,
@@ -106,19 +123,33 @@ export const editComment = async (
     });
   }
 
-  return sendTRPCResponse(
-    {
-      status: 201,
-      message: "Berhasil mengubah komentar lu",
-    },
-    editedComment,
-  );
+  return sendTRPCResponse({
+    status: 201,
+    message: "Berhasil mengubah komentar lu",
+  });
 };
 
 export const deleteComment = async (
   prisma: PrismaContext,
+  current_user_id: string,
   input: { comment_id: number },
 ) => {
+  const currentComment = await prisma.comment.findUnique({
+    where: {
+      id: input.comment_id,
+    },
+    select: {
+      user_id: true,
+    },
+  });
+
+  if (currentComment?.user_id !== current_user_id) {
+    return sendTRPCResponse({
+      status: 405,
+      message: "Gak usah aneh aneh deh",
+    });
+  }
+
   const deletedComment = await prisma.comment.delete({
     where: {
       id: input.comment_id,

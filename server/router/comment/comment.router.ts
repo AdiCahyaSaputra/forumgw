@@ -7,11 +7,12 @@ export const commentRouter = router({
     .input(
       z.object({
         public_id: z.string(),
-        user_id: z.string(),
         text: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => createComment(ctx.prisma, input)),
+    .mutation(async ({ ctx, input }) =>
+      createComment(ctx.prisma, ctx.user.id, input),
+    ),
   editComment: authProcedure
     .input(
       z.object({
@@ -19,12 +20,16 @@ export const commentRouter = router({
         text: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input }) => editComment(ctx.prisma, input)),
+    .mutation(async ({ ctx, input }) =>
+      editComment(ctx.prisma, ctx.user.id, input),
+    ),
   deleteComment: authProcedure
     .input(
       z.object({
         comment_id: z.number(),
       }),
     )
-    .mutation(async ({ ctx, input }) => deleteComment(ctx.prisma, input)),
+    .mutation(async ({ ctx, input }) =>
+      deleteComment(ctx.prisma, ctx.user.id, input),
+    ),
 });

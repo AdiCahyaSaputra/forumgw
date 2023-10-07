@@ -230,7 +230,6 @@ export const getDetailedPost = async (
           created_at: true,
           user: {
             select: {
-              id: true,
               username: true,
               image: true,
             },

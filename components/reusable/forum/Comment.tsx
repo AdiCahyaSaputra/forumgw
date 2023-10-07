@@ -23,14 +23,12 @@ import Link from "next/link";
 import React, { useState } from "react";
 import EditCommentForm from "./EditCommentForm";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 
 type TProps = {
   id: number;
   text: string;
   created_at: string;
   user?: {
-    id: string;
     username: string;
     image: string | null;
   } | null;

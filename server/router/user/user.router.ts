@@ -66,5 +66,7 @@ export const userRouter = router({
         image: z.string().nullable(),
       }),
     )
-    .mutation(async ({ ctx, input }) => editProfile(ctx.prisma, input)),
+    .mutation(async ({ ctx, input }) =>
+      editProfile(ctx.prisma, ctx.user.id, input),
+    ),
 });

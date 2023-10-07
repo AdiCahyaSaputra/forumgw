@@ -189,12 +189,12 @@ export const getProfile = async (
 
 export const editProfile = async (
   prisma: PrismaContext,
+  user_id: string,
   input: TUpdateUser,
 ) => {
-  const username = input.username.split(" ").join("");
   const updatedUser = await prisma.user.update({
     where: {
-      username,
+      id: user_id,
     },
     data: input,
   });

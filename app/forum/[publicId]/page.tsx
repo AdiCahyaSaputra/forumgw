@@ -54,7 +54,6 @@ const PostDetail = ({ params }: { params: { publicId: string } }) => {
     createComment(
       {
         public_id: params.publicId,
-        user_id: currentUser.id,
         text: filterBadWord(commentText),
       },
       {

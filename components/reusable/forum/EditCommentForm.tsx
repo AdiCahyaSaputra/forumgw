@@ -43,7 +43,6 @@ const EditCommentForm: React.FC<TProps> = ({
       {
         onSuccess: (data) => {
           setResponse(data);
-          setCommentText(data.data?.text!);
           setOpenEditMenu(false);
         },
         onError: (error) => {
@@ -58,9 +57,8 @@ const EditCommentForm: React.FC<TProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
-        openEditMenu ? "flex " : "hidden"
-      }`}
+      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openEditMenu ? "flex " : "hidden"
+        }`}
     >
       <Card>
         <CardHeader>
