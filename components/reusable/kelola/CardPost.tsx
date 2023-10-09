@@ -24,7 +24,6 @@ import EditPostForm from "./EditPostForm";
 type TProps = {
   id: string;
   content: string;
-  category_id: number;
   created_at: string;
   user?: {
     name: string;
@@ -46,7 +45,6 @@ const CardPost: React.FC<TProps> = ({
   id,
   content,
   created_at,
-  category_id,
   user,
   anonymous,
   setResponse,
@@ -77,7 +75,6 @@ const CardPost: React.FC<TProps> = ({
   return (
     <>
       <EditPostForm
-        category_id={category_id}
         openEditMenu={openEditMenu}
         setOpenEditMenu={setOpenEditMenu}
         post_id={id}

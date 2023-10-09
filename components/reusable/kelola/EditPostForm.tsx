@@ -26,7 +26,6 @@ import { z } from "zod";
 type TProps = {
   post_id: string;
   content: string;
-  category_id: number;
   isAnonymous: boolean;
   openEditMenu: boolean;
   setOpenEditMenu: (value: React.SetStateAction<boolean>) => void;
@@ -47,7 +46,6 @@ const formSchema = z.object({
 const EditPostForm: React.FC<TProps> = ({
   post_id,
   content,
-  category_id,
   isAnonymous,
   openEditMenu,
   setOpenEditMenu,
@@ -68,7 +66,6 @@ const EditPostForm: React.FC<TProps> = ({
     updatePost(
       {
         ...values,
-        category_id: category_id === 1 ? "1" : category_id === 2 ? "2" : "1",
         visibilityTo: isAnonymousPost ? "anonymous" : "public",
         post_id,
       },

@@ -157,7 +157,6 @@ export const getUserPosts = async (
       id: true,
       content: true,
       created_at: true,
-      category_id: true,
       user: {
         select: {
           id: true,
@@ -335,7 +334,7 @@ export const createPost = async (
 export const updatePost = async (
   prisma: PrismaContext,
   post_id: string,
-  data: TUpSertPost,
+  data: Omit<TUpSertPost, "category_id">,
   visibilityTo: "anonymous" | "public",
 ) => {
   if (visibilityTo === "anonymous") {
@@ -374,7 +373,6 @@ export const updatePost = async (
       where: { id: post_id },
       data: {
         content: data.content,
-        category_id: +data.category_id,
         user_id: null,
         anonymous_id,
       },
@@ -403,7 +401,6 @@ export const updatePost = async (
       },
       data: {
         content: data.content,
-        category_id: +data.category_id,
         user_id: data.user_id,
         anonymous_id: null,
       },

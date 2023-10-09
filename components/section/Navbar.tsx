@@ -25,9 +25,9 @@ const Navbar: React.FC = () => {
   return (
     <nav className="py-4 border-b">
       <div className="container flex justify-between items-center">
-        <h1 className="font-bold text-xl">
+        <Link href="/forum?c=fyp" className="font-bold text-xl">
           Forum<span className="text-red-600">Gw</span>
-        </h1>
+        </Link>
 
         <Link href={`/profil/${user.username}`}>
           <Avatar className="cursor-pointer rounded-md">
