@@ -1,5 +1,6 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { excludeField } from "@/lib/helper/obj.helper";
+import { filterBadWord } from "@/lib/helper/sensor.helper";
 import type { PrismaContext } from "@/server/trpc";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { SignJWT } from "jose";
@@ -27,6 +28,16 @@ type TUpdateUser = {
 export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
   const username = input.username.split(" ").join("");
   const { name, password } = input;
+
+  if (
+    filterBadWord(username).includes("***") ||
+    filterBadWord(name).includes("***")
+  ) {
+    return sendTRPCResponse({
+      status: 400,
+      message: 'Gosah aneh" deh bre, Matiin burpsuite lu',
+    });
+  }
 
   const userExist = await prisma.user.findUnique({
     where: {
@@ -192,6 +203,16 @@ export const editProfile = async (
   user_id: string,
   input: TUpdateUser,
 ) => {
+  if (
+    filterBadWord(input.username).includes("***") ||
+    filterBadWord(input.name).includes("***")
+  ) {
+    return sendTRPCResponse({
+      status: 400,
+      message: 'Gosah aneh" deh bre, Matiin burpsuite lu',
+    });
+  }
+
   const updatedUser = await prisma.user.update({
     where: {
       id: user_id,
