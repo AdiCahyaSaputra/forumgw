@@ -187,7 +187,7 @@ const Comment: React.FC<TProps> = ({
           )}
         </div>
 
-        <p className="mt-2">{text}</p>
+        <p className="mt-2 break-all">{text}</p>
       </div>
     </div>
   );

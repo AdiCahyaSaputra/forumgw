@@ -84,9 +84,8 @@ const CardForum: React.FC<TProps> = ({
   return (
     <>
       <div
-        className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
-          openReason ? "flex" : "hidden"
-        }`}
+        className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openReason ? "flex" : "hidden"
+          }`}
       >
         <Card>
           <CardTitle className="font-bold p-4">Apa alasan lo bre ?</CardTitle>
@@ -135,9 +134,8 @@ const CardForum: React.FC<TProps> = ({
                   {anonymous ? "Anonymous" : user && user.name}
                 </h2>
                 <p
-                  className={`text-foreground/60 ${
-                    !anonymous && "group-hover:underline"
-                  }`}
+                  className={`text-foreground/60 ${!anonymous && "group-hover:underline"
+                    }`}
                 >
                   {anonymous ? anonymous.username : user && user.username}
                 </p>
@@ -151,7 +149,7 @@ const CardForum: React.FC<TProps> = ({
               Dibuat saat {getMetaData(created_at)}
             </small>
           </div>
-          <p className="mt-1">{content}</p>
+          <p className="mt-1 break-all">{content}</p>
         </CardContent>
         <CardFooter className="p-0 flex-col items-start pb-2">
           <Separator className="mb-2" />

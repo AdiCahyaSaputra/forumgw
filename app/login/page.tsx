@@ -113,7 +113,7 @@ const Login: React.FC = () => {
       </div>
       <Card className="w-max border-none shadow-none">
         <CardHeader>
-          <CardTitle className="lg:text-xl">👋🏼 Login Dulu Bre</CardTitle>
+          <CardTitle className="lg:text-xl">👋 Login Dulu Bre</CardTitle>
           <CardDescription>
             Sebelum mulai masuk ke menu utama, <br />
             yakali nggak login bre
@@ -175,8 +175,9 @@ const Login: React.FC = () => {
             )}
           </CardContent>
           <CardFooter
-            className={`px-0 py-0 pt-4 flex-col ${response.status === 200 && "hidden"
-              }`}
+            className={`px-0 py-0 pt-4 flex-col ${
+              response.status === 200 && "hidden"
+            }`}
           >
             <Separator className="mb-4" />
             <Link href="/daftar" className="w-full">

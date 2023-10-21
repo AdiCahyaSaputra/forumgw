@@ -112,7 +112,7 @@ const CardPost: React.FC<TProps> = ({
               Dibuat saat {getMetaData(created_at)}
             </small>
           </div>
-          <p className="mt-1">{content}</p>
+          <p className="mt-1 break-all">{content}</p>
         </CardContent>
         <CardFooter className="p-0 flex-col items-start pb-2">
           <Separator className="mb-2" />

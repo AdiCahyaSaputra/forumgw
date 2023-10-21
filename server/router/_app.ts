@@ -1,4 +1,4 @@
-import { procedure, router } from "../trpc";
+import { router } from "../trpc";
 import { commentRouter } from "./comment/comment.router";
 import { notificationRouter } from "./notification/notification.router";
 import { postRouter } from "./post/post.router";
