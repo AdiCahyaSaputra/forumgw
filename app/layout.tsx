@@ -2,7 +2,7 @@ import ProgressProvider from "@/components/provider/progress-provider";
 import { ThemeProvider } from "@/components/provider/themer-provider";
 import TrpcProvider from "@/components/provider/trpc-provider";
 import { Toaster } from "@/components/ui/toaster";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -16,9 +16,15 @@ export const metadata: Metadata = {
   referrer: "origin-when-cross-origin",
   keywords: ["Next.js", "React", "JavaScript", "ForumGW"],
   authors: [{ name: "Adics", url: "https://adics.xyz/" }],
-  colorScheme: "dark",
   creator: "Adi Cahya Saputra",
   publisher: "Adi Cahya Saputra",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
 };
 
 export default function RootLayout({

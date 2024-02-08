@@ -232,3 +232,33 @@ export const editProfile = async (
     message: "Berhasil mengubah data user lu",
   });
 };
+
+export const searchUser = async (prisma: PrismaContext, username: string) => {
+  const user = await prisma.user.findMany({
+    where: {
+      username: {
+        contains: username,
+      },
+    },
+    select: {
+      username: true,
+      name: true,
+      image: true,
+    },
+  });
+
+  if (!user.length) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "User yang lu cari ga ada",
+    });
+  }
+
+  return sendTRPCResponse(
+    {
+      status: 200,
+      message: "Ada nih user nya",
+    },
+    user,
+  );
+};

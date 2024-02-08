@@ -76,6 +76,9 @@ const Login: React.FC = () => {
         if (data.status === 200) {
           const { isSuccess } = await setAccessToken(data.data as string);
 
+          // The users is online
+          await fetch("http://localhost:3000/api/ws/socket");
+
           if (isSuccess) router.push("/forum?c=fyp");
         }
       },

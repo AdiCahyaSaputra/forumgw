@@ -9,10 +9,12 @@ import {
   GanttChartSquare,
   Loader2,
   LogOut,
+  Mail,
   Megaphone,
   Menu,
   TrendingUp,
   User,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -21,6 +23,7 @@ import NavItem from "../reusable/layout/NavItem";
 import LoadingState from "../reusable/state/LoadingState";
 import { Button } from "../ui/button";
 import { useAuth } from "@/lib/hook/auth.hook";
+import { useWebSocket } from "@/lib/hook/websocket.hook";
 
 const navCategoryItems = [
   {
@@ -32,6 +35,11 @@ const navCategoryItems = [
     url: "/forum?c=dev",
     label: "Dari Developer",
     Icon: Bug,
+  },
+  {
+    url: "/sirkel",
+    label: "Sirkel Khusus",
+    Icon: Users,
   },
 ];
 
@@ -67,11 +75,18 @@ const AsideSection: React.FC = () => {
   });
 
   const { currentUser } = useAuth();
+  const socket = useWebSocket();
 
   const { data: notificationResponse } =
     trpc.notification.getNotification.useQuery();
 
+  const { data: groupResponse } = trpc.group.getGroupInvitation.useQuery();
+
   const logoutHandler = async () => {
+    if (currentUser) {
+      socket.emit("user_logout", currentUser.username);
+    }
+
     setLogoutClicked(true);
     const { isSuccess } = await destroyAccessToken();
 
@@ -127,6 +142,12 @@ const AsideSection: React.FC = () => {
                   .length || ""
               } Notifikasi`}
               Icon={BellRing}
+            />
+
+            <NavItem
+              url="/undangan"
+              label={`${groupResponse?.data?.length || ""} Undangan`}
+              Icon={Mail}
             />
             {user.role === "developer" && (
               <NavItem

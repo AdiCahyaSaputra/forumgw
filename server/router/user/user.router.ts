@@ -1,7 +1,13 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { authProcedure, procedure, router } from "@/server/trpc";
 import { z } from "zod";
-import { editProfile, getProfile, signIn, signUp } from "./user.service";
+import {
+  editProfile,
+  getProfile,
+  searchUser,
+  signIn,
+  signUp,
+} from "./user.service";
 
 export const userRouter = router({
   signUp: procedure
@@ -69,4 +75,11 @@ export const userRouter = router({
     .mutation(async ({ ctx, input }) =>
       editProfile(ctx.prisma, ctx.user.id, input),
     ),
+  searchUser: authProcedure
+    .input(
+      z.object({
+        username: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => searchUser(ctx.prisma, input.username)),
 });
