@@ -1,5 +1,6 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { PrismaContext } from "@/server/trpc";
+import { send } from "process";
 
 type TUpsertGroup = {
   name: string;
@@ -188,4 +189,92 @@ export const acceptOrDeclineInvite = async (
       message: message[data.type],
     });
   }
+};
+
+export const getGroupByQuery = async (
+  prisma: PrismaContext,
+  searchTerm: string | null,
+) => {
+  if (searchTerm) {
+    const groups = await prisma.group.findMany({
+      where: {
+        name: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      },
+      select: {
+        public_id: true,
+        name: true,
+        description: true,
+        leader: {
+          select: {
+            name: true,
+            username: true,
+            image: true,
+          },
+        },
+        _count: {
+          select: {
+            group_member: true,
+          },
+        },
+      },
+    });
+
+    if (!groups.length) {
+      return sendTRPCResponse({
+        status: 404,
+        message: "Sirkel nya gk ketemu bre",
+      });
+    }
+
+    return sendTRPCResponse(
+      {
+        status: 200,
+        message: "Nih sirkel nya bre",
+      },
+      groups,
+    );
+  }
+
+  const groups = await prisma.group.findMany({
+    select: {
+      public_id: true,
+      name: true,
+      description: true,
+      leader: {
+        select: {
+          name: true,
+          username: true,
+          image: true,
+        },
+      },
+      _count: {
+        select: {
+          group_member: true,
+        },
+      },
+    },
+    orderBy: {
+      group_member: {
+        _count: "desc",
+      },
+    },
+  });
+
+  if (!groups.length) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Sirkel masih kosong",
+    });
+  }
+
+  return sendTRPCResponse(
+    {
+      status: 200,
+      message: "Nih sirkel nya bre",
+    },
+    groups,
+  );
 };

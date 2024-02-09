@@ -89,10 +89,12 @@ const SirkelPage: React.FC = () => {
         <Link href="/sirkel-baru">
           <Button>Buat Sirkel</Button>
         </Link>
-        <Button variant="outline">Gabung Sirkel</Button>
+        <Link href="/sirkel-gabung">
+          <Button variant="outline">Gabung Sirkel</Button>
+        </Link>
       </div>
 
-      <div className="mt-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
+      <ul className="mt-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
         <LoadingState
           data={groupResponse}
           loadingFallback={<Skeleton className="py-4 w-full rounded-md" />}
@@ -102,22 +104,24 @@ const SirkelPage: React.FC = () => {
             message={groupResponse?.message}
           >
             {groupResponse?.data?.map(({ group }, idx) => (
-              <Link href={`/sirkel/${group.public_id}`} key={idx}>
-                <Card className="w-full">
-                  <CardContent className="p-4 flex flex-row items-start space-x-2">
-                    <div>
-                      <h2 className="font-bold">{group.name}</h2>
-                      <CardDescription>
-                        {getOnlineCount(group.public_id)} Member Online
-                      </CardDescription>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
+              <li key={idx}>
+                <Link href={`/sirkel/${group.public_id}`}>
+                  <Card className="w-full">
+                    <CardContent className="p-4 flex flex-row items-start space-x-2">
+                      <div>
+                        <h2 className="font-bold">{group.name}</h2>
+                        <CardDescription>
+                          {getOnlineCount(group.public_id)} Member Online
+                        </CardDescription>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </li>
             ))}
           </EmptyState>
         </LoadingState>
-      </div>
+      </ul>
     </>
   );
 };

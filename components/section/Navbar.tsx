@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="py-4 border-b">
-      <div className="container flex justify-between items-center">
+      <div className="lg:px-[2rem] px-4 flex justify-between items-center">
         <Link href="/forum?c=fyp" className="font-bold text-xl">
           Forum<span className="text-red-600">Gw</span>
         </Link>

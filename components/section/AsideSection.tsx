@@ -15,6 +15,7 @@ import {
   TrendingUp,
   User,
   Users,
+  CircleDashed,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -49,10 +50,19 @@ const navSettingItems = [
     label: "Akun",
     Icon: User,
   },
+];
+
+const navDashboardItems = [
   {
     url: "/kelola",
     label: "Kelola Post",
     Icon: GanttChartSquare,
+  },
+
+  {
+    url: "/kelola-sirkel",
+    label: "Kelola Sirkel",
+    Icon: CircleDashed,
   },
 ];
 
@@ -129,6 +139,23 @@ const AsideSection: React.FC = () => {
           </ul>
 
           <h2 className="text-lg font-bold mt-4 text-foreground/70">
+            Dashboard
+          </h2>
+          <ul className="space-y-2 mt-2">
+            {navDashboardItems.map((item, idx) => (
+              <NavItem {...item} key={idx} />
+            ))}
+
+            {user.role === "developer" && (
+              <NavItem
+                url="/reported-post"
+                label="Reported Post"
+                Icon={Megaphone}
+              />
+            )}
+          </ul>
+
+          <h2 className="text-lg font-bold mt-4 text-foreground/70">
             Pengaturan
           </h2>
           <ul className="space-y-2 mt-2">
@@ -149,13 +176,6 @@ const AsideSection: React.FC = () => {
               label={`${groupResponse?.data?.length || ""} Undangan`}
               Icon={Mail}
             />
-            {user.role === "developer" && (
-              <NavItem
-                url="/reported-post"
-                label="Reported Post"
-                Icon={Megaphone}
-              />
-            )}
           </ul>
         </div>
 

@@ -3,6 +3,7 @@ import {
   acceptOrDeclineInvite,
   createGroup,
   getAllGroupByUser,
+  getGroupByQuery,
   getGroupInvitation,
 } from "./group.service";
 import { z } from "zod";
@@ -39,5 +40,16 @@ export const groupRouter = router({
     .mutation(
       async ({ ctx, input }) =>
         await acceptOrDeclineInvite(ctx.prisma, input, ctx.user.id),
+    ),
+
+  getGroupByQuery: authProcedure
+    .input(
+      z.object({
+        searchTerm: z.string().min(1).nullable(),
+      }),
+    )
+    .query(
+      async ({ ctx, input }) =>
+        await getGroupByQuery(ctx.prisma, input.searchTerm),
     ),
 });

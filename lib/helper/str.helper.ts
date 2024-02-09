@@ -71,3 +71,15 @@ export const getMetaData = (createdAt: string | Date) => {
     }
   }
 };
+
+export const truncateThousand = (number: number): string => {
+  if (number >= 1000) {
+    const truncatedNumber = number / 1000;
+
+    return truncatedNumber % 1 === 0
+      ? `${truncatedNumber}K`
+      : `${truncatedNumber.toFixed(1)}K`;
+  }
+
+  return number.toString();
+};
