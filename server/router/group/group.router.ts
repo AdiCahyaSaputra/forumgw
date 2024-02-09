@@ -4,6 +4,7 @@ import {
   createGroup,
   createGroupPost,
   getAllGroupByUser,
+  getDetailedGroupPost,
   getGroupByPublicId,
   getGroupByQuery,
   getGroupInvitation,
@@ -78,5 +79,19 @@ export const groupRouter = router({
         user_id: ctx.user.id,
       };
       return await createGroupPost(ctx.prisma, data, input.isAnonymousPost);
+    }),
+  getDetailedGroupPost: authProcedure
+    .input(
+      z.object({
+        public_group_id: z.string(),
+        public_post_id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const data = {
+        ...input,
+        user_id: ctx.user.id,
+      };
+      return getDetailedGroupPost(ctx.prisma, data);
     }),
 });

@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { truncateThousand } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
-import { createGroupPost } from "@/server/router/group/group.service";
 import { ListPlusIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
@@ -131,6 +130,7 @@ const SirkelDetailPage = ({ params }: Props) => {
               {groupResponse?.data?.post?.map((post, idx) => (
                 <CardForumSirkel
                   isMember={groupResponse?.data.isMember}
+                  groupPublicId={groupResponse?.data.public_id}
                   key={idx}
                   {...post}
                 />

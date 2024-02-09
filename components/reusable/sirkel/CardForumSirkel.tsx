@@ -11,6 +11,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 type TProps = {
+  groupPublicId: string;
   public_id: string;
   content: string;
   created_at: string;
@@ -29,6 +30,7 @@ type TProps = {
 };
 
 const CardForumSirkel: React.FC<TProps> = ({
+  groupPublicId,
   public_id,
   content,
   created_at,
@@ -159,7 +161,7 @@ const CardForumSirkel: React.FC<TProps> = ({
           <Separator className="mb-2" />
           {isMember ? (
             <div className="space-x-2 px-4 py-2">
-              <Link href={`/forum/${public_id}`}>
+              <Link href={`/sirkel/${groupPublicId}/${public_id}`}>
                 <Button variant="outline" size="default" className="space-x-2">
                   <MessagesSquare className="w-5 aspect-square" />
                   <span>{_count.comments}</span>

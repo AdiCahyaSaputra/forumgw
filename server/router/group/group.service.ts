@@ -20,6 +20,12 @@ type TUpSertPost = {
   content: string;
 };
 
+type TDetailPostArg = {
+  public_group_id: string;
+  public_post_id: string;
+  user_id: string;
+};
+
 export const getAllGroupByUser = async (
   prisma: PrismaContext,
   user_id: string,
@@ -409,17 +415,17 @@ export const createGroupPost = async (
     },
   });
 
-  if (!group?.group_member.length) {
-    return sendTRPCResponse({
-      status: 400,
-      message: "Lu hengker terbaik di bumi banh",
-    });
-  }
-
   if (!group) {
     return sendTRPCResponse({
       status: 400,
       message: "Gagal membuat postingan",
+    });
+  }
+
+  if (!group?.group_member.length) {
+    return sendTRPCResponse({
+      status: 400,
+      message: "Lu hengker terbaik di bumi banh",
     });
   }
 
@@ -492,4 +498,91 @@ export const createGroupPost = async (
     status: 200,
     message: "Berhasil membuat postingan Public",
   });
+};
+
+export const getDetailedGroupPost = async (
+  prisma: PrismaContext,
+  data: TDetailPostArg,
+) => {
+  const group = await prisma.group.findFirst({
+    where: {
+      public_id: data.public_group_id,
+    },
+    select: {
+      id: true,
+      group_member: {
+        where: {
+          user_id: data.user_id,
+        },
+      },
+    },
+  });
+
+  if (!group) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Gagal membuat postingan",
+    });
+  }
+
+  if (!group?.group_member.length) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Lu hengker terbaik di bumi banh",
+    });
+  }
+
+  const existingPostWithComments = await prisma.post.findUnique({
+    where: {
+      public_id: data.public_post_id,
+    },
+    select: {
+      public_id: true,
+      content: true,
+      created_at: true,
+      user: {
+        select: {
+          username: true,
+          name: true,
+          image: true,
+        },
+      },
+      anonymous: {
+        select: {
+          username: true,
+        },
+      },
+      comments: {
+        select: {
+          id: true,
+          text: true,
+          created_at: true,
+          user: {
+            select: {
+              username: true,
+              image: true,
+            },
+          },
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+      },
+    },
+  });
+
+  if (!existingPostWithComments) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Postingan ini sebenernya gk ada",
+    });
+  }
+
+  return sendTRPCResponse(
+    {
+      status: 200,
+      message: "Postingan beserta komentar nya",
+    },
+    existingPostWithComments,
+  );
 };
