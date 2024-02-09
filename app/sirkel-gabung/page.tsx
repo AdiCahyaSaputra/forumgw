@@ -2,7 +2,6 @@
 import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SearchIcon } from "lucide-react";
 import Link from "next/link";
 import {
   Card,
@@ -10,7 +9,7 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { truncateThousand } from "@/lib/helper/str.helper";

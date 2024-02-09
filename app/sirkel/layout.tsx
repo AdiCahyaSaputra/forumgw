@@ -14,9 +14,7 @@ const SirkelLayout = (props: PropsWithChildren) => {
       <Navbar />
       <div className="flex relative items-start">
         <AsideSection />
-        <main className="h-max pb-10 grow">
-          <div className="container">{props.children}</div>
-        </main>
+        <main className="h-max pb-10 grow">{props.children}</main>
       </div>
     </>
   );

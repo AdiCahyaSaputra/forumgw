@@ -79,7 +79,7 @@ const SirkelPage: React.FC = () => {
   }, [groups]);
 
   return (
-    <>
+    <div className="container">
       <h2 className="text-lg font-bold mt-4">Sirkel Khusus</h2>
       <p className="text-foreground/60">
         Sebuah tempat dimana lu berkumpul dan berdiskusi dengan orang-orang yang
@@ -122,7 +122,7 @@ const SirkelPage: React.FC = () => {
           </EmptyState>
         </LoadingState>
       </ul>
-    </>
+    </div>
   );
 };
 

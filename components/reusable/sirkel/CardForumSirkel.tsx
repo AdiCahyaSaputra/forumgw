@@ -25,15 +25,17 @@ type TProps = {
   _count: {
     comments: number;
   };
+  isMember: boolean;
 };
 
-const CardForum: React.FC<TProps> = ({
+const CardForumSirkel: React.FC<TProps> = ({
   public_id,
   content,
   created_at,
   user,
   anonymous,
   _count,
+  isMember,
 }) => {
   const [reason, setReason] = useState("");
   const [openReason, setOpenReason] = useState(false);
@@ -155,28 +157,32 @@ const CardForum: React.FC<TProps> = ({
         </CardContent>
         <CardFooter className="p-0 flex-col items-start pb-2">
           <Separator className="mb-2" />
-          <div className="space-x-2 px-4 py-2">
-            <Link href={`/forum/${public_id}`}>
-              <Button variant="outline" size="default" className="space-x-2">
-                <MessagesSquare className="w-5 aspect-square" />
-                <span>{_count.comments}</span>
+          {isMember ? (
+            <div className="space-x-2 px-4 py-2">
+              <Link href={`/forum/${public_id}`}>
+                <Button variant="outline" size="default" className="space-x-2">
+                  <MessagesSquare className="w-5 aspect-square" />
+                  <span>{_count.comments}</span>
+                </Button>
+              </Link>
+              <Button variant="outline" size="icon">
+                <Share2 className="w-5 aspect-square" />
               </Button>
-            </Link>
-            <Button variant="outline" size="icon">
-              <Share2 className="w-5 aspect-square" />
-            </Button>
-            <Button
-              onClick={() => setOpenReason(true)}
-              variant="destructive"
-              size="icon"
-            >
-              <Megaphone className="w-5 aspect-square" />
-            </Button>
-          </div>
+              <Button
+                onClick={() => setOpenReason(true)}
+                variant="destructive"
+                size="icon"
+              >
+                <Megaphone className="w-5 aspect-square" />
+              </Button>
+            </div>
+          ) : (
+            <p className="text-sm px-4 py-2 font-bold">Join Sirkel dulu dekk</p>
+          )}
         </CardFooter>
       </Card>
     </>
   );
 };
 
-export default CardForum;
+export default CardForumSirkel;

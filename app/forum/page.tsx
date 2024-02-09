@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 
 type TProps = {};
 
-const Forum: React.FC<TProps> = ({ }) => {
+const Forum: React.FC<TProps> = ({}) => {
   const query = useSearchParams();
   const category = query?.get("c");
   const category_id = category === "fyp" ? "1" : category === "dev" ? "2" : "1";

@@ -13,6 +13,13 @@ export const getFeedByCategory = async (
   prisma: PrismaContext,
   category_id: string,
 ) => {
+  if (+category_id === 3) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Halo hengkerr",
+    });
+  }
+
   const existingPosts = await prisma.post.findMany({
     where: { category_id: +category_id },
     select: {
@@ -152,6 +159,9 @@ export const getUserPosts = async (
   const existingPosts = await prisma.post.findMany({
     where: {
       OR: [{ user_id }, { anonymous_id: anonymousUser?.id }],
+      NOT: {
+        category_id: 3,
+      },
     },
     select: {
       id: true,

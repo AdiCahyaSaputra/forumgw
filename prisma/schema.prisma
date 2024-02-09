@@ -46,10 +46,12 @@ model post {
   anonymous    anonymous? @relation(fields: [anonymous_id], references: [id], onDelete: Cascade)
   anonymous_id String?
 
+  group_id String?
+  group    group?  @relation(fields: [group_id], references: [id], onDelete: Cascade)
+
   reports      report[]
   comments     comment[]
   notification notification[]
-  group_post   group_post[]
 }
 
 model category {
@@ -133,8 +135,8 @@ model group {
   leader    user   @relation(fields: [leader_id], references: [id], onDelete: Cascade)
 
   group_member     group_member[]
-  group_post       group_post[]
   group_invitation group_invitation[]
+  post             post[]
 }
 
 model group_member {
@@ -145,16 +147,6 @@ model group_member {
 
   user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String
-}
-
-model group_post {
-  id Int @id @default(autoincrement())
-
-  group    group  @relation(fields: [group_id], references: [id], onDelete: Cascade)
-  group_id String
-
-  post    post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
-  post_id String
 }
 
 model group_invitation {

@@ -2,7 +2,9 @@ import { authProcedure, router } from "@/server/trpc";
 import {
   acceptOrDeclineInvite,
   createGroup,
+  createGroupPost,
   getAllGroupByUser,
+  getGroupByPublicId,
   getGroupByQuery,
   getGroupInvitation,
 } from "./group.service";
@@ -52,4 +54,29 @@ export const groupRouter = router({
       async ({ ctx, input }) =>
         await getGroupByQuery(ctx.prisma, input.searchTerm),
     ),
+  getGroupByPublicId: authProcedure
+    .input(
+      z.object({
+        public_id: z.string(),
+      }),
+    )
+    .query(
+      async ({ ctx, input }) =>
+        await getGroupByPublicId(ctx.prisma, ctx.user.id, input.public_id),
+    ),
+  createGroupPost: authProcedure
+    .input(
+      z.object({
+        content: z.string(),
+        group_public_id: z.string(),
+        isAnonymousPost: z.boolean().default(false),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const data = {
+        ...input,
+        user_id: ctx.user.id,
+      };
+      return await createGroupPost(ctx.prisma, data, input.isAnonymousPost);
+    }),
 });
