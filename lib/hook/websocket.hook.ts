@@ -2,7 +2,7 @@
 import { io } from "socket.io-client";
 
 export const useWebSocket = () => {
-  const socket = io(`http://localhost:3001`, {
+  const socket = io(`${process.env.BASE_URL}`, {
     transports: ["websocket"],
     path: "/api/ws/socket",
     addTrailingSlash: false,
