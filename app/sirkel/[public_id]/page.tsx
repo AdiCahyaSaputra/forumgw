@@ -11,7 +11,8 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { truncateThousand } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
-import { ListPlusIcon } from "lucide-react";
+import { ListPlusIcon, TextSelectIcon } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 type Props = {
@@ -104,14 +105,28 @@ const SirkelDetailPage = ({ params }: Props) => {
         <h2 className="font-bold text-lg mt-4">Postingan Di Sirkel Ini</h2>
 
         {groupResponse?.data?.isMember && (
-          <Button
-            className="mt-2 w-full flex justify-between gap-2"
-            variant="default"
-            onClick={() => setOpenCreateMenu(true)}
-          >
-            <span>Bikin Postingan Baru</span>
-            <ListPlusIcon className="w-5 h-5" />
-          </Button>
+          <div className="flex flex-col md:flex-row items-center gap-2">
+            <Button
+              className="mt-2 w-full flex justify-between gap-2"
+              variant="default"
+              onClick={() => setOpenCreateMenu(true)}
+            >
+              <span>Bikin Postingan Baru</span>
+              <ListPlusIcon className="w-5 h-5" />
+            </Button>
+            <Link
+              href={`/sirkel/${params.public_id}/kelola`}
+              className="w-full"
+            >
+              <Button
+                className="mt-2 w-full flex justify-between gap-2"
+                variant="outline"
+              >
+                <span>Kelola Postingan Grup</span>
+                <TextSelectIcon className="w-5 h-5" />
+              </Button>
+            </Link>
+          </div>
         )}
 
         <div className="mt-4 w-full space-y-4">

@@ -202,7 +202,7 @@ export const getUserPosts = async (
   return sendTRPCResponse(
     {
       status: 200,
-      message: "Semua postingan yangn orang ini posting",
+      message: "Semua postingan yang orang ini posting",
     },
     existingPosts,
   );

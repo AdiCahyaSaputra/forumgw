@@ -26,6 +26,12 @@ type TDetailPostArg = {
   user_id: string;
 };
 
+type TGroupPostAuthorArg = {
+  group_public_id: string;
+  withAnonymousPosts: boolean;
+  withComments: boolean;
+};
+
 export const getAllGroupByUser = async (
   prisma: PrismaContext,
   user_id: string,
@@ -584,5 +590,101 @@ export const getDetailedGroupPost = async (
       message: "Postingan beserta komentar nya",
     },
     existingPostWithComments,
+  );
+};
+
+export const getGroupPostByAuthor = async (
+  prisma: PrismaContext,
+  data: TGroupPostAuthorArg,
+  user_id: string,
+) => {
+  const group = await prisma.group.findFirst({
+    where: {
+      public_id: data.group_public_id,
+    },
+    select: {
+      id: true,
+      group_member: {
+        where: {
+          user_id,
+        },
+      },
+    },
+  });
+
+  if (!group) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Gagal membuat postingan",
+    });
+  }
+
+  if (!group?.group_member.length) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Lu hengker terbaik di bumi banh",
+    });
+  }
+
+  let anonymousUser = null;
+
+  if (data.withAnonymousPosts) {
+    anonymousUser = await prisma.anonymous.findUnique({
+      where: {
+        user_id,
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  const existingPosts = await prisma.post.findMany({
+    where: {
+      OR: [{ user_id }, { anonymous_id: anonymousUser?.id }],
+      category_id: 3,
+    },
+    select: {
+      id: true,
+      content: true,
+      created_at: true,
+      user: {
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+        },
+      },
+      anonymous: data.withAnonymousPosts && {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
+      _count: {
+        select: {
+          comments: true,
+        },
+      },
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+
+  if (!existingPosts.length) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Orang ini belom pernah posting apapun",
+    });
+  }
+
+  return sendTRPCResponse(
+    {
+      status: 200,
+      message: "Semua postingan yang orang ini posting",
+    },
+    existingPosts,
   );
 };

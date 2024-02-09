@@ -8,6 +8,7 @@ import {
   getGroupByPublicId,
   getGroupByQuery,
   getGroupInvitation,
+  getGroupPostByAuthor,
 } from "./group.service";
 import { z } from "zod";
 
@@ -94,4 +95,16 @@ export const groupRouter = router({
       };
       return getDetailedGroupPost(ctx.prisma, data);
     }),
+  getGroupPostByAuthor: authProcedure
+    .input(
+      z.object({
+        group_public_id: z.string(),
+        withAnonymousPosts: z.boolean().default(false),
+        withComments: z.boolean().default(false),
+      }),
+    )
+    .query(
+      async ({ ctx, input }) =>
+        await getGroupPostByAuthor(ctx.prisma, input, ctx.user.id),
+    ),
 });

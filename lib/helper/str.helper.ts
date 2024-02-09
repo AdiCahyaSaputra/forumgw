@@ -37,7 +37,7 @@ export const checkCurrentActiveUrl = (
     return currentUrl === url;
   }
 
-  return pathname?.includes(url);
+  return pathname?.startsWith(url);
 };
 
 export const getMetaData = (createdAt: string | Date) => {

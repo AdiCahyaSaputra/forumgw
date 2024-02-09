@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { VenetianMask } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -54,7 +54,7 @@ const EditPostForm: React.FC<TProps> = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      content,
+      content: "",
     },
   });
 
@@ -86,15 +86,20 @@ const EditPostForm: React.FC<TProps> = ({
     );
   };
 
+  useEffect(() => {
+    form.setValue("content", content);
+  }, [content]);
+
   return (
     <div
-      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openEditMenu ? "flex " : "hidden"
-        }`}
+      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
+        openEditMenu ? "flex " : "hidden"
+      }`}
     >
       <Card>
         <CardHeader>
           <CardTitle className="flex items-start justify-between">
-            <span className="text-xl">Bikin Postingan</span>
+            <span className="text-xl">Edit Postingan</span>
             <Button
               variant={`${isAnonymousPost ? "destructive" : "outline"}`}
               size="icon"
@@ -104,8 +109,8 @@ const EditPostForm: React.FC<TProps> = ({
             </Button>
           </CardTitle>
           <CardDescription>
-            Tulis aja apa yang lu mau, <br />
-            <span className="font-bold">selagi gk ngerugiin gw mah</span>
+            Tulis aja apa yang lu pikirin, <br />
+            <span className="font-bold">jangan xss juga tapi</span>
           </CardDescription>
           <CardContent className="p-0 pt-2">
             <Form {...form}>
