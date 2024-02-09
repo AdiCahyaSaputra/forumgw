@@ -37,6 +37,10 @@ export const checkCurrentActiveUrl = (
     return currentUrl === url;
   }
 
+  if (url.startsWith("/kelola")) {
+    return pathname === url;
+  }
+
   return pathname?.startsWith(url);
 };
 

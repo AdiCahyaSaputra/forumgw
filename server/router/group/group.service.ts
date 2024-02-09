@@ -32,6 +32,19 @@ type TGroupPostAuthorArg = {
   withComments: boolean;
 };
 
+type TEditGroupArg = {
+  group_public_id: string;
+  user_id: string;
+  update_data: TUpsertGroup & {
+    logo: string | null;
+  };
+};
+
+type TDeleteGroupArg = {
+  group_public_id: string;
+  user_id: string;
+};
+
 export const getAllGroupByUser = async (
   prisma: PrismaContext,
   user_id: string,
@@ -45,6 +58,7 @@ export const getAllGroupByUser = async (
         select: {
           public_id: true,
           name: true,
+          description: true,
           logo: true,
         },
       },
@@ -686,5 +700,250 @@ export const getGroupPostByAuthor = async (
       message: "Semua postingan yang orang ini posting",
     },
     existingPosts,
+  );
+};
+
+export const editGroup = async (prisma: PrismaContext, data: TEditGroupArg) => {
+  const group = await prisma.group.findFirst({
+    where: {
+      AND: [
+        {
+          public_id: data.group_public_id,
+          leader_id: data.user_id,
+        },
+      ],
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!group) {
+    return sendTRPCResponse({
+      status: 401,
+      message: "Lu hengker terbaik di bumi banh",
+    });
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const { name, description, invitedUsername, logo } = data.update_data;
+
+      if (invitedUsername?.length) {
+        const invitedUsers = await tx.user.findMany({
+          where: {
+            username: {
+              in: invitedUsername,
+            },
+          },
+        });
+
+        const groupMember = await tx.group_member.findMany({
+          where: {
+            group_id: group.id,
+          },
+          select: {
+            user_id: true,
+          },
+        });
+
+        const kickedMember = groupMember
+          .filter(
+            ({ user_id }) => !invitedUsers.some((user) => user_id === user.id),
+          )
+          .map((user) => user.user_id);
+
+        if (kickedMember.length) {
+          await tx.group_member.deleteMany({
+            where: {
+              AND: [
+                {
+                  group_id: group.id,
+                  user_id: {
+                    in: kickedMember,
+                  },
+                },
+              ],
+            },
+          });
+        }
+
+        const data = invitedUsers.map((user) => {
+          const isAlreadyMember = !!groupMember.find(
+            (member) => member.user_id === user.id,
+          );
+
+          return {
+            group_id: group.id,
+            user_id: user.id,
+            isAlreadyMember,
+          };
+        });
+
+        const inviteUsersData = data
+          .filter((user) => !user.isAlreadyMember)
+          .map((user) => ({
+            group_id: user.group_id,
+            user_id: user.user_id,
+          }));
+
+        await tx.group_invitation.createMany({
+          data: inviteUsersData,
+        });
+      }
+
+      await tx.group.update({
+        where: {
+          id: group.id,
+        },
+        data: {
+          name,
+          description,
+          logo,
+        },
+      });
+    });
+
+    return sendTRPCResponse({
+      status: 201,
+      message: "Sirkel lu berhasil gua edit",
+    });
+  } catch (err) {
+    console.log(err);
+
+    return sendTRPCResponse({
+      status: 400,
+      message: "Sirkel lu gagal gue edit",
+    });
+  }
+};
+
+export const deleteGroup = async (
+  prisma: PrismaContext,
+  data: TDeleteGroupArg,
+) => {
+  const group = await prisma.group.findFirst({
+    where: {
+      AND: [
+        {
+          public_id: data.group_public_id,
+          leader_id: data.user_id,
+        },
+      ],
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!group) {
+    return sendTRPCResponse({
+      status: 401,
+      message: "Lu hengker terbaik di bumi banh",
+    });
+  }
+
+  const deletedGroup = await prisma.group.delete({
+    where: {
+      id: group.id,
+    },
+  });
+
+  if (!deletedGroup) {
+    return sendTRPCResponse({
+      status: 400,
+      message: "Sirkel nya gabisa ke hapus bjir",
+    });
+  }
+
+  return sendTRPCResponse({
+    status: 200,
+    message: "Sirkel lu udah gw hapus",
+  });
+};
+
+export const getGroupByAuthor = async (
+  prisma: PrismaContext,
+  user_id: string,
+) => {
+  const groups = await prisma.group.findMany({
+    where: {
+      leader_id: user_id,
+    },
+    select: {
+      public_id: true,
+      name: true,
+      description: true,
+      logo: true,
+      _count: {
+        select: {
+          group_member: true,
+        },
+      },
+    },
+  });
+
+  if (!groups.length) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Lu belom bikin sirkel anjer",
+    });
+  }
+
+  return sendTRPCResponse(
+    {
+      status: 200,
+      message: "Ni semua sirkel lu",
+    },
+    groups,
+  );
+};
+
+export const getDetailedGroupMemberByPublicId = async (
+  prisma: PrismaContext,
+  user_id: string,
+  public_id: string,
+) => {
+  const group = await prisma.group.findFirst({
+    where: {
+      AND: [
+        {
+          leader_id: user_id,
+          public_id,
+        },
+      ],
+    },
+    select: {
+      public_id: true,
+      name: true,
+      description: true,
+      logo: true,
+      group_member: {
+        select: {
+          user: {
+            select: {
+              name: true,
+              username: true,
+              image: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!group) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Sirkel nya gk ketemu banh",
+    });
+  }
+
+  return sendTRPCResponse(
+    {
+      status: 200,
+      message: "Ni sirkel lu",
+    },
+    group,
   );
 };

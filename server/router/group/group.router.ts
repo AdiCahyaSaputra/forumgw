@@ -3,8 +3,12 @@ import {
   acceptOrDeclineInvite,
   createGroup,
   createGroupPost,
+  deleteGroup,
+  editGroup,
   getAllGroupByUser,
+  getDetailedGroupMemberByPublicId,
   getDetailedGroupPost,
+  getGroupByAuthor,
   getGroupByPublicId,
   getGroupByQuery,
   getGroupInvitation,
@@ -106,5 +110,54 @@ export const groupRouter = router({
     .query(
       async ({ ctx, input }) =>
         await getGroupPostByAuthor(ctx.prisma, input, ctx.user.id),
+    ),
+  editGroup: authProcedure
+    .input(
+      z.object({
+        group_public_id: z.string(),
+        update_data: z.object({
+          name: z.string(),
+          description: z.string(),
+          invitedUsername: z.array(z.string()).nullable(),
+          logo: z.string().nullable(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const data = {
+        ...input,
+        user_id: ctx.user.id,
+      };
+      return editGroup(ctx.prisma, data);
+    }),
+  deleteGroup: authProcedure
+    .input(
+      z.object({
+        group_public_id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const data = {
+        ...input,
+        user_id: ctx.user.id,
+      };
+
+      return deleteGroup(ctx.prisma, data);
+    }),
+  getGroupByAuthor: authProcedure.query(
+    async ({ ctx }) => await getGroupByAuthor(ctx.prisma, ctx.user.id),
+  ),
+  getDetailedGroupMemberByPublicId: authProcedure
+    .input(
+      z.object({
+        public_id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) =>
+      getDetailedGroupMemberByPublicId(
+        ctx.prisma,
+        ctx.user.id,
+        input.public_id,
+      ),
     ),
 });

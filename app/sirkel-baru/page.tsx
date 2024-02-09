@@ -27,6 +27,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import EmptyState from "@/components/reusable/state/EmptyState";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { useToast } from "@/components/ui/use-toast";
+import { filterBadWord } from "@/lib/helper/sensor.helper";
 
 type TUser = {
   name: string;
@@ -74,25 +75,32 @@ const BuatSrikelPage = () => {
   };
 
   const handleCreateGroup = async (values: z.infer<typeof formSchema>) => {
-    createGroup(values, {
-      onSuccess: (response) => {
-        toast({
-          title: "Notifikasi",
-          description: response.message,
-        });
-
-        form.reset();
-        setUsers([]);
+    createGroup(
+      {
+        name: filterBadWord(values.name),
+        description: filterBadWord(values.description),
+        invitedUsername: values.invitedUsername,
       },
-      onError: (err) => {
-        toast({
-          title: "Notifikasi",
-          description: "Ada error bre",
-        });
+      {
+        onSuccess: (response) => {
+          toast({
+            title: "Notifikasi",
+            description: response.message,
+          });
 
-        console.log(err);
+          form.reset();
+          setUsers([]);
+        },
+        onError: (err) => {
+          toast({
+            title: "Notifikasi",
+            description: "Ada error bre",
+          });
+
+          console.log(err);
+        },
       },
-    });
+    );
   };
 
   useEffect(() => {
