@@ -10,7 +10,7 @@ export const useWebSocket = () => {
 
   socket.on("connect_error", async (err) => {
     console.log(`connect_error due to ${err.message}`);
-    await fetch("http://localhost:3000/api/ws/socket");
+    await fetch(`${process.env.BASE_URL}/api/ws/socket`);
   });
 
   return socket;
