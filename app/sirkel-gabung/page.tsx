@@ -18,15 +18,44 @@ import LoadingState from "@/components/reusable/state/LoadingState";
 import { Skeleton } from "@/components/ui/skeleton";
 import EmptyState from "@/components/reusable/state/EmptyState";
 import { useDebounce } from "@/lib/hook/debounce.hook";
+import { useToast } from "@/components/ui/use-toast";
 
 const GabungSirkelPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const searchTermDebounce = useDebounce(searchTerm);
+  const { toast } = useToast();
 
   const { data: groupResponse } = trpc.group.getGroupByQuery.useQuery({
     searchTerm: searchTermDebounce || null,
   });
+
+  const { mutate: askToJoinGroup, isLoading } =
+    trpc.group.askToJoinGroup.useMutation();
+
+  const handleJoinRequest = (public_id: string) => {
+    askToJoinGroup(
+      {
+        public_id,
+      },
+      {
+        onSuccess: (response) => {
+          toast({
+            title: "Notifikasi",
+            description: response.message,
+          });
+        },
+        onError: (err) => {
+          toast({
+            title: "Notifikasi",
+            description: "Error bang 😅",
+          });
+
+          console.log(err);
+        },
+      },
+    );
+  };
 
   return (
     <div className="h-[3000px]">
@@ -98,7 +127,17 @@ const GabungSirkelPage = () => {
                           </div>
                         </div>
                       </div>
-                      <Button className="w-full mt-4">Join Sekarang</Button>
+                      <Button
+                        onClick={() => handleJoinRequest(group.public_id)}
+                        className="w-full mt-4"
+                        disabled={group.isMember || isLoading}
+                      >
+                        {isLoading
+                          ? "Proses..."
+                          : group.isMember
+                            ? "Lu Udah Join"
+                            : "Join Sekarang"}
+                      </Button>
                     </CardFooter>
                   </Card>
                 </li>

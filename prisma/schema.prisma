@@ -17,16 +17,17 @@ model user {
   image String?
   bio   String? @db.VarChar(100)
 
-  role             role?              @relation(fields: [role_id], references: [id])
-  role_id          Int?
-  anonymous        anonymous?
-  posts            post[]
-  comments         comment[]
-  notification     notification[]
-  jwt              jwt[]
-  group            group[]
-  group_member     group_member[]
-  group_invitation group_invitation[]
+  role               role?                @relation(fields: [role_id], references: [id])
+  role_id            Int?
+  anonymous          anonymous?
+  posts              post[]
+  comments           comment[]
+  notification       notification[]
+  jwt                jwt[]
+  group              group[]
+  group_member       group_member[]
+  group_invitation   group_invitation[]
+  group_join_request group_join_request[]
 }
 
 model post {
@@ -134,9 +135,10 @@ model group {
   leader_id String
   leader    user   @relation(fields: [leader_id], references: [id], onDelete: Cascade)
 
-  group_member     group_member[]
-  group_invitation group_invitation[]
-  post             post[]
+  group_member       group_member[]
+  group_invitation   group_invitation[]
+  post               post[]
+  group_join_request group_join_request[]
 }
 
 model group_member {
@@ -150,6 +152,16 @@ model group_member {
 }
 
 model group_invitation {
+  id Int @id @default(autoincrement())
+
+  group    group  @relation(fields: [group_id], references: [id], onDelete: Cascade)
+  group_id String
+
+  user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+}
+
+model group_join_request {
   id Int @id @default(autoincrement())
 
   group    group  @relation(fields: [group_id], references: [id], onDelete: Cascade)

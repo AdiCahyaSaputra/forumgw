@@ -1,6 +1,8 @@
 import { authProcedure, router } from "@/server/trpc";
 import {
   acceptOrDeclineInvite,
+  acceptOrDeclineJoinRequest,
+  askToJoinGroup,
   createGroup,
   createGroupPost,
   deleteGroup,
@@ -12,6 +14,7 @@ import {
   getGroupByPublicId,
   getGroupByQuery,
   getGroupInvitation,
+  getGroupJoinRequest,
   getGroupPostByAuthor,
 } from "./group.service";
 import { z } from "zod";
@@ -58,7 +61,7 @@ export const groupRouter = router({
     )
     .query(
       async ({ ctx, input }) =>
-        await getGroupByQuery(ctx.prisma, input.searchTerm),
+        await getGroupByQuery(ctx.prisma, ctx.user.id, input.searchTerm),
     ),
   getGroupByPublicId: authProcedure
     .input(
@@ -159,5 +162,39 @@ export const groupRouter = router({
         ctx.user.id,
         input.public_id,
       ),
+    ),
+  askToJoinGroup: authProcedure
+    .input(
+      z.object({
+        public_id: z.string(),
+      }),
+    )
+    .mutation(
+      async ({ ctx, input }) =>
+        await askToJoinGroup(ctx.prisma, ctx.user.id, input.public_id),
+    ),
+
+  getGroupJoinRequest: authProcedure
+    .input(
+      z.object({
+        public_id: z.string(),
+      }),
+    )
+    .query(
+      async ({ ctx, input }) =>
+        await getGroupJoinRequest(ctx.prisma, ctx.user.id, input.public_id),
+    ),
+
+  acceptOrDeclineJoinRequest: authProcedure
+    .input(
+      z.object({
+        type: z.enum(["accept", "decline"]),
+        request_id: z.number(),
+        group_id: z.string(),
+      }),
+    )
+    .mutation(
+      async ({ ctx, input }) =>
+        await acceptOrDeclineJoinRequest(ctx.prisma, input, ctx.user.id),
     ),
 });

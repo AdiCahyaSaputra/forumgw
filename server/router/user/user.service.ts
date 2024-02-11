@@ -172,7 +172,14 @@ export const getProfile = async (
 
   const existingUserPosts = await prisma.post.findMany({
     where: {
-      user_id: existingUser?.id,
+      AND: [
+        {
+          user_id: existingUser?.id,
+          category_id: {
+            not: 3,
+          },
+        },
+      ],
     },
     select: {
       public_id: true,

@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { truncateThousand } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
-import { ListPlusIcon, TextSelectIcon } from "lucide-react";
+import { ListPlusIcon, TextSelectIcon, UserCogIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -77,27 +77,39 @@ const SirkelDetailPage = ({ params }: Props) => {
 
             <Separator className="my-4" />
 
-            <div className="space-y-2">
-              <h3 className="text-sm font-bold">Ingfo Leader</h3>
-              <div className="flex items-start gap-2">
-                <Avatar className="rounded-md">
-                  <AvatarImage src={groupResponse?.data?.leader.image ?? ""} />
-                  <AvatarFallback className="rounded-md bg-muted">
-                    {groupResponse?.data?.leader.username[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+            <div className="space-y-4">
+              <div className="space-y-2 pb-4">
+                <h3 className="text-sm font-bold">Ingfo Leader</h3>
+                <div className="flex items-start gap-2">
+                  <Avatar className="rounded-md">
+                    <AvatarImage
+                      src={groupResponse?.data?.leader.image ?? ""}
+                    />
+                    <AvatarFallback className="rounded-md bg-muted">
+                      {groupResponse?.data?.leader.username[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
 
-                <div className="text-sm">
-                  <h4 className="font-bold">
-                    {groupResponse?.data?.leader.name}
-                  </h4>
-                  <p className="text-foreground/60">
-                    {groupResponse?.data?.leader.username}
-                  </p>
+                  <div className="text-sm">
+                    <h4 className="font-bold">
+                      {groupResponse?.data?.leader.name}
+                    </h4>
+                    <p className="text-foreground/60">
+                      {groupResponse?.data?.leader.username}
+                    </p>
+                  </div>
                 </div>
               </div>
 
               {!groupResponse?.data?.isMember && <Button>Join Sekarang</Button>}
+              {groupResponse?.data?.isLeader && (
+                <Link href={`/sirkel/${params.public_id}/request-join`}>
+                  <Button className="flex items-center gap-2">
+                    <UserCogIcon className="w-5 h-5" />
+                    <span>Permintaan Join Sirkel</span>
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </LoadingState>
