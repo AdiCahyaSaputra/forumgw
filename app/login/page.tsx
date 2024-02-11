@@ -78,7 +78,7 @@ const Login: React.FC = () => {
 
           // The users is online
           // console.log(`${process.env.BASE_SOCKET_URL}/api/ws/socket`);
-          await fetch(`${process.env.BASE_SOCKET_URL}/api/ws/socket`);
+          // await fetch(`${process.env.BASE_SOCKET_URL}/api/ws/socket`);
 
           if (isSuccess) router.push("/forum?c=fyp");
         }

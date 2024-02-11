@@ -24,7 +24,7 @@ import NavItem from "../reusable/layout/NavItem";
 import LoadingState from "../reusable/state/LoadingState";
 import { Button } from "../ui/button";
 import { useAuth } from "@/lib/hook/auth.hook";
-import { useWebSocket } from "@/lib/hook/websocket.hook";
+// import { useWebSocket } from "@/lib/hook/websocket.hook";
 
 const navCategoryItems = [
   {
@@ -85,7 +85,7 @@ const AsideSection: React.FC = () => {
   });
 
   const { currentUser } = useAuth();
-  const socket = useWebSocket();
+  // const socket = useWebSocket();
 
   const { data: notificationResponse } =
     trpc.notification.getNotification.useQuery();
@@ -93,9 +93,9 @@ const AsideSection: React.FC = () => {
   const { data: groupResponse } = trpc.group.getGroupInvitation.useQuery();
 
   const logoutHandler = async () => {
-    if (currentUser) {
-      socket.emit("user_logout", currentUser.username);
-    }
+    // if (currentUser) {
+    //   socket.emit("user_logout", currentUser.username);
+    // }
 
     setLogoutClicked(true);
     const { isSuccess } = await destroyAccessToken();

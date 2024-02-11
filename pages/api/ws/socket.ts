@@ -24,7 +24,9 @@ const handler = async (_: NextApiRequest, res: NextApiResponseWithSocket) => {
     });
   }
 
-  console.log("Starting socket server on port : ", 3001);
+  console.log("Starting socket server on port : ", 3000);
+
+  const port = process.env.PORT || "3000";
 
   const io = new Server({
     path: "/api/ws/socket",
@@ -32,7 +34,7 @@ const handler = async (_: NextApiRequest, res: NextApiResponseWithSocket) => {
     cors: {
       origin: "*",
     },
-  }).listen(3001);
+  }).listen(+port);
 
   const groups: Record<string, string[]> = {};
 
