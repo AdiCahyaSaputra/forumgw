@@ -2,6 +2,7 @@ import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { generateAnonymousRandomString } from "@/lib/helper/str.helper";
 import { PrismaContext } from "@/server/trpc";
 import { Gruppo } from "next/font/google";
+import { send } from "process";
 
 type TUpsertGroup = {
   name: string;
@@ -1134,19 +1135,56 @@ export const acceptOrDeclineJoinRequest = async (
   data: TAcceptOrDeclineJoinRequest,
   user_id: string,
 ) => {
+  const isLeader = await prisma.group.findFirst({
+    where: {
+      id: data.group_id,
+      leader_id: user_id,
+    },
+    select: {
+      leader_id: true,
+    },
+  });
+
+  if (!isLeader) {
+    return sendTRPCResponse({
+      status: 401,
+      message: "Wah lu hengker ya bang",
+    });
+  }
+
   try {
     await prisma.$transaction(async (tx) => {
-      await tx.group_join_request.delete({
+      const joinRequest = await tx.group_join_request.findUnique({
         where: {
           id: data.request_id,
         },
+        select: {
+          user: {
+            select: {
+              id: true,
+            },
+          },
+        },
       });
+
+      if (!joinRequest) {
+        return sendTRPCResponse({
+          status: 401,
+          message: "Lu siapa anjer",
+        });
+      }
 
       if (data.type === "accept") {
         await tx.group_member.create({
           data: {
             group_id: data.group_id,
-            user_id,
+            user_id: joinRequest.user.id,
+          },
+        });
+
+        await tx.group_join_request.delete({
+          where: {
+            id: data.request_id,
           },
         });
       }
@@ -1170,6 +1208,60 @@ export const acceptOrDeclineJoinRequest = async (
     return sendTRPCResponse({
       status: 400,
       message: message[data.type],
+    });
+  }
+};
+
+export const exitFromGroup = async (
+  prisma: PrismaContext,
+  user_id: string,
+  public_id: string,
+) => {
+  const group = await prisma.group.findFirst({
+    where: {
+      public_id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!group) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Sirkel gk ketemu",
+    });
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const groupMember = await tx.group_member.findFirst({
+        where: {
+          AND: {
+            group_id: group.id,
+            user_id,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      await tx.group_member.delete({
+        where: {
+          id: groupMember?.id,
+        },
+      });
+    });
+
+    return sendTRPCResponse({
+      status: 200,
+      message: "Good Bye bre",
+    });
+  } catch (err) {
+    return sendTRPCResponse({
+      status: 500,
+      message: "Gagal keluar dari group wkwkwk",
     });
   }
 };

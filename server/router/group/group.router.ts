@@ -7,6 +7,7 @@ import {
   createGroupPost,
   deleteGroup,
   editGroup,
+  exitFromGroup,
   getAllGroupByUser,
   getDetailedGroupMemberByPublicId,
   getDetailedGroupPost,
@@ -196,5 +197,16 @@ export const groupRouter = router({
     .mutation(
       async ({ ctx, input }) =>
         await acceptOrDeclineJoinRequest(ctx.prisma, input, ctx.user.id),
+    ),
+
+  exitFromGroup: authProcedure
+    .input(
+      z.object({
+        public_id: z.string(),
+      }),
+    )
+    .mutation(
+      async ({ ctx, input }) =>
+        await exitFromGroup(ctx.prisma, ctx.user.id, input.public_id),
     ),
 });

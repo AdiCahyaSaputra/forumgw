@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
 import CardForumSirkel from "@/components/reusable/sirkel/CardForumSirkel";
 import CreateGroupPostForm from "@/components/reusable/sirkel/CreateGroupPostForm";
@@ -9,9 +20,16 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/use-toast";
 import { truncateThousand } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
-import { ListPlusIcon, TextSelectIcon, UserCogIcon } from "lucide-react";
+import { group } from "console";
+import {
+  ListPlusIcon,
+  TextSelectIcon,
+  Trash2,
+  UserCogIcon,
+} from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -27,8 +45,64 @@ const SirkelDetailPage = ({ params }: Props) => {
       public_id: params.public_id,
     });
 
+  const { mutate: exitFromGroup } = trpc.group.exitFromGroup.useMutation();
+  const { mutate: askToJoinGroup, isLoading } =
+    trpc.group.askToJoinGroup.useMutation();
+
+  const { toast } = useToast();
+
   const [openCreateMenu, setOpenCreateMenu] = useState(false);
   const [createdPost, setCreatedPost] = useState(false);
+
+  const handleJoinRequest = () => {
+    askToJoinGroup(
+      {
+        public_id: params.public_id,
+      },
+      {
+        onSuccess: (response) => {
+          toast({
+            title: "Notifikasi",
+            description: response.message,
+          });
+        },
+        onError: (err) => {
+          toast({
+            title: "Notifikasi",
+            description: "Error bang 😅",
+          });
+
+          console.log(err);
+        },
+      },
+    );
+  };
+
+  const handleExitFromGroup = () => {
+    exitFromGroup(
+      {
+        public_id: params.public_id,
+      },
+      {
+        onSuccess: (response) => {
+          toast({
+            title: "Notifikasi",
+            description: response.message,
+          });
+
+          refetch();
+        },
+        onError: (err) => {
+          toast({
+            title: "Notifikasi",
+            description: "Duh error bre",
+          });
+
+          console.log(err);
+        },
+      },
+    );
+  };
 
   useEffect(() => {
     if (createdPost) {
@@ -101,7 +175,32 @@ const SirkelDetailPage = ({ params }: Props) => {
                 </div>
               </div>
 
-              {!groupResponse?.data?.isMember && <Button>Join Sekarang</Button>}
+              {groupResponse?.data?.isMember &&
+                !groupResponse.data.isLeader && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive">Keluar Dari Sini</Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Keluar Sirkel?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Yakin bang mau keluar dari sirkel ini?
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Gk Jadi</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleExitFromGroup}>
+                          Yaudh Sih
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              {!groupResponse?.data?.isMember && (
+                <Button onClick={handleJoinRequest}>Join Sekarang</Button>
+              )}
               {groupResponse?.data?.isLeader && (
                 <Link href={`/sirkel/${params.public_id}/request-join`}>
                   <Button className="flex items-center gap-2">
