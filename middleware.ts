@@ -49,6 +49,13 @@ export const config = {
     "/forum/:path*",
     "/profil/:path*",
     "/akun/:path*",
+    "/notifikasi/:path*",
+    "/reported-post/:path*",
     "/kelola/:path*",
+    "/kelola-sirkel/:path*",
+    "/sirkel/:path*",
+    "/sirkel-baru/:path*",
+    "/sirkel-gabung/:path*",
+    "/undangan/:path*",
   ],
 };
