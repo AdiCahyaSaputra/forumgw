@@ -146,9 +146,16 @@ const BuatSrikelPage = () => {
           />
 
           <div className="space-y-2">
-            <h4 className="text-lg font-bold">Langsung Rekrut Member?</h4>
+            <div>
+              <h4 className="text-lg font-bold">Langsung Rekrut Member?</h4>
+              <p className="text-foreground/60 text-sm">
+                Member yang di invite bakal nerima{" "}
+                <span className="font-bold">undangan</span> buat gabung dari
+                sirkel ini
+              </p>
+            </div>
 
-            <ul className="my-2">
+            <ul className="my-2 space-y-2">
               {users.map((user, idx) => (
                 <li key={idx} className="flex justify-between">
                   <div className="flex space-x-2">
