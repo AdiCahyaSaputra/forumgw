@@ -8,6 +8,7 @@ import { getMetaData } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
 import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
 import Link from "next/link";
+import { Balancer } from "react-wrap-balancer";
 import React, { useEffect, useState } from "react";
 
 type TProps = {
@@ -151,7 +152,9 @@ const CardForum: React.FC<TProps> = ({
               Dibuat saat {getMetaData(created_at)}
             </small>
           </div>
-          <p className="mt-1 break-all">{content}</p>
+          <p className="mt-1 cst-wrap-text">
+            <Balancer>{content}</Balancer>
+          </p>
         </CardContent>
         <CardFooter className="p-0 flex-col items-start pb-2">
           <Separator className="mb-2" />

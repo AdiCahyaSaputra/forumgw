@@ -23,13 +23,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { truncateThousand } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
-import { group } from "console";
-import {
-  ListPlusIcon,
-  TextSelectIcon,
-  Trash2,
-  UserCogIcon,
-} from "lucide-react";
+import { ListPlusIcon, TextSelectIcon, UserCogIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 

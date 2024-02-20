@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import BalancerProvider from "@/components/provider/balancer-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,7 +40,9 @@ export default function RootLayout({
       >
         <TrpcProvider>
           <ThemeProvider>
-            <ProgressProvider>{children}</ProgressProvider>
+            <ProgressProvider>
+              <BalancerProvider>{children}</BalancerProvider>
+            </ProgressProvider>
           </ThemeProvider>
         </TrpcProvider>
         <Toaster />

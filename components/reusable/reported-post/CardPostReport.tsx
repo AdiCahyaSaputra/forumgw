@@ -6,6 +6,7 @@ import { getMetaData } from "@/lib/helper/str.helper";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import Balancer from "react-wrap-balancer";
 
 type TProps = {
   reason: string;
@@ -60,7 +61,9 @@ const CardPostReport: React.FC<TProps> = ({ reason, post }) => {
             Dibuat saat {getMetaData(post?.created_at!)}
           </small>
         </div>
-        <p className="mt-1 break-all">{post?.content}</p>
+        <p className="mt-1 cst-wrap-text">
+          <Balancer>{post?.content}</Balancer>
+        </p>
       </CardContent>
       <CardFooter className="p-0 flex-col items-start">
         <Separator />

@@ -50,6 +50,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.45.4",
+    "react-wrap-balancer": "^1.1.0",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "superjson": "^1.13.1",

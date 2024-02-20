@@ -20,6 +20,7 @@ import { trpc } from "@/lib/trpc";
 import { Pencil, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import EditPostForm from "./EditPostForm";
+import Balancer from "react-wrap-balancer";
 
 type TProps = {
   id: string;
@@ -113,7 +114,9 @@ const CardPost: React.FC<TProps> = ({
               Dibuat saat {getMetaData(created_at)}
             </small>
           </div>
-          <p className="mt-1 break-all">{content}</p>
+          <p className="mt-1 cst-wrap-text">
+            <Balancer>{content}</Balancer>
+          </p>
         </CardContent>
         <CardFooter className="p-0 flex-col items-start pb-2">
           <Separator className="mb-2" />

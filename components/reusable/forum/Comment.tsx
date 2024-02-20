@@ -23,6 +23,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import EditCommentForm from "./EditCommentForm";
 import { Badge } from "@/components/ui/badge";
+import Balancer from "react-wrap-balancer";
 
 type TProps = {
   id: number;
@@ -74,8 +75,9 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-20 bg-white/60 justify-center items-center ${openDeleteDialog ? "flex" : "hidden"
-        }`}
+      className={`fixed inset-0 z-20 bg-white/60 justify-center items-center ${
+        openDeleteDialog ? "flex" : "hidden"
+      }`}
     >
       <Card>
         <CardHeader>
@@ -187,7 +189,9 @@ const Comment: React.FC<TProps> = ({
           )}
         </div>
 
-        <p className="mt-2 break-all">{text}</p>
+        <p className="mt-2 cst-wrap-text">
+          <Balancer>{text}</Balancer>
+        </p>
       </div>
     </div>
   );
