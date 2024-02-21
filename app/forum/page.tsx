@@ -6,6 +6,7 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import PostFeed from "@/lib/interface/PostFeed";
 import { trpc } from "@/lib/trpc";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -20,8 +21,12 @@ const Forum: React.FC<TProps> = ({}) => {
   const [openCreateMenu, setOpenCreateMenu] = useState(false);
   const [createdPost, setCreatedPost] = useState(false);
 
+  const [posts, setPosts] = useState<PostFeed[]>([]);
+  const [cursor, setCursor] = useState<string | null>(null);
+
   const { data: postResponse, refetch } = trpc.post.getFeedByCategory.useQuery({
     category_id,
+    cursor,
   });
 
   useEffect(() => {
@@ -29,6 +34,10 @@ const Forum: React.FC<TProps> = ({}) => {
       refetch();
       setCreatedPost(false);
       setOpenCreateMenu(false);
+    }
+
+    if (postResponse?.data?.posts) {
+      setPosts(postResponse.data.posts);
     }
   }, [createdPost, postResponse]);
 
@@ -56,11 +65,13 @@ const Forum: React.FC<TProps> = ({}) => {
             data={postResponse?.data}
             loadingFallback={<Skeleton className="w-full h-24 rounded-md" />}
           >
-            {postResponse?.data?.map((post, idx) => (
+            {posts.map((post, idx) => (
               <CardForum key={idx} {...post} />
             ))}
           </LoadingState>
         </EmptyState>
+        {/* TODO: infinite scroll posts */}
+        {posts.length && <div />}
       </div>
     </>
   );

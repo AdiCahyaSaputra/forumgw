@@ -16,10 +16,15 @@ import {
 
 export const postRouter = router({
   getFeedByCategory: procedure
-    .input(z.object({ category_id: z.enum(["1", "2"]) }))
+    .input(
+      z.object({
+        category_id: z.enum(["1", "2"]),
+        cursor: z.string().nullable(),
+      }),
+    )
     .query(
       async ({ ctx, input }) =>
-        await getFeedByCategory(ctx.prisma, input.category_id),
+        await getFeedByCategory(ctx.prisma, input.category_id, input.cursor),
     ),
   getPostReportedReasons: devProcedure
     .input(
@@ -62,12 +67,12 @@ export const postRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const data: Omit<typeof input, "isAnonymousPost"> & { user_id: string } =
-      {
-        ...input,
-        user_id: ctx.user.id,
-        category_id:
-          ctx.user.role?.name === "developer" ? input.category_id : "1",
-      };
+        {
+          ...input,
+          user_id: ctx.user.id,
+          category_id:
+            ctx.user.role?.name === "developer" ? input.category_id : "1",
+        };
 
       return createPost(ctx.prisma, data, input.isAnonymousPost);
     }),
