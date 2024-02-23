@@ -19,7 +19,7 @@ export const postRouter = router({
     .input(
       z.object({
         category_id: z.enum(["1", "2"]),
-        cursor: z.string().nullable(),
+        cursor: z.string().nullish(),
       }),
     )
     .query(

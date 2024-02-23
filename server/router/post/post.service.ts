@@ -12,7 +12,7 @@ type TUpSertPost = {
 export const getFeedByCategory = async (
   prisma: PrismaContext,
   category_id: string,
-  cursor: string | null,
+  cursor?: string | null,
 ) => {
   if (+category_id === 3) {
     return sendTRPCResponse({
@@ -25,7 +25,7 @@ export const getFeedByCategory = async (
 
   const existingPosts = await prisma.post.findMany({
     take: limit + 1,
-    cursor: cursor ? { id: cursor } : undefined,
+    cursor: cursor ? { public_id: cursor } : undefined,
     where: { category_id: +category_id },
     select: {
       public_id: true,
@@ -66,7 +66,7 @@ export const getFeedByCategory = async (
   if (existingPosts.length > limit) {
     const nextPost = existingPosts.pop();
 
-    nextCursor = nextPost?.public_id!;
+    nextCursor = nextPost!.public_id;
   }
 
   return sendTRPCResponse(

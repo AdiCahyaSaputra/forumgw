@@ -2,6 +2,7 @@
 
 import CardForum from "@/components/reusable/forum/CardForum";
 import CreatePostForm from "@/components/reusable/forum/CreatePostForm";
+import ObserverPlaceholder from "@/components/reusable/forum/ObserverPlaceholder";
 import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Input } from "@/components/ui/input";
@@ -22,12 +23,20 @@ const Forum: React.FC<TProps> = ({}) => {
   const [createdPost, setCreatedPost] = useState(false);
 
   const [posts, setPosts] = useState<PostFeed[]>([]);
-  const [cursor, setCursor] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
 
-  const { data: postResponse, refetch } = trpc.post.getFeedByCategory.useQuery({
-    category_id,
-    cursor,
-  });
+  const {
+    data: postResponse,
+    refetch,
+    fetchNextPage,
+  } = trpc.post.getFeedByCategory.useInfiniteQuery(
+    {
+      category_id,
+    },
+    {
+      getNextPageParam: (lastPost) => lastPost?.data?.cursor!,
+    },
+  );
 
   useEffect(() => {
     if (createdPost) {
@@ -36,8 +45,10 @@ const Forum: React.FC<TProps> = ({}) => {
       setOpenCreateMenu(false);
     }
 
-    if (postResponse?.data?.posts) {
-      setPosts(postResponse.data.posts);
+    if (postResponse?.pages[page - 1]) {
+      if (postResponse.pages[page - 1].data?.posts.length) {
+        setPosts([...posts, ...postResponse.pages[page - 1].data?.posts!]);
+      }
     }
   }, [createdPost, postResponse]);
 
@@ -56,13 +67,14 @@ const Forum: React.FC<TProps> = ({}) => {
           onFocus={() => setOpenCreateMenu(true)}
         />
       </div>
+
       <div className="container pt-4 pb-10 w-full space-y-4">
         <EmptyState
-          status={postResponse?.status}
-          message={postResponse?.message}
+          status={postResponse?.pages[0].status}
+          message={postResponse?.pages[0].message}
         >
           <LoadingState
-            data={postResponse?.data}
+            data={postResponse?.pages[0].data}
             loadingFallback={<Skeleton className="w-full h-24 rounded-md" />}
           >
             {posts.map((post, idx) => (
@@ -70,8 +82,16 @@ const Forum: React.FC<TProps> = ({}) => {
             ))}
           </LoadingState>
         </EmptyState>
-        {/* TODO: infinite scroll posts */}
-        {posts.length && <div />}
+
+        {postResponse?.pages[page - 1]?.data?.cursor !== null &&
+          posts.length && (
+            <ObserverPlaceholder
+              callback={() => {
+                fetchNextPage();
+                setPage(page + 1);
+              }}
+            />
+          )}
       </div>
     </>
   );
