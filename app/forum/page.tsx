@@ -21,8 +21,6 @@ const Forum: React.FC<TProps> = ({}) => {
   const [openCreateMenu, setOpenCreateMenu] = useState(false);
   const [createdPost, setCreatedPost] = useState(false);
 
-  const [page, setPage] = useState<number>(1);
-
   const {
     data: postResponse,
     refetch,
@@ -77,11 +75,11 @@ const Forum: React.FC<TProps> = ({}) => {
           </LoadingState>
         </EmptyState>
 
-        {!!postResponse?.pages[page - 1]?.data?.cursor && (
+        {!!postResponse?.pages[postResponse?.pages.length - 1]?.data
+          ?.cursor && (
           <ObserverPlaceholder
             callback={() => {
               fetchNextPage();
-              setPage(page + 1);
             }}
           />
         )}
