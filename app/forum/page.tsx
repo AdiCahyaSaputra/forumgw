@@ -7,7 +7,6 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import PostFeed from "@/lib/interface/PostFeed";
 import { trpc } from "@/lib/trpc";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -22,7 +21,6 @@ const Forum: React.FC<TProps> = ({}) => {
   const [openCreateMenu, setOpenCreateMenu] = useState(false);
   const [createdPost, setCreatedPost] = useState(false);
 
-  const [posts, setPosts] = useState<PostFeed[]>([]);
   const [page, setPage] = useState<number>(1);
 
   const {
@@ -43,12 +41,6 @@ const Forum: React.FC<TProps> = ({}) => {
       refetch();
       setCreatedPost(false);
       setOpenCreateMenu(false);
-    }
-
-    if (postResponse?.pages[page - 1]) {
-      if (postResponse.pages[page - 1].data?.posts.length) {
-        setPosts([...posts, ...postResponse.pages[page - 1].data?.posts!]);
-      }
     }
   }, [createdPost, postResponse]);
 
@@ -77,21 +69,22 @@ const Forum: React.FC<TProps> = ({}) => {
             data={postResponse?.pages[0].data}
             loadingFallback={<Skeleton className="w-full h-24 rounded-md" />}
           >
-            {posts.map((post, idx) => (
-              <CardForum key={idx} {...post} />
-            ))}
+            {postResponse?.pages.map((response) => {
+              return response.data?.posts.map((post, idx) => (
+                <CardForum key={idx} {...post} />
+              ));
+            })}
           </LoadingState>
         </EmptyState>
 
-        {postResponse?.pages[page - 1]?.data?.cursor !== null &&
-          posts.length && (
-            <ObserverPlaceholder
-              callback={() => {
-                fetchNextPage();
-                setPage(page + 1);
-              }}
-            />
-          )}
+        {!!postResponse?.pages[page - 1]?.data?.cursor && (
+          <ObserverPlaceholder
+            callback={() => {
+              fetchNextPage();
+              setPage(page + 1);
+            }}
+          />
+        )}
       </div>
     </>
   );
