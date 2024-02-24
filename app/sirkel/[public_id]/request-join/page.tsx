@@ -117,7 +117,7 @@ const RequestJoinPage = ({ params }: Props) => {
                             })
                           }
                         >
-                          Terima Deh 😁
+                          Terima&nbsp;😁
                         </Button>
                         <Button
                           disabled={isLoading}
@@ -130,7 +130,7 @@ const RequestJoinPage = ({ params }: Props) => {
                           }
                           variant="outline"
                         >
-                          Tolak Aja 😒
+                          Tolak&nbsp;😒
                         </Button>
                       </div>
                     </div>
