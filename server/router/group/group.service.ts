@@ -1,8 +1,6 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { generateAnonymousRandomString } from "@/lib/helper/str.helper";
 import { PrismaContext } from "@/server/trpc";
-import { Gruppo } from "next/font/google";
-import { send } from "process";
 
 type TUpsertGroup = {
   name: string;

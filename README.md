@@ -27,6 +27,7 @@ pnpm install
 # rename .env.example to .env
 # and setup .env
 pnpm prisma migrate dev
+pnpm prisma db seed
 
 # run local dev server
 pnpm dev

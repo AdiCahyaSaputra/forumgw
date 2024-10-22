@@ -3,7 +3,7 @@ type TResponse = {
   message: string;
 };
 
-export const sendTRPCResponse = <T = void>(response: TResponse, data?: T) => {
+export const sendTRPCResponse = <T = void>(response: TResponse, data: T | undefined = undefined) => {
   return {
     ...response,
     data: data as T,
