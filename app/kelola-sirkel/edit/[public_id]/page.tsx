@@ -25,7 +25,7 @@ import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserCheckIcon, UserMinusIcon, UserPlusIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -36,9 +36,9 @@ type TUser = {
 };
 
 type TProps = {
-  params: {
+  params: Promise<{
     public_id: string;
-  };
+  }>;
 };
 
 const formSchema = z.object({
@@ -49,6 +49,8 @@ const formSchema = z.object({
 });
 
 const EditSirkelPage = ({ params }: TProps) => {
+  const { public_id } = use(params);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,7 +82,7 @@ const EditSirkelPage = ({ params }: TProps) => {
 
   const { data: groupResponse } =
     trpc.group.getDetailedGroupMemberByPublicId.useQuery({
-      public_id: params.public_id,
+      public_id: public_id,
     });
 
   const isUserAlreadyInvited = (username: string) => {
@@ -90,7 +92,7 @@ const EditSirkelPage = ({ params }: TProps) => {
   const handleCreateGroup = async (values: z.infer<typeof formSchema>) => {
     editGroup(
       {
-        group_public_id: params.public_id,
+        group_public_id: public_id,
         update_data: values,
       },
       {
@@ -111,7 +113,7 @@ const EditSirkelPage = ({ params }: TProps) => {
 
           console.log(err);
         },
-      },
+      }
     );
   };
 
@@ -213,7 +215,7 @@ const EditSirkelPage = ({ params }: TProps) => {
                         type="button"
                         onClick={() => {
                           const usersList = users.filter(
-                            (_, userIdx) => userIdx !== idx,
+                            (_, userIdx) => userIdx !== idx
                           );
                           setUsers(usersList);
                         }}
@@ -257,7 +259,7 @@ const EditSirkelPage = ({ params }: TProps) => {
                           onError: (err) => {
                             console.log(err);
                           },
-                        },
+                        }
                       );
                     }}
                     type="button"

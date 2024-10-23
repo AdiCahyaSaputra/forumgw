@@ -7,25 +7,32 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
-const ProfilDetail = ({ params }: { params: { username: string } }) => {
+const ProfilDetail = ({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) => {
+  const { username } = use(params);
+
   const { data: userResponse, refetch } = trpc.user.getProfile.useQuery({
-    username: params.username,
+    username,
   });
 
   const [previewImage, setPreviewImage] = useState(false);
 
   useEffect(() => {
-    console.log(userResponse, params.username);
+    console.log(userResponse, username);
     refetch();
   }, []);
 
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black/60 z-20 ${previewImage ? "flex" : "hidden"
-          } items-center justify-center`}
+        className={`fixed inset-0 bg-black/60 z-20 ${
+          previewImage ? "flex" : "hidden"
+        } items-center justify-center`}
       >
         <div>
           <div

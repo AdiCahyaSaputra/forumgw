@@ -13,7 +13,7 @@ import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { Send } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
 const CreateCommentLoader = () => {
   return (
@@ -33,9 +33,11 @@ const CommentLoader = () => {
   );
 };
 
-const PostDetail = ({ params }: { params: { publicId: string } }) => {
+const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
+  const { publicId } = use(params);
+
   const { data: postResponse, refetch } = trpc.post.getDetailedPost.useQuery({
-    public_id: params.publicId,
+    public_id: publicId,
   });
 
   const { mutate: createComment, isLoading } =
@@ -53,7 +55,7 @@ const PostDetail = ({ params }: { params: { publicId: string } }) => {
     e.preventDefault();
     createComment(
       {
-        public_id: params.publicId,
+        public_id: publicId,
         text: filterBadWord(commentText),
       },
       {
@@ -68,7 +70,7 @@ const PostDetail = ({ params }: { params: { publicId: string } }) => {
           setCommentText("");
           console.log(error);
         },
-      },
+      }
     );
   };
 

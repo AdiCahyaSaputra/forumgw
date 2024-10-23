@@ -13,7 +13,7 @@ import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { Send } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
 const CreateCommentLoader = () => {
   return (
@@ -34,17 +34,19 @@ const CommentLoader = () => {
 };
 
 type Props = {
-  params: {
+  params: Promise<{
     public_id: string;
     post_public_id: string;
-  };
+  }>;
 };
 
 const GroupPostDetailPage = ({ params }: Props) => {
+  const { public_id, post_public_id } = use(params);
+
   const { data: postResponse, refetch } =
     trpc.group.getDetailedGroupPost.useQuery({
-      public_group_id: params.public_id,
-      public_post_id: params.post_public_id,
+      public_group_id: public_id,
+      public_post_id: post_public_id,
     });
 
   const { mutate: createComment, isLoading } =
@@ -62,7 +64,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
     e.preventDefault();
     createComment(
       {
-        public_id: params.post_public_id,
+        public_id: post_public_id,
         text: filterBadWord(commentText),
       },
       {
@@ -77,7 +79,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
           setCommentText("");
           console.log(error);
         },
-      },
+      }
     );
   };
 
@@ -101,7 +103,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
       <SubMenuHeader
         data={null}
         title="Detail Postingan"
-        backUrl={`/sirkel/${params.public_id}`}
+        backUrl={`/sirkel/${public_id}`}
       />
       <div className="container mt-4 pb-10">
         <LoadingState

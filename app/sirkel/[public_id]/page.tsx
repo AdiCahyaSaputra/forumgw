@@ -1,5 +1,10 @@
 "use client";
 
+import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
+import CardForumSirkel from "@/components/reusable/sirkel/CardForumSirkel";
+import CreateGroupPostForm from "@/components/reusable/sirkel/CreateGroupPostForm";
+import EmptyState from "@/components/reusable/state/EmptyState";
+import LoadingState from "@/components/reusable/state/LoadingState";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,12 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
-import CardForumSirkel from "@/components/reusable/sirkel/CardForumSirkel";
-import CreateGroupPostForm from "@/components/reusable/sirkel/CreateGroupPostForm";
-import EmptyState from "@/components/reusable/state/EmptyState";
-import LoadingState from "@/components/reusable/state/LoadingState";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,18 +25,20 @@ import { truncateThousand } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
 import { ListPlusIcon, TextSelectIcon, UserCogIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 type Props = {
-  params: {
+  params: Promise<{
     public_id: string;
-  };
+  }>;
 };
 
 const SirkelDetailPage = ({ params }: Props) => {
+  const { public_id } = use(params);
+
   const { data: groupResponse, refetch } =
     trpc.group.getGroupByPublicId.useQuery({
-      public_id: params.public_id,
+      public_id: public_id,
     });
 
   const { mutate: exitFromGroup } = trpc.group.exitFromGroup.useMutation();
@@ -51,7 +53,7 @@ const SirkelDetailPage = ({ params }: Props) => {
   const handleJoinRequest = () => {
     askToJoinGroup(
       {
-        public_id: params.public_id,
+        public_id: public_id,
       },
       {
         onSuccess: (response) => {
@@ -75,7 +77,7 @@ const SirkelDetailPage = ({ params }: Props) => {
   const handleExitFromGroup = () => {
     exitFromGroup(
       {
-        public_id: params.public_id,
+        public_id: public_id,
       },
       {
         onSuccess: (response) => {
@@ -196,7 +198,7 @@ const SirkelDetailPage = ({ params }: Props) => {
                 <Button onClick={handleJoinRequest}>Join Sekarang</Button>
               )}
               {groupResponse?.data?.isLeader && (
-                <Link href={`/sirkel/${params.public_id}/request-join`}>
+                <Link href={`/sirkel/${public_id}/request-join`}>
                   <Button className="flex items-center gap-2">
                     <UserCogIcon className="w-5 h-5" />
                     <span>Permintaan Join Sirkel</span>
@@ -220,7 +222,7 @@ const SirkelDetailPage = ({ params }: Props) => {
               <ListPlusIcon className="w-5 h-5" />
             </Button>
             <Link
-              href={`/sirkel/${params.public_id}/kelola`}
+              href={`/sirkel/${public_id}/kelola`}
               className="w-full"
             >
               <Button

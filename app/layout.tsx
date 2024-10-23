@@ -5,6 +5,7 @@ import TrpcProvider from "@/components/provider/trpc-provider";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -40,9 +41,11 @@ export default function RootLayout({
       >
         <TrpcProvider>
           <ThemeProvider>
-            <ProgressProvider>
-              <BalancerProvider>{children}</BalancerProvider>
-            </ProgressProvider>
+            <Suspense>
+              <ProgressProvider>
+                <BalancerProvider>{children}</BalancerProvider>
+              </ProgressProvider>
+            </Suspense>
           </ThemeProvider>
         </TrpcProvider>
         <Toaster />

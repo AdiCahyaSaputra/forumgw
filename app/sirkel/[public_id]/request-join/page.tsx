@@ -9,12 +9,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc";
 import Link from "next/link";
-import React from "react";
+import { use } from "react";
 
 type Props = {
-  params: {
+  params: Promise<{
     public_id: string;
-  };
+  }>;
 };
 
 type TJoinRequestHandle = {
@@ -24,9 +24,11 @@ type TJoinRequestHandle = {
 };
 
 const RequestJoinPage = ({ params }: Props) => {
+  const { public_id } = use(params);
+
   const { data: usersResponse, refetch } =
     trpc.group.getGroupJoinRequest.useQuery({
-      public_id: params.public_id,
+      public_id: public_id,
     });
 
   const { mutate: acceptOrDeclineJoinRequest, isLoading } =
@@ -62,7 +64,7 @@ const RequestJoinPage = ({ params }: Props) => {
 
           console.log(err);
         },
-      },
+      }
     );
   };
 
@@ -70,7 +72,7 @@ const RequestJoinPage = ({ params }: Props) => {
     <>
       <SubMenuHeader
         title="Permintaan Join Sirkel"
-        backUrl={`/sirkel/${params.public_id}`}
+        backUrl={`/sirkel/${public_id}`}
       />
 
       <div className="container mt-4">

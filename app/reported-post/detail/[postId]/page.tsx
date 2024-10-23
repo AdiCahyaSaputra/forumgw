@@ -7,11 +7,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
-const DetailReport = ({ params }: { params: { postId: string } }) => {
+const DetailReport = ({ params }: { params: Promise<{ postId: string }> }) => {
+  const { postId } = use(params);
+
   const { data: postResponse } = trpc.post.getPostReportedReasons.useQuery({
-    post_id: params.postId,
+    post_id: postId,
   });
 
   const router = useRouter();
@@ -28,7 +30,7 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
   const safePostHandler = () => {
     safePost(
       {
-        post_id: params.postId,
+        post_id: postId,
       },
       {
         onSuccess: (data) => {
@@ -41,14 +43,14 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
           });
           console.log(error);
         },
-      },
+      }
     );
   };
 
   const takeDownHandler = () => {
     takeDown(
       {
-        post_id: params.postId,
+        post_id: postId,
       },
       {
         onSuccess: (data) => {
@@ -61,7 +63,7 @@ const DetailReport = ({ params }: { params: { postId: string } }) => {
           });
           console.log(error);
         },
-      },
+      }
     );
   };
 

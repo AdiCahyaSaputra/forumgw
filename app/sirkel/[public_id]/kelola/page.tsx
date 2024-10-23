@@ -8,7 +8,7 @@ import LoadingState from "@/components/reusable/state/LoadingState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 type TPost = {
   id: string;
@@ -30,19 +30,21 @@ type TPost = {
 };
 
 type Props = {
-  params: {
+  params: Promise<{
     public_id: string;
-  };
+  }>;
 };
 
 const KelolaGroupPostPage = ({ params }: Props) => {
+  const { public_id } = use(params);
+
   const [filter, setFilter] = useState<"Public" | "Anonymous" | "Semua">(
-    "Semua",
+    "Semua"
   );
 
   const { data: postResponse, refetch } =
     trpc.group.getGroupPostByAuthor.useQuery({
-      group_public_id: params.public_id,
+      group_public_id: public_id,
       withAnonymousPosts: true,
     });
 
@@ -83,16 +85,11 @@ const KelolaGroupPostPage = ({ params }: Props) => {
 
   return (
     <>
-      <SubMenuHeader
-        backUrl={`/sirkel/${params.public_id}`}
-        title="Kelola Post"
-      />
+      <SubMenuHeader backUrl={`/sirkel/${public_id}`} title="Kelola Post" />
 
       <div className="container">
         <h2 className="text-lg font-bold mt-4">Semua Postingan</h2>
-        <p className="text-foreground/60">
-          Kelola semua postingan disini bre
-        </p>
+        <p className="text-foreground/60">Kelola semua postingan disini bre</p>
 
         <div className="mt-8 pb-10">
           <FilterPostDropdown filter={filter} setFilter={setFilter} />

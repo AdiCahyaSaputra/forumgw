@@ -2,10 +2,12 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { destroyAccessToken } from "@/lib/helper/api.helper";
+import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import {
   BellRing,
   Bug,
+  CircleDashed,
   GanttChartSquare,
   Loader2,
   LogOut,
@@ -15,7 +17,6 @@ import {
   TrendingUp,
   User,
   Users,
-  CircleDashed,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -23,7 +24,6 @@ import React, { useEffect, useState } from "react";
 import NavItem from "../reusable/layout/NavItem";
 import LoadingState from "../reusable/state/LoadingState";
 import { Button } from "../ui/button";
-import { useAuth } from "@/lib/hook/auth.hook";
 // import { useWebSocket } from "@/lib/hook/websocket.hook";
 
 const navCategoryItems = [
@@ -85,7 +85,6 @@ const AsideSection: React.FC = () => {
   });
 
   const { currentUser } = useAuth();
-  // const socket = useWebSocket();
 
   const { data: notificationResponse } =
     trpc.notification.getNotification.useQuery();
@@ -93,10 +92,6 @@ const AsideSection: React.FC = () => {
   const { data: groupResponse } = trpc.group.getGroupInvitation.useQuery();
 
   const logoutHandler = async () => {
-    // if (currentUser) {
-    //   socket.emit("user_logout", currentUser.username);
-    // }
-
     setLogoutClicked(true);
     const { isSuccess } = await destroyAccessToken();
 

@@ -85,7 +85,7 @@ const Forum: React.FC<TProps> = ({}) => {
         )}
       </div>
     </>
-  );
+  ); 
 };
 
 export default Forum;
