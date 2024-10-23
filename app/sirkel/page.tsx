@@ -28,7 +28,7 @@ const SirkelPage: React.FC = () => {
         </Link>
       </div>
 
-      <ul className="mt-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">
+      <ul className="mt-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-2">
         <LoadingState
           data={groupResponse}
           loadingFallback={<Skeleton className="py-4 w-full rounded-md" />}
