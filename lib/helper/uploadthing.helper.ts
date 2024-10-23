@@ -7,8 +7,10 @@ const f = createUploadthing();
 export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "4MB" } })
     .middleware(async ({ req }) => {
-      const token = req.cookies.get("token")?.value;
-      const jwtPayload = await getJWTPayload(token ?? "");
+      const token = req.cookies.get("token")?.value || null;
+      const refreshToken = req.cookies.get("refresh_token")?.value || null;
+
+      const jwtPayload = await getJWTPayload(token, refreshToken);
 
       if (!jwtPayload) throw new Error("Unauthorized");
 

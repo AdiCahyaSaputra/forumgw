@@ -134,12 +134,25 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
     .setExpirationTime("2h")
     .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
+  const refreshToken = await new SignJWT({
+    id: jwt.id,
+    expired_in: new Date(Date.now() + 24 * (60 * 60 * 1000)), // 1 Day
+  })
+    .setProtectedHeader({ alg: "HS256" })
+    .setJti(nanoid())
+    .setIssuedAt()
+    .setExpirationTime("1d")
+    .sign(new TextEncoder().encode(process.env.JWT_SECRET));
+
   return sendTRPCResponse(
     {
       status: 200,
       message: "Ok, Selamat berdiskusi..",
     },
-    token,
+    {
+      token,
+      refreshToken
+    },
   );
 };
 

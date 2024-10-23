@@ -3,7 +3,10 @@ type TResponse = {
   message: string;
 };
 
-export const sendTRPCResponse = <T = void>(response: TResponse, data: T | undefined = undefined) => {
+export const sendTRPCResponse = <T = void>(
+  response: TResponse,
+  data: T | undefined = undefined
+) => {
   return {
     ...response,
     data: data as T,
@@ -24,11 +27,18 @@ export const getBaseUrl = () => {
   return `http://localhost:${process.env.PORT ?? 3000}`;
 };
 
-export const setAccessToken = async (token: string) => {
+export const setAccessToken = async ({
+  token,
+  refreshToken,
+}: {
+  token: string;
+  refreshToken: string;
+}) => {
   const req = await fetch(`${getBaseUrl()}/api-cookie`, {
     method: "POST",
     body: JSON.stringify({
       token,
+      refreshToken
     }),
   });
 

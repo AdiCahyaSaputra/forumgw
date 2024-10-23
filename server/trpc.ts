@@ -5,10 +5,13 @@ import { prisma } from "./../prisma/db";
 
 export const createContext = async (opts: CreateNextContextOptions) => {
   const cookie = opts.req.cookies;
+
   const token = cookie.token || null;
+  const refreshToken = cookie.refresh_token || null;
 
   return {
     token,
+    refreshToken,
     prisma,
   };
 };
@@ -19,7 +22,7 @@ export type Context = inferAsyncReturnType<typeof createContext>;
 const trpc = initTRPC.context<Context>().create();
 
 const isAuthenticated = trpc.middleware(async (opts) => {
-  const jwtPayload = await getJWTPayload(opts.ctx.token);
+  const jwtPayload = await getJWTPayload(opts.ctx.token, opts.ctx.refreshToken);
 
   const data = await prisma.jwt.findUnique({
     where: {
@@ -50,7 +53,7 @@ const isAuthenticated = trpc.middleware(async (opts) => {
 });
 
 const isDeveloper = trpc.middleware(async (opts) => {
-  const jwtPayload = await getJWTPayload(opts.ctx.token);
+  const jwtPayload = await getJWTPayload(opts.ctx.token, opts.ctx.refreshToken);
 
   const data = await prisma.jwt.findUnique({
     where: {
@@ -71,6 +74,7 @@ const isDeveloper = trpc.middleware(async (opts) => {
   });
 
   if (!data?.user) throw new TRPCError({ code: "UNAUTHORIZED" });
+
   if (data?.user.role?.name !== "developer")
     throw new TRPCError({ code: "FORBIDDEN" });
 

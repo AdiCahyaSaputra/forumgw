@@ -6,9 +6,17 @@ export async function POST(request: Request) {
   const body = await request.json();
 
   cookieStore.set("token", body.token, {
-    maxAge: 60 * 60 * 60 * 2, // 2 Hour
+    maxAge: 60 * 60 * 2, // 2 Hour
     sameSite: true,
     secure: true,
+    httpOnly: true 
+  });
+
+  cookieStore.set("refresh_token", body.refreshToken, {
+    maxAge: 60 * 60 * 24, // 1 Day
+    sameSite: true,
+    secure: true,
+    httpOnly: true 
   });
 
   return NextResponse.json({ message: "Berhasil", status: 200 });

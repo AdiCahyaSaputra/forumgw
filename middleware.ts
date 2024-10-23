@@ -7,20 +7,23 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/daftar");
 
   const token = request.cookies.get("token");
+  const refreshToken = request.cookies.get("refresh_token");
 
-  if (!token?.value) {
+  if (!token?.value || !refreshToken?.value) {
     if (isGuest) return NextResponse.next();
 
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // When the Token exist
-  const jwtPayload = await getJWTPayload(token.value);
+  const jwtPayload = await getJWTPayload(token.value, refreshToken.value);
 
   if (!jwtPayload) {
     if (isGuest) return NextResponse.next();
 
     request.cookies.set("token", "");
+    request.cookies.set("refresh_token", "");
+
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -28,15 +31,6 @@ export async function middleware(request: NextRequest) {
   if (isGuest || request.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
   }
-
-  // TODO: implement it on client later
-
-  // if (
-  //   request.nextUrl.pathname.startsWith("/reported-post") &&
-  //   payload.role.name !== "developer"
-  // ) {
-  //   return NextResponse.redirect(new URL("/forum?c=fyp", request.url));
-  // }
 
   return NextResponse.next();
 }

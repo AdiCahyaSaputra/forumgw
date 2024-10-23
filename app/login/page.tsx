@@ -69,16 +69,12 @@ const Login: React.FC = () => {
 
   const submitHandler = (values: z.infer<typeof formSchema>) => {
     signIn(values, {
-      onSuccess: async (data) => {
-        setResponse(data);
+      onSuccess: async (response) => {
+        setResponse(response);
         form.reset();
 
-        if (data.status === 200) {
-          const { isSuccess } = await setAccessToken(data.data as string);
-
-          // The users is online
-          // console.log(`${process.env.BASE_SOCKET_URL}/api/ws/socket`);
-          // await fetch(`${process.env.BASE_SOCKET_URL}/api/ws/socket`);
+        if (response.status === 200) {
+          const { isSuccess } = await setAccessToken(response.data!);
 
           if (isSuccess) router.push("/forum?c=fyp");
         }
