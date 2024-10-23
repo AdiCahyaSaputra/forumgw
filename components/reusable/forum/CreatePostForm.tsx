@@ -125,7 +125,7 @@ const CreatePostForm: React.FC<TProps> = ({
             </Button>
           </CardTitle>
           <CardDescription>
-            Tulis aja apa yang lu pikirin, <br />
+            Tulis aja apa yang lagi pikirin, <br />
             <span className="font-bold">jangan xss juga tapi</span>
           </CardDescription>
           <CardContent className="p-0 pt-2">

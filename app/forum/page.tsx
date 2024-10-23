@@ -53,7 +53,7 @@ const Forum: React.FC<TProps> = ({}) => {
       <div className="py-4 flex w-full bg-white supports-[backdrop-filter]:bg-white/60 border-b container supports-[backdrop-filter]:backdrop-blur-md sticky z-10 top-0">
         <Input
           className="w-full"
-          placeholder="Apa sih yang lu pikirin?"
+          placeholder="Ada berita apa hari ini? Cerita yuk"
           onFocus={() => setOpenCreateMenu(true)}
         />
       </div>

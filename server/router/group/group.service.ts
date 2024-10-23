@@ -74,14 +74,14 @@ export const getAllGroupByUser = async (
   if (!group.length) {
     return sendTRPCResponse({
       status: 404,
-      message: "Lu belom punya sirkel bre!",
+      message: "Kamu belom punya sirkel!",
     });
   }
 
   return sendTRPCResponse(
     {
       status: 200,
-      message: "Nih bre semua sirkel lu",
+      message: "Nih bre semua sirkel nya",
     },
     group,
   );
@@ -133,12 +133,12 @@ export const createGroup = async (
 
     return sendTRPCResponse({
       status: 201,
-      message: "Sirkel lu udah gue bikin",
+      message: "Sirkel nya udah berhasil di buat",
     });
   } catch (error) {
     return sendTRPCResponse({
       status: 400,
-      message: "Sirkel lu gagal gue bikin",
+      message: "Sirkel nya gagal di buat",
     });
   }
 };
@@ -490,7 +490,7 @@ export const createGroupPost = async (
   if (!group?.group_member.length) {
     return sendTRPCResponse({
       status: 400,
-      message: "Lu hengker terbaik di bumi banh",
+      message: "Kamu hengker terbaik di bumi",
     });
   }
 
@@ -593,7 +593,7 @@ export const getDetailedGroupPost = async (
   if (!group?.group_member.length) {
     return sendTRPCResponse({
       status: 404,
-      message: "Lu hengker terbaik di bumi banh",
+      message: "Kamu hengker terbaik di bumi",
     });
   }
 
@@ -681,7 +681,7 @@ export const getGroupPostByAuthor = async (
   if (!group?.group_member.length) {
     return sendTRPCResponse({
       status: 404,
-      message: "Lu hengker terbaik di bumi banh",
+      message: "Kamu hengker terbaik di bumi",
     });
   }
 
@@ -766,7 +766,7 @@ export const editGroup = async (prisma: PrismaContext, data: TEditGroupArg) => {
   if (!group) {
     return sendTRPCResponse({
       status: 401,
-      message: "Lu hengker terbaik di bumi banh",
+      message: "Kamu hengker terbaik di bumi",
     });
   }
 
@@ -851,14 +851,14 @@ export const editGroup = async (prisma: PrismaContext, data: TEditGroupArg) => {
 
     return sendTRPCResponse({
       status: 201,
-      message: "Sirkel lu berhasil gua edit",
+      message: "Sirkel nya berhasil di edit",
     });
   } catch (err) {
     console.log(err);
 
     return sendTRPCResponse({
       status: 400,
-      message: "Sirkel lu gagal gue edit",
+      message: "Sirkel nya gagal di edit",
     });
   }
 };
@@ -897,13 +897,13 @@ export const deleteGroup = async (
   if (!deletedGroup) {
     return sendTRPCResponse({
       status: 400,
-      message: "Sirkel nya gabisa ke hapus bjir",
+      message: "Sirkel nya gabisa ke hapus wkwkwk",
     });
   }
 
   return sendTRPCResponse({
     status: 200,
-    message: "Sirkel lu udah gw hapus",
+    message: "Sirkel nya udah di hapus",
   });
 };
 
@@ -931,14 +931,14 @@ export const getGroupByAuthor = async (
   if (!groups.length) {
     return sendTRPCResponse({
       status: 404,
-      message: "Lu belom bikin sirkel anjer",
+      message: "Kamu belom bikin sirkel",
     });
   }
 
   return sendTRPCResponse(
     {
       status: 200,
-      message: "Ni semua sirkel lu",
+      message: "Ni semua sirkel kamu",
     },
     groups,
   );
@@ -987,7 +987,7 @@ export const getDetailedGroupMemberByPublicId = async (
   return sendTRPCResponse(
     {
       status: 200,
-      message: "Ni sirkel lu",
+      message: "Ni sirkel kamu",
     },
     group,
   );
@@ -1045,7 +1045,7 @@ export const askToJoinGroup = async (
   if (alreadyMember) {
     return sendTRPCResponse({
       status: 400,
-      message: "Lu udh jadi member anjer ngapain daftar",
+      message: "Kamu udh jadi member ngapain daftar",
     });
   }
 
@@ -1059,13 +1059,13 @@ export const askToJoinGroup = async (
   if (!createdJoinRequest) {
     return sendTRPCResponse({
       status: 400,
-      message: "Duh gw ga bisa bikinin join request bre",
+      message: "Duh ga bisa bikinin join request bre",
     });
   }
 
   return sendTRPCResponse({
     status: 201,
-    message: "Sip, gw follow up dulu ke leader nya entar",
+    message: "Sip, lagi follow up dulu ke leader nya entar",
   });
 };
 
@@ -1091,7 +1091,7 @@ export const getGroupJoinRequest = async (
   if (!group) {
     return sendTRPCResponse({
       status: 404,
-      message: "Sirkel gk ketemu atau lu bukan leader",
+      message: "Sirkel gk ketemu atau kamu bukan leader",
     });
   }
 
@@ -1168,7 +1168,7 @@ export const acceptOrDeclineJoinRequest = async (
       if (!joinRequest) {
         return sendTRPCResponse({
           status: 401,
-          message: "Lu siapa anjer",
+          message: "Lho kamu siapa",
         });
       }
 
@@ -1189,7 +1189,7 @@ export const acceptOrDeclineJoinRequest = async (
     });
 
     const message = {
-      accept: "Ok gw panggil dulu tu anak",
+      accept: "Ok tu anak lagi panggil",
       decline: "Wkwkwk yaudh",
     };
 

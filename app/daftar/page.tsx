@@ -32,7 +32,7 @@ const formSchema = z.object({
   name: z
     .string()
     .min(3, {
-      message: "Yaelah nama lu pendek amat min(3)",
+      message: "nama nya pendek amat min(3)",
     })
     .max(255, {
       message: "Jangan asal ngisi bre max(255)",
@@ -43,10 +43,10 @@ const formSchema = z.object({
   username: z
     .string()
     .min(3, {
-      message: "Username lu terlalu pendek min(3)",
+      message: "Username nya terlalu pendek min(3)",
     })
     .max(20, {
-      message: "Username lu kepanjangan bre max(20)",
+      message: "Username nya kepanjangan bre max(20)",
     })
     .refine((data) => !filterBadWord(data).includes("***"), {
       message: "Gak boleh toxic ya bre",
@@ -54,10 +54,10 @@ const formSchema = z.object({
   password: z
     .string()
     .min(8, {
-      message: "Password lu terlalu pendek min(8)",
+      message: "Password nya terlalu pendek min(8)",
     })
     .max(100, {
-      message: "Password lu kepanjangan bre max(100)",
+      message: "Password nya kepanjangan bre max(100)",
     }),
 });
 
@@ -206,8 +206,9 @@ const Daftar: React.FC = () => {
           )}
         </CardContent>
         <CardFooter
-          className={`px-0 py-0 pt-4 flex-col ${response.status === 201 && "hidden"
-            }`}
+          className={`px-0 py-0 pt-4 flex-col ${
+            response.status === 201 && "hidden"
+          }`}
         >
           <Separator className="mb-4" />
           <Link href="/login" className="w-full">

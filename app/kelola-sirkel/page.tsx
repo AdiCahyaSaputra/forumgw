@@ -1,7 +1,5 @@
 "use client";
 
-import { trpc } from "@/lib/trpc";
-import React, { useState } from "react";
 import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import {
@@ -15,6 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -22,10 +21,11 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { trpc } from "@/lib/trpc";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
-import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 const KelolaSirkelPage = () => {
   const { data: groupResponse, refetch } =
@@ -64,7 +64,7 @@ const KelolaSirkelPage = () => {
     <div className="container">
       <h2 className="text-lg font-bold mt-4">Kelola Sirkel</h2>
       <p className="text-foreground/60">
-        Tempat dimana lu bisa kelola semua sirkel lu
+        Tempat dimana kamu bisa kelola semua sirkel
       </p>
 
       <ul className="mt-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1">

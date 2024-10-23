@@ -450,7 +450,7 @@ export const updatePost = async (
 
   return sendTRPCResponse({
     status: 403,
-    message: "Lu salah masukin data",
+    message: "Kamu salah masukin data",
   });
 };
 
@@ -471,7 +471,7 @@ export const deletePost = async (prisma: PrismaContext, post_id: string) => {
   return sendTRPCResponse(
     {
       status: 201,
-      message: "Postingan lu berhasil gue delete",
+      message: "Postingan nya berhasil di hapus",
     },
     deletedPost,
   );
@@ -514,7 +514,7 @@ export const reportPost = async (
 
   return sendTRPCResponse({
     status: 201,
-    message: "Thank You bre udah nge laporin, Ntar gua cek",
+    message: "Thank You bre udah nge laporin, Ntar di cek",
   });
 };
 
@@ -554,6 +554,6 @@ export const takeDown = async (prisma: PrismaContext, post_id: string) => {
 
   return sendTRPCResponse({
     status: 201,
-    message: "Postingan ini berhasil gue take-down",
+    message: "Postingan ini berhasil di take-down",
   });
 };

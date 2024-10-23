@@ -119,13 +119,13 @@ export const editComment = async (
   if (!editedComment) {
     return sendTRPCResponse({
       status: 400,
-      message: "Gagal merubah komentar lu bre",
+      message: "Gagal merubah komentar nya bre",
     });
   }
 
   return sendTRPCResponse({
     status: 201,
-    message: "Berhasil mengubah komentar lu",
+    message: "Berhasil mengubah komentar nya",
   });
 };
 
@@ -159,7 +159,7 @@ export const deleteComment = async (
   if (!deletedComment) {
     return sendTRPCResponse({
       status: 400,
-      message: "Gagal menghapus komentar lu",
+      message: "Gagal menghapus komentar",
     });
   }
 

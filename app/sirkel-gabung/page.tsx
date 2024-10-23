@@ -1,24 +1,24 @@
 "use client";
 import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
+import EmptyState from "@/components/reusable/state/EmptyState";
+import LoadingState from "@/components/reusable/state/LoadingState";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import React, { useState } from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { truncateThousand } from "@/lib/helper/str.helper";
-import { trpc } from "@/lib/trpc";
-import LoadingState from "@/components/reusable/state/LoadingState";
 import { Skeleton } from "@/components/ui/skeleton";
-import EmptyState from "@/components/reusable/state/EmptyState";
-import { useDebounce } from "@/lib/hook/debounce.hook";
 import { useToast } from "@/components/ui/use-toast";
+import { truncateThousand } from "@/lib/helper/str.helper";
+import { useDebounce } from "@/lib/hook/debounce.hook";
+import { trpc } from "@/lib/trpc";
+import Link from "next/link";
+import { useState } from "react";
 
 const GabungSirkelPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -64,7 +64,7 @@ const GabungSirkelPage = () => {
       <div className="mt-4 container">
         <h2 className="text-lg font-bold mt-4">Eksplor Sirkel</h2>
         <p className="text-foreground/60">
-          Cari sirkel yang se-frekuensi ama lu
+          Cari sirkel yang se-frekuensi ama dirimu
         </p>
 
         <div className="mt-4 flex items-center gap-2">
@@ -135,7 +135,7 @@ const GabungSirkelPage = () => {
                         {isLoading
                           ? "Proses..."
                           : group.isMember
-                            ? "Lu Udah Join"
+                            ? "Udah Join Kok"
                             : "Join Sekarang"}
                       </Button>
                     </CardFooter>

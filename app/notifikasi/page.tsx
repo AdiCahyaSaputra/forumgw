@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { NotificationType } from "@/lib/helper/enum.helper";
 import { trpc } from "@/lib/trpc";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Notifikasi = () => {
   const [filter, setFilter] = useState<"Dibaca" | "Belum Dibaca" | "Semua">(
@@ -65,7 +65,7 @@ const Notifikasi = () => {
     <>
       <h2 className="text-lg font-bold mt-4">Notifikasi Tentang Kehidupan</h2>
       <p className="text-foreground/60">
-        Sesuatu yang mungkin lu tungguin terus padahal gak berguna
+        Sesuatu yang mungkin kamu tungguin terus padahal gak berguna
       </p>
 
       <div className="mt-8 pb-10">
@@ -74,7 +74,7 @@ const Notifikasi = () => {
         <ul className="mt-2 space-y-2">
           <EmptyState
             status={getFilteredNotif()?.length ? 200 : 404}
-            message="Akun lu sepi bre yahaha"
+            message="Akun nya sepi bre yahaha"
           >
             <LoadingState
               data={notificationResponse?.data}

@@ -35,7 +35,7 @@ export const getNotification = async (
     return sendTRPCResponse(
       {
         status: 404,
-        message: "Akun lu sepi bre yahaha",
+        message: "Akun nya sepi bre yahaha",
       },
       [],
     );
@@ -67,7 +67,7 @@ export const notificationIsReaded = async (
     return sendTRPCResponse(
       {
         status: 400,
-        message: "Gw gak bisa ngelakuin itu :(",
+        message: "Aku gak bisa ngelakuin itu :(",
       },
       [],
     );

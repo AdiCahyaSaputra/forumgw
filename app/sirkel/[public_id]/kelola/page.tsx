@@ -89,9 +89,9 @@ const KelolaGroupPostPage = ({ params }: Props) => {
       />
 
       <div className="container">
-        <h2 className="text-lg font-bold mt-4">Semua Postingan Lu</h2>
+        <h2 className="text-lg font-bold mt-4">Semua Postingan</h2>
         <p className="text-foreground/60">
-          Kelola semua postingan lu disini bre
+          Kelola semua postingan disini bre
         </p>
 
         <div className="mt-8 pb-10">

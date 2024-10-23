@@ -1,13 +1,8 @@
 "use client";
 
+import EmptyState from "@/components/reusable/state/EmptyState";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
 import {
   Dialog,
   DialogContent,
@@ -15,19 +10,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UserCheckIcon, UserMinusIcon, UserPlusIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { trpc } from "@/lib/trpc";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import EmptyState from "@/components/reusable/state/EmptyState";
-import { useAuth } from "@/lib/hook/auth.hook";
 import { useToast } from "@/components/ui/use-toast";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
+import { useAuth } from "@/lib/hook/auth.hook";
+import { trpc } from "@/lib/trpc";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserCheckIcon, UserMinusIcon, UserPlusIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 type TUser = {
   name: string;
@@ -112,7 +112,7 @@ const BuatSrikelPage = () => {
 
   return (
     <div className="container">
-      <h2 className="text-lg font-bold mt-4">Jadilah CEO dari Sirkel Lu</h2>
+      <h2 className="text-lg font-bold mt-4">Jadilah CEO dari Sirkel</h2>
       <p className="text-foreground/60">Bangun sirkel yg solid disini</p>
 
       <Form {...form}>
@@ -138,7 +138,7 @@ const BuatSrikelPage = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Textarea placeholder="Deskripsikan Sirkel lu" {...field} />
+                  <Textarea placeholder="Deskripsikan Sirkel kamu" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -205,7 +205,7 @@ const BuatSrikelPage = () => {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Invite Member Terbaik Lu</DialogTitle>
+                  <DialogTitle>Invite Member Terbaik Kamu</DialogTitle>
                 </DialogHeader>
                 <Input
                   placeholder="username"

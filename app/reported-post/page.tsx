@@ -20,7 +20,7 @@ const ReportedPost: React.FC = () => {
         Semua Postingan Yang Dilaporin Netizen
       </h2>
       <p className="text-foreground/60">
-        Lu bisa take down postingan bermasalah disini
+        Kamu bisa take down postingan bermasalah disini
       </p>
 
       <div className="mt-4 space-y-2 pb-10">

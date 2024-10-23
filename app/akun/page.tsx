@@ -5,7 +5,7 @@ const Akun = async () => {
     <>
       <h2 className="text-lg font-bold mt-4">Informasi Akun</h2>
       <p className="text-foreground/60">
-        Disini lu bisa mengubah data profil publik lu bre
+        Disini bisa mengubah data profil publik bre
       </p>
       <AkunForm />
     </>

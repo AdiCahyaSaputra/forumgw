@@ -1,11 +1,11 @@
 import AsideSection from "@/components/section/AsideSection";
 import Navbar from "@/components/section/Navbar";
 import { Metadata } from "next";
-import React, { PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
 
 export const metadata: Metadata = {
   title: "Kelola Sirkel",
-  description: "Tempat dimana lu bisa kelola sirkel lu",
+  description: "Tempat dimana kamu bisa kelola sirkel",
 };
 
 const KelolaSirkelLayout = (props: PropsWithChildren) => {

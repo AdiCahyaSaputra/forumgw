@@ -16,8 +16,8 @@ const SirkelPage: React.FC = () => {
     <div className="container">
       <h2 className="text-lg font-bold mt-4">Sirkel Khusus</h2>
       <p className="text-foreground/60">
-        Sebuah tempat dimana lu berkumpul dan berdiskusi dengan orang-orang yang
-        lu pilih
+        Sebuah tempat dimana kalian berkumpul dan berdiskusi dengan orang-orang yang
+        kalian pilih
       </p>
       <div className="flex gap-2 mt-4">
         <Link href="/sirkel-baru">

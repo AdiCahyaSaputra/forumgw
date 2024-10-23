@@ -70,8 +70,8 @@ const KelolaPostingan: React.FC = () => {
 
   return (
     <>
-      <h2 className="text-lg font-bold mt-4">Semua Postingan Lu</h2>
-      <p className="text-foreground/60">Kelola semua postingan lu disini bre</p>
+      <h2 className="text-lg font-bold mt-4">Semua Postingan</h2>
+      <p className="text-foreground/60">Kelola semua postingan disini bre</p>
 
       <div className="mt-8 pb-10">
         <FilterPostDropdown filter={filter} setFilter={setFilter} />

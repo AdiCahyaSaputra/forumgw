@@ -24,7 +24,7 @@ const formSchema = z.object({
   name: z
     .string()
     .min(3, {
-      message: "Yaelah nama lu pendek amat min(3)",
+      message: "Yaelah nama nya pendek amat min(3)",
     })
     .max(255, {
       message: "Jangan asal ngisi bre max(255)",
@@ -32,13 +32,13 @@ const formSchema = z.object({
   username: z
     .string()
     .min(3, {
-      message: "Username lu terlalu pendek min(3)",
+      message: "Username kamu terlalu pendek min(3)",
     })
     .max(20, {
-      message: "Username lu kepanjangan bre max(20)",
+      message: "Username kamu kepanjangan bre max(20)",
     }),
   bio: z.string().max(100, {
-    message: "Bio lu kepanjangan bre max(100)",
+    message: "Bio kamu kepanjangan bre max(100)",
   }),
 });
 

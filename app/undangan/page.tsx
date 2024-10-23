@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import EmptyState from "@/components/reusable/state/EmptyState";
+import LoadingState from "@/components/reusable/state/LoadingState";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,13 +10,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { trpc } from "@/lib/trpc";
-import LoadingState from "@/components/reusable/state/LoadingState";
 import { Skeleton } from "@/components/ui/skeleton";
-import EmptyState from "@/components/reusable/state/EmptyState";
 import { useToast } from "@/components/ui/use-toast";
+import { trpc } from "@/lib/trpc";
 
 type TInviteHandle = {
   type: "accept" | "decline";
@@ -89,7 +88,7 @@ const UndanganPage = () => {
                       <span className="font-bold">
                         {invitation.group.leader.username}
                       </span>{" "}
-                      ngundang lu buat join sirkel ini
+                      mengundang kamu buat join sirkel ini
                     </p>
                     <Separator className="my-2" />
                     <div className="flex gap-2">

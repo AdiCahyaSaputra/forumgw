@@ -36,10 +36,10 @@ const formSchema = z.object({
   content: z
     .string()
     .min(1, {
-      message: "Postingan lu terlalu pendek min(1)",
+      message: "Postingan nya terlalu pendek min(1)",
     })
     .max(255, {
-      message: "Postingan lu kepanjangan max(255)",
+      message: "Postingan nya kepanjangan max(255)",
     }),
 });
 
@@ -109,7 +109,7 @@ const EditPostForm: React.FC<TProps> = ({
             </Button>
           </CardTitle>
           <CardDescription>
-            Tulis aja apa yang lu pikirin, <br />
+            Tulis aja apa yang lagi pikirin, <br />
             <span className="font-bold">jangan xss juga tapi</span>
           </CardDescription>
           <CardContent className="p-0 pt-2">

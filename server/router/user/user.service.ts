@@ -35,7 +35,7 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
   ) {
     return sendTRPCResponse({
       status: 400,
-      message: 'Gosah aneh" deh bre, Matiin burpsuite lu',
+      message: 'Gosah aneh" deh bre, Matiin burpsuite nya',
     });
   }
 
@@ -64,14 +64,14 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
   if (!createdUser) {
     return sendTRPCResponse({
       status: 400,
-      message: "Gagal nge-daftarin akun lu bre :(",
+      message: "Gagal nge-daftarin akun nya bre :(",
     });
   }
 
   return sendTRPCResponse(
     {
       status: 201,
-      message: "Akun lu berhasil terdaftar",
+      message: "Ok akun nya berhasil terdaftar",
     },
     createdUser,
   );
@@ -209,7 +209,7 @@ export const getProfile = async (
   return sendTRPCResponse(
     {
       status: 200,
-      message: "Nih user yang lu cari",
+      message: "Nih user yang dicari",
     },
     {
       user: excludeField(existingUser, ["id"]),
@@ -229,7 +229,7 @@ export const editProfile = async (
   ) {
     return sendTRPCResponse({
       status: 400,
-      message: 'Gosah aneh" deh bre, Matiin burpsuite lu',
+      message: 'Gosah aneh" deh bre, Matiin burpsuite nya',
     });
   }
 
@@ -243,13 +243,13 @@ export const editProfile = async (
   if (!updatedUser) {
     return sendTRPCResponse({
       status: 400,
-      message: "Gagal mengubah data user lu",
+      message: "Gagal mengubah data user",
     });
   }
 
   return sendTRPCResponse({
     status: 201,
-    message: "Berhasil mengubah data user lu",
+    message: "Berhasil mengubah data user",
   });
 };
 
@@ -270,7 +270,7 @@ export const searchUser = async (prisma: PrismaContext, username: string) => {
   if (!user.length) {
     return sendTRPCResponse({
       status: 404,
-      message: "User yang lu cari ga ada",
+      message: "User yang di cari ga ada",
     });
   }
 

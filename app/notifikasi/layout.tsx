@@ -6,7 +6,7 @@ import React from "react";
 
 export const metadata: Metadata = {
   title: "Notifikasi",
-  description: "Sesuatu yang mungkin lu tungguin terus",
+  description: "Sesuatu yang mungkin lkamu tungguin terus",
 };
 
 const NotifikasiLayout: React.FC = async (props: React.PropsWithChildren) => {

@@ -6,7 +6,7 @@ import React from "react";
 
 export const metadata: Metadata = {
   title: "Kelola Postingan",
-  description: "Kelola Postingan lu disini bre",
+  description: "Kelola Postingan disini bre",
 };
 
 const KelolaLayout: React.FC = async (props: React.PropsWithChildren) => {
