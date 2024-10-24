@@ -9,24 +9,18 @@ export type TJWTPayload = {
 };
 
 export const getJWTPayload = async (token: string | null, refreshToken: string | null) => {
-  if (!token) return null;
+  if (!token) {
+    if(!refreshToken) return null;
 
-  const payload = await jwtVerify(
+    return await refreshJWT(refreshToken);
+  }
+
+  return await jwtVerify(
     token,
     new TextEncoder().encode(process.env.JWT_SECRET)
   )
     .then((decoded) => decoded.payload as TJWTPayload)
     .catch(() => null);
- 
-  // Check the error of current token
-  if(!payload) {
-    // generate new token if its expired / error happen
-    const newPayload = await refreshJWT(refreshToken);
-
-    return newPayload;
-  }
-
-  return payload;
 };
 
 export const refreshJWT = async (refreshToken: string | null) => {
