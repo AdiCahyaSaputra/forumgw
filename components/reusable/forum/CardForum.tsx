@@ -160,23 +160,27 @@ const CardForum: React.FC<TProps> = ({
               Dibuat saat {getMetaData(created_at)}
             </small>
 
-            <div className="py-2 space-x-2">
-              {tag_post.map(({ tag }, idx) => {
-                return (
-                  <Link
-                    href={`${pathname}?t=${tag.id}&${searchParams?.toString()}`}
-                    key={idx}
-                  >
-                    <Badge
-                      variant="outline"
-                      className="w-max hover:bg-muted cursor-pointer"
+            {tag_post.length > 1 && (
+              <div className="py-2 space-x-2">
+                {tag_post.map(({ tag }, idx) => {
+                  return (
+                    <Link
+                      href={`${pathname}?t=${
+                        tag.id
+                      }&${searchParams?.toString()}`}
+                      key={idx}
                     >
-                      #{tag.name}
-                    </Badge>
-                  </Link>
-                );
-              })}
-            </div>
+                      <Badge
+                        variant="outline"
+                        className="w-max hover:bg-muted cursor-pointer"
+                      >
+                        #{tag.name}
+                      </Badge>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
           <p className="mt-1 cst-wrap-text">
             <Balancer>{content}</Balancer>
