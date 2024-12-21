@@ -53,6 +53,8 @@ model post {
   reports      report[]
   comments     comment[]
   notification notification[]
+
+  tag_post tag_post[]
 }
 
 model category {
@@ -169,4 +171,22 @@ model group_join_request {
 
   user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String
+}
+
+model tag {
+  id Int @id @default(autoincrement())
+
+  name String @db.VarChar(100)
+
+  tag_post tag_post[]
+}
+
+model tag_post {
+  id Int @id @default(autoincrement())
+
+  tag    tag @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+  tag_id Int
+
+  post    post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id String
 }

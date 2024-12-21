@@ -15,16 +15,17 @@ import {
 } from "./post.service";
 
 export const postRouter = router({
-  getFeedByCategory: procedure
+  getFeedByCategoryAndTag: procedure
     .input(
       z.object({
         category_id: z.enum(["1", "2"]),
+        tag_id: z.string().nullable(),
         cursor: z.string().nullish(),
       }),
     )
     .query(
       async ({ ctx, input }) =>
-        await getFeedByCategory(ctx.prisma, input.category_id, input.cursor),
+        await getFeedByCategory(ctx.prisma, input.category_id, input.tag_id, input.cursor),
     ),
   getPostReportedReasons: devProcedure
     .input(
@@ -63,6 +64,10 @@ export const postRouter = router({
         content: z.string(),
         category_id: z.enum(["1", "2"]),
         isAnonymousPost: z.boolean().default(false),
+        tags: z.array(z.object({
+          id: z.number(),
+          name: z.string(),
+        }))
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -82,6 +87,10 @@ export const postRouter = router({
         post_id: z.string(),
         content: z.string(),
         visibilityTo: z.enum(["anonymous", "public"]),
+        tags: z.array(z.object({
+          id: z.number(),
+          name: z.string(),
+        }))
       }),
     )
     .mutation(async ({ ctx, input }) => {

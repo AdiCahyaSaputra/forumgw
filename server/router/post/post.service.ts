@@ -1,5 +1,6 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { generateAnonymousRandomString } from "@/lib/helper/str.helper";
+import Tag from "@/lib/interface/Tag";
 import { PrismaContext } from "@/server/trpc";
 
 // Update or inSert
@@ -7,12 +8,14 @@ type TUpSertPost = {
   user_id: string;
   content: string;
   category_id: "1" | "2";
+  tags: Tag[];
 };
 
 export const getFeedByCategory = async (
   prisma: PrismaContext,
   category_id: string,
-  cursor?: string | null,
+  tag_id: string | null,
+  cursor?: string | null
 ) => {
   if (+category_id === 3) {
     return sendTRPCResponse({
@@ -23,10 +26,28 @@ export const getFeedByCategory = async (
 
   const limit = 10;
 
+  const whereClause: any[] = [
+    {
+      category_id: +category_id,
+    },
+  ];
+
+  if (!!tag_id) {
+    whereClause.push({
+      tag_post: {
+        some: {
+          tag_id: +tag_id,
+        },
+      },
+    });
+  }
+
   const existingPosts = await prisma.post.findMany({
     take: limit + 1,
     cursor: cursor ? { public_id: cursor } : undefined,
-    where: { category_id: +category_id },
+    where: {
+      AND: whereClause,
+    },
     select: {
       public_id: true,
       content: true,
@@ -41,6 +62,16 @@ export const getFeedByCategory = async (
       anonymous: {
         select: {
           username: true,
+        },
+      },
+      tag_post: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
       _count: {
@@ -77,13 +108,13 @@ export const getFeedByCategory = async (
     {
       posts: existingPosts,
       cursor: nextCursor,
-    },
+    }
   );
 };
 
 export const getPostReportedReasons = async (
   prisma: PrismaContext,
-  post_id: string,
+  post_id: string
 ) => {
   const reasons = await prisma.report.findMany({
     where: {
@@ -107,7 +138,7 @@ export const getPostReportedReasons = async (
       status: 200,
       message: "Nih alasan nya",
     },
-    reasons,
+    reasons
   );
 };
 
@@ -126,6 +157,16 @@ export const getReportedPost = async (prisma: PrismaContext) => {
               username: true,
               name: true,
               image: true,
+            },
+          },
+          tag_post: {
+            select: {
+              tag: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
           anonymous: {
@@ -150,14 +191,14 @@ export const getReportedPost = async (prisma: PrismaContext) => {
       status: 200,
       message: "Semua data postingan yang dilaporkan",
     },
-    reportedPosts,
+    reportedPosts
   );
 };
 
 export const getUserPosts = async (
   prisma: PrismaContext,
   user_id: string,
-  withAnonymousPosts: boolean,
+  withAnonymousPosts: boolean
 ) => {
   let anonymousUser = null;
 
@@ -197,6 +238,16 @@ export const getUserPosts = async (
           username: true,
         },
       },
+      tag_post: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
       _count: {
         select: {
           comments: true,
@@ -220,13 +271,13 @@ export const getUserPosts = async (
       status: 200,
       message: "Semua postingan yang orang ini posting",
     },
-    existingPosts,
+    existingPosts
   );
 };
 
 export const getDetailedPost = async (
   prisma: PrismaContext,
-  public_id: string,
+  public_id: string
 ) => {
   const existingPostWithComments = await prisma.post.findUnique({
     where: {
@@ -246,6 +297,16 @@ export const getDetailedPost = async (
       anonymous: {
         select: {
           username: true,
+        },
+      },
+      tag_post: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
       comments: {
@@ -279,81 +340,109 @@ export const getDetailedPost = async (
       status: 200,
       message: "Postingan beserta komentar nya",
     },
-    existingPostWithComments,
+    existingPostWithComments
   );
 };
 
 export const createPost = async (
   prisma: PrismaContext,
   data: TUpSertPost,
-  isAnonymousPost: boolean,
+  isAnonymousPost: boolean
 ) => {
-  if (isAnonymousPost) {
-    let anonymousId: string | null = null;
+  return prisma.$transaction(async (tx) => {
+    if (isAnonymousPost) {
+      let anonymousId: string | null = null;
 
-    const existingAnonymousUser = await prisma.anonymous.findUnique({
-      where: { user_id: data.user_id },
-    });
+      const existingAnonymousUser = await tx.anonymous.findUnique({
+        where: { user_id: data.user_id },
+      });
 
-    if (!existingAnonymousUser) {
-      const createdAnonymousUser = await prisma.anonymous.create({
+      if (!existingAnonymousUser) {
+        const createdAnonymousUser = await tx.anonymous.create({
+          data: {
+            user_id: data.user_id,
+            username: "si-" + generateAnonymousRandomString(4),
+          },
+        });
+
+        if (!createdAnonymousUser) {
+          return sendTRPCResponse({
+            status: 400,
+            message: "Gagal membuat postingan Anonymous",
+          });
+        }
+
+        anonymousId = createdAnonymousUser.id;
+      } else {
+        anonymousId = existingAnonymousUser.id;
+      }
+
+      const createdAnonymousPost = await tx.post.create({
         data: {
-          user_id: data.user_id,
-          username: "si-" + generateAnonymousRandomString(4),
+          content: data.content,
+          anonymous_id: anonymousId,
+          category_id: +data.category_id,
         },
       });
 
-      if (!createdAnonymousUser) {
+      if (!createdAnonymousPost) {
         return sendTRPCResponse({
           status: 400,
           message: "Gagal membuat postingan Anonymous",
         });
       }
 
-      anonymousId = createdAnonymousUser.id;
-    } else {
-      anonymousId = existingAnonymousUser.id;
+      if (data.tags.length > 0) {
+        const tagsOnPost = data.tags.map((tag) => {
+          return {
+            tag_id: tag.id,
+            post_id: createdAnonymousPost.id,
+          };
+        });
+
+        await tx.tag_post.createMany({
+          data: tagsOnPost,
+        });
+      }
+
+      return sendTRPCResponse({
+        status: 200,
+        message: "Berhasil membuat postingan Anonymous",
+      });
     }
 
-    const createdAnonymousPost = await prisma.post.create({
+    const createdPublicPost = await prisma.post.create({
       data: {
         content: data.content,
-        anonymous_id: anonymousId,
+        user_id: data.user_id,
         category_id: +data.category_id,
       },
     });
 
-    if (!createdAnonymousPost) {
+    if (!createdPublicPost) {
       return sendTRPCResponse({
         status: 400,
-        message: "Gagal membuat postingan Anonymous",
+        message: "Gagal membuat postingan Public",
+      });
+    }
+
+    if (data.tags.length > 0) {
+      const tagsOnPost = data.tags.map((tag) => {
+        return {
+          tag_id: tag.id,
+          post_id: createdPublicPost.id,
+        };
+      });
+
+      await tx.tag_post.createMany({
+        data: tagsOnPost,
       });
     }
 
     return sendTRPCResponse({
       status: 200,
-      message: "Berhasil membuat postingan Anonymous",
+      message: "Berhasil membuat postingan Public",
     });
-  }
-
-  const createdPublicPost = await prisma.post.create({
-    data: {
-      content: data.content,
-      user_id: data.user_id,
-      category_id: +data.category_id,
-    },
-  });
-
-  if (!createdPublicPost) {
-    return sendTRPCResponse({
-      status: 400,
-      message: "Gagal membuat postingan Public",
-    });
-  }
-
-  return sendTRPCResponse({
-    status: 200,
-    message: "Berhasil membuat postingan Public",
   });
 };
 
@@ -361,126 +450,174 @@ export const updatePost = async (
   prisma: PrismaContext,
   post_id: string,
   data: Omit<TUpSertPost, "category_id">,
-  visibilityTo: "anonymous" | "public",
+  visibilityTo: "anonymous" | "public"
 ) => {
-  if (visibilityTo === "anonymous") {
-    let anonymous_id = null;
+  return prisma.$transaction(async (tx) => {
+    if (visibilityTo === "anonymous") {
+      let anonymous_id = null;
 
-    const existingAnonymousUser = await prisma.anonymous.findUnique({
-      where: {
-        user_id: data.user_id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!existingAnonymousUser) {
-      const createdAnonymousUser = await prisma.anonymous.create({
-        data: {
+      const existingAnonymousUser = await tx.anonymous.findUnique({
+        where: {
           user_id: data.user_id,
-          username: "si-" + generateAnonymousRandomString(4),
+        },
+        select: {
+          id: true,
         },
       });
 
-      if (!createdAnonymousUser) {
+      if (!existingAnonymousUser) {
+        const createdAnonymousUser = await tx.anonymous.create({
+          data: {
+            user_id: data.user_id,
+            username: "si-" + generateAnonymousRandomString(4),
+          },
+        });
+
+        if (!createdAnonymousUser) {
+          return sendTRPCResponse({
+            status: 400,
+            message: "Gagal mengubah postingan",
+          });
+        }
+
+        anonymous_id = createdAnonymousUser.id;
+      } else {
+        anonymous_id = existingAnonymousUser.id;
+      }
+
+      const updatedPost = await prisma.post.update({
+        where: { id: post_id },
+        data: {
+          content: data.content,
+          user_id: null,
+          anonymous_id,
+        },
+      });
+
+      if (!updatedPost) {
         return sendTRPCResponse({
           status: 400,
           message: "Gagal mengubah postingan",
         });
       }
 
-      anonymous_id = createdAnonymousUser.id;
-    } else {
-      anonymous_id = existingAnonymousUser.id;
+      if (data.tags) {
+        await tx.tag_post.deleteMany({
+          where: {
+            post_id: post_id,
+          },
+        });
+
+        const tagsOnPost = data.tags.map((tag) => {
+          return {
+            tag_id: tag.id,
+            post_id: post_id,
+          };
+        });
+
+        await tx.tag_post.createMany({
+          data: tagsOnPost,
+        });
+      }
+
+      return sendTRPCResponse(
+        {
+          status: 201,
+          message: "Berhasil mengubah postingan",
+        },
+        updatedPost
+      );
     }
 
-    const updatedPost = await prisma.post.update({
-      where: { id: post_id },
-      data: {
-        content: data.content,
-        user_id: null,
-        anonymous_id,
-      },
-    });
-
-    if (!updatedPost) {
-      return sendTRPCResponse({
-        status: 400,
-        message: "Gagal mengubah postingan",
+    if (visibilityTo === "public") {
+      const updatedPost = await tx.post.update({
+        where: {
+          id: post_id,
+        },
+        data: {
+          content: data.content,
+          user_id: data.user_id,
+          anonymous_id: null,
+        },
       });
+
+      if (!updatedPost) {
+        return sendTRPCResponse({
+          status: 400,
+          message: "Gagal mengubah postingan",
+        });
+      }
+
+      if (data.tags) {
+        await tx.tag_post.deleteMany({
+          where: {
+            post_id: post_id,
+          },
+        });
+
+        const tagsOnPost = data.tags.map((tag) => {
+          return {
+            tag_id: tag.id,
+            post_id: post_id,
+          };
+        });
+
+        await tx.tag_post.createMany({
+          data: tagsOnPost,
+        });
+      }
+
+      return sendTRPCResponse(
+        {
+          status: 201,
+          message: "Berhasil mengubah postingan",
+        },
+        updatedPost
+      );
     }
 
-    return sendTRPCResponse(
-      {
-        status: 201,
-        message: "Berhasil mengubah postingan",
-      },
-      updatedPost,
-    );
-  }
-
-  if (visibilityTo === "public") {
-    const updatedPost = await prisma.post.update({
-      where: {
-        id: post_id,
-      },
-      data: {
-        content: data.content,
-        user_id: data.user_id,
-        anonymous_id: null,
-      },
+    return sendTRPCResponse({
+      status: 403,
+      message: "Kamu salah masukin data",
     });
-
-    if (!updatedPost) {
-      return sendTRPCResponse({
-        status: 400,
-        message: "Gagal mengubah postingan",
-      });
-    }
-
-    return sendTRPCResponse(
-      {
-        status: 201,
-        message: "Berhasil mengubah postingan",
-      },
-      updatedPost,
-    );
-  }
-
-  return sendTRPCResponse({
-    status: 403,
-    message: "Kamu salah masukin data",
   });
 };
 
 export const deletePost = async (prisma: PrismaContext, post_id: string) => {
-  const deletedPost = await prisma.post.delete({
-    where: {
-      id: post_id,
-    },
-  });
-
-  if (!deletedPost) {
-    return sendTRPCResponse({
-      status: 400,
-      message: "Gagal menghapus data postingan",
+  return prisma.$transaction(async (tx) => {
+    const deletedPost = await tx.post.delete({
+      where: {
+        id: post_id,
+      },
     });
-  }
 
-  return sendTRPCResponse(
-    {
-      status: 201,
-      message: "Postingan nya berhasil di hapus",
-    },
-    deletedPost,
-  );
+    if (!deletedPost) {
+      return sendTRPCResponse({
+        status: 400,
+        message: "Gagal menghapus data postingan",
+      });
+    }
+
+    await tx.tag_post.deleteMany({
+      where: {
+        post_id: post_id,
+      },
+    });
+
+    return sendTRPCResponse(
+      {
+        status: 201,
+        message: "Postingan nya berhasil di hapus",
+      },
+      deletedPost
+    );
+  });
 };
 
 export const reportPost = async (
   prisma: PrismaContext,
   public_id: string,
-  reason: string,
+  reason: string
 ) => {
   const post = await prisma.post.findUnique({
     where: {
@@ -539,21 +676,29 @@ export const safePost = async (prisma: PrismaContext, post_id: string) => {
 };
 
 export const takeDown = async (prisma: PrismaContext, post_id: string) => {
-  const deletedPost = await prisma.post.delete({
-    where: {
-      id: post_id,
-    },
-  });
-
-  if (!deletedPost) {
-    return sendTRPCResponse({
-      status: 400,
-      message: "Gagal take-down postingan",
+  return prisma.$transaction(async (tx) => {
+    const deletedPost = await tx.post.delete({
+      where: {
+        id: post_id,
+      },
     });
-  }
 
-  return sendTRPCResponse({
-    status: 201,
-    message: "Postingan ini berhasil di take-down",
+    if (!deletedPost) {
+      return sendTRPCResponse({
+        status: 400,
+        message: "Gagal take-down postingan",
+      });
+    }
+
+    await tx.tag_post.deleteMany({
+      where: {
+        post_id: post_id,
+      },
+    });
+
+    return sendTRPCResponse({
+      status: 201,
+      message: "Postingan ini berhasil di take-down",
+    });
   });
 };

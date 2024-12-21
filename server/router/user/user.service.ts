@@ -73,7 +73,7 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
       status: 201,
       message: "Ok akun nya berhasil terdaftar",
     },
-    createdUser,
+    createdUser
   );
 };
 
@@ -151,15 +151,15 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
     },
     {
       token,
-      refreshToken
-    },
+      refreshToken,
+    }
   );
 };
 
 export const getProfile = async (
   prisma: PrismaContext,
   user_id: string,
-  input: TUserUnique,
+  input: TUserUnique
 ) => {
   const whereClause = input.username
     ? { username: input.username }
@@ -198,6 +198,16 @@ export const getProfile = async (
       public_id: true,
       content: true,
       created_at: true,
+      tag_post: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
       _count: {
         select: {
           comments: true,
@@ -214,14 +224,14 @@ export const getProfile = async (
     {
       user: excludeField(existingUser, ["id"]),
       posts: existingUserPosts,
-    },
+    }
   );
 };
 
 export const editProfile = async (
   prisma: PrismaContext,
   user_id: string,
-  input: TUpdateUser,
+  input: TUpdateUser
 ) => {
   if (
     filterBadWord(input.username).includes("***") ||
@@ -279,6 +289,6 @@ export const searchUser = async (prisma: PrismaContext, username: string) => {
       status: 200,
       message: "Ada nih user nya",
     },
-    user,
+    user
   );
 };

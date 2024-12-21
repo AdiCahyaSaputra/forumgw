@@ -617,6 +617,16 @@ export const getDetailedGroupPost = async (
           username: true,
         },
       },
+      tag_post: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        }
+      },
       comments: {
         select: {
           id: true,
@@ -720,6 +730,16 @@ export const getGroupPostByAuthor = async (
           id: true,
           username: true,
         },
+      },
+      tag_post: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
+        }
       },
       _count: {
         select: {

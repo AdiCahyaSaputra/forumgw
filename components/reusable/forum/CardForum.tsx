@@ -1,15 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { getMetaData } from "@/lib/helper/str.helper";
+import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
 import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
 import Link from "next/link";
-import { Balancer } from "react-wrap-balancer";
+import { usePathname, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { Balancer } from "react-wrap-balancer";
 
 type TProps = {
   public_id: string;
@@ -23,6 +26,7 @@ type TProps = {
   anonymous?: {
     username: string;
   } | null;
+  tag_post: { tag: Tag }[];
   _count: {
     comments: number;
   };
@@ -34,6 +38,7 @@ const CardForum: React.FC<TProps> = ({
   created_at,
   user,
   anonymous,
+  tag_post,
   _count,
 }) => {
   const [reason, setReason] = useState("");
@@ -43,6 +48,9 @@ const CardForum: React.FC<TProps> = ({
   });
 
   const { toast } = useToast();
+
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { mutate: reportPost, isLoading } = trpc.post.reportPost.useMutation();
 
@@ -65,7 +73,7 @@ const CardForum: React.FC<TProps> = ({
 
           console.log(error);
         },
-      },
+      }
     );
   };
 
@@ -147,10 +155,28 @@ const CardForum: React.FC<TProps> = ({
           </CardTitle>
         </Link>
         <CardContent className="p-4 pt-2">
-          <div>
+          <div className="flex flex-col">
             <small className="text-foreground/60 text-sm">
               Dibuat saat {getMetaData(created_at)}
             </small>
+
+            <div className="py-2 space-x-2">
+              {tag_post.map(({ tag }, idx) => {
+                return (
+                  <Link
+                    href={`${pathname}?t=${tag.id}&${searchParams?.toString()}`}
+                    key={idx}
+                  >
+                    <Badge
+                      variant="outline"
+                      className="w-max hover:bg-muted cursor-pointer"
+                    >
+                      #{tag.name}
+                    </Badge>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
           <p className="mt-1 cst-wrap-text">
             <Balancer>{content}</Balancer>

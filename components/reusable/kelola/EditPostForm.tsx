@@ -68,6 +68,7 @@ const EditPostForm: React.FC<TProps> = ({
         ...values,
         visibilityTo: isAnonymousPost ? "anonymous" : "public",
         post_id,
+        tags: []
       },
       {
         onSuccess: (data) => {

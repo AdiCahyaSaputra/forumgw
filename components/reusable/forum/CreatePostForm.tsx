@@ -71,6 +71,7 @@ const CreatePostForm: React.FC<TProps> = ({
         category_id,
         isAnonymousPost,
         content: filterBadWord(values.content),
+        tags: []
       },
       {
         onSuccess: (data) => {

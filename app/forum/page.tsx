@@ -5,10 +5,11 @@ import CreatePostForm from "@/components/reusable/forum/CreatePostForm";
 import ObserverPlaceholder from "@/components/reusable/forum/ObserverPlaceholder";
 import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type TProps = {};
@@ -16,7 +17,10 @@ type TProps = {};
 const Forum: React.FC<TProps> = ({}) => {
   const query = useSearchParams();
   const category = query?.get("c");
+  const tag_id = query?.get("t") || null;
   const category_id = category === "fyp" ? "1" : category === "dev" ? "2" : "1";
+
+  const router = useRouter();
 
   const [openCreateMenu, setOpenCreateMenu] = useState(false);
   const [createdPost, setCreatedPost] = useState(false);
@@ -25,9 +29,10 @@ const Forum: React.FC<TProps> = ({}) => {
     data: postResponse,
     refetch,
     fetchNextPage,
-  } = trpc.post.getFeedByCategory.useInfiniteQuery(
+  } = trpc.post.getFeedByCategoryAndTag.useInfiniteQuery(
     {
       category_id,
+      tag_id
     },
     {
       getNextPageParam: (lastPost) => lastPost?.data?.cursor!,
@@ -59,6 +64,11 @@ const Forum: React.FC<TProps> = ({}) => {
       </div>
 
       <div className="container pt-4 pb-10 w-full space-y-4">
+        {tag_id && (
+          <Button onClick={() => {
+            router.push(`/forum?c=${category}`)
+          }}>Hapus filter tag</Button>
+        )}
         <EmptyState
           status={postResponse?.pages[0].status}
           message={postResponse?.pages[0].message}
