@@ -28,7 +28,7 @@ const FilterTag = () => {
         <X />
       </Button>
 
-      <div className="w-full overflow-x-auto no-scrollbar">
+      <div className="w-full overflow-x-auto no-scrollbar flex gap-2 items-center">
         {tagResponse?.data?.map((tag, idx) => (
           <Button
             onClick={() => {
