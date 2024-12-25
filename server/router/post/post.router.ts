@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   createPost,
   deletePost,
+  getAllOrSpecificTags,
   getDetailedPost,
   getFeedByCategory,
   getPostReportedReasons,
@@ -15,17 +16,39 @@ import {
 } from "./post.service";
 
 export const postRouter = router({
+  getTags: procedure
+    .input(
+      z.object({
+        tag_ids: z.array(z.string()),
+        tag_names: z.array(z.string()),
+        take_all: z.boolean().default(false),
+      }),
+    )
+    .query(
+      async ({ ctx, input }) =>
+        await getAllOrSpecificTags(
+          ctx.prisma,
+          input.tag_ids,
+          input.tag_names,
+          input.take_all,
+        ),
+    ),
   getFeedByCategoryAndTag: procedure
     .input(
       z.object({
         category_id: z.enum(["1", "2"]),
-        tag_id: z.string().nullable(),
+        tag_ids: z.array(z.string()),
         cursor: z.string().nullish(),
       }),
     )
     .query(
       async ({ ctx, input }) =>
-        await getFeedByCategory(ctx.prisma, input.category_id, input.tag_id, input.cursor),
+        await getFeedByCategory(
+          ctx.prisma,
+          input.category_id,
+          input.tag_ids,
+          input.cursor,
+        ),
     ),
   getPostReportedReasons: devProcedure
     .input(
@@ -64,20 +87,22 @@ export const postRouter = router({
         content: z.string(),
         category_id: z.enum(["1", "2"]),
         isAnonymousPost: z.boolean().default(false),
-        tags: z.array(z.object({
-          id: z.number(),
-          name: z.string(),
-        }))
+        tags: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+          }),
+        ),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const data: Omit<typeof input, "isAnonymousPost"> & { user_id: string } =
-        {
-          ...input,
-          user_id: ctx.user.id,
-          category_id:
-            ctx.user.role?.name === "developer" ? input.category_id : "1",
-        };
+      {
+        ...input,
+        user_id: ctx.user.id,
+        category_id:
+          ctx.user.role?.name === "developer" ? input.category_id : "1",
+      };
 
       return createPost(ctx.prisma, data, input.isAnonymousPost);
     }),
@@ -87,10 +112,12 @@ export const postRouter = router({
         post_id: z.string(),
         content: z.string(),
         visibilityTo: z.enum(["anonymous", "public"]),
-        tags: z.array(z.object({
-          id: z.number(),
-          name: z.string(),
-        }))
+        tags: z.array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+          }),
+        ),
       }),
     )
     .mutation(async ({ ctx, input }) => {

@@ -11,10 +11,55 @@ type TUpSertPost = {
   tags: Tag[];
 };
 
+export const getAllOrSpecificTags = async (prisma: PrismaContext, tag_ids: string[], tag_names: string[], take_all: boolean) => {
+  if(take_all) {
+    const tags = await prisma.tag.findMany({
+      take: 10
+    });
+
+    return sendTRPCResponse({
+      status: 200,
+      message: "Ok",
+    }, tags)
+  }
+
+  if(tag_ids.length > 0) {
+    const tags = await prisma.tag.findMany({
+      take: 10,
+      where: {
+        id: {
+          in: tag_ids.map(id => +id)
+        }
+      }
+    });
+
+    return sendTRPCResponse({
+      status: 200,
+      message: "Ok",
+    }, tags)
+  }
+
+  if(tag_names.length > 0) {
+    const tags = await prisma.tag.findMany({
+      take: 10,
+      where: {
+        name: {
+          in: tag_names
+        }
+      }
+    });
+
+    return sendTRPCResponse({
+      status: 200,
+      message: "Ok",
+    }, tags)
+  }
+}
+
 export const getFeedByCategory = async (
   prisma: PrismaContext,
   category_id: string,
-  tag_id: string | null,
+  tag_ids: string[],
   cursor?: string | null
 ) => {
   if (+category_id === 3) {
@@ -32,11 +77,13 @@ export const getFeedByCategory = async (
     },
   ];
 
-  if (!!tag_id) {
+  if (!!tag_ids.length) {
     whereClause.push({
       tag_post: {
         some: {
-          tag_id: +tag_id,
+          tag_id: {
+            in: tag_ids.map(id => +id),
+          }
         },
       },
     });

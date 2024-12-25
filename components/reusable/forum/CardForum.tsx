@@ -163,6 +163,12 @@ const CardForum: React.FC<TProps> = ({
             {tag_post.length > 1 && (
               <div className="py-2 space-x-2">
                 {tag_post.map(({ tag }, idx) => {
+                  let tagFilter = [tag.id.toString()]
+
+                  if(searchParams?.has("t")) {
+                    tagFilter.push(...searchParams.get("t")!.split(","))
+                  }
+
                   return (
                     <Link
                       href={`${pathname}?t=${
