@@ -18,26 +18,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
+import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, VenetianMask, X } from "lucide-react";
+import { VenetianMask } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import Tag from "@/lib/interface/Tag";
+import InputTags from "./InputTags";
 
 type TProps = {
   category_id: "1" | "2";
@@ -55,20 +43,7 @@ const formSchema = z.object({
     .max(255, {
       message: "Postingan lu kepanjangan max(255)",
     }),
-  tags: z.string().nullable(),
 });
-
-const languages = [
-  { label: "English", value: "en" },
-  { label: "French", value: "fr" },
-  { label: "German", value: "de" },
-  { label: "Spanish", value: "es" },
-  { label: "Portuguese", value: "pt" },
-  { label: "Russian", value: "ru" },
-  { label: "Japanese", value: "ja" },
-  { label: "Korean", value: "ko" },
-  { label: "Chinese", value: "zh" },
-] as const;
 
 const CreatePostForm: React.FC<TProps> = ({
   category_id,
@@ -80,28 +55,20 @@ const CreatePostForm: React.FC<TProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: "",
-      tags: null,
     },
   });
 
-  const { toast } = useToast();
-
-  const { data: tagsResponse, isLoading: isLoadingTags } =
-    trpc.post.getTags.useQuery({
-      tag_ids: [],
-      tag_names: [],
-      take_all: true,
-    });
-
-  const { mutate: createPost, isLoading } = trpc.post.createPost.useMutation();
-
   const [isAnonymousPost, setIsAnonymousPost] = useState(false);
-  const [response, setReponse] = useState({
+  const [response, setResponse] = useState({
     message: "",
   });
 
-  const [openTagSearch, setOpenTagSearch] = useState(false);
   const [tags, setTags] = useState<Tag[]>([]);
+  const [tagInput, setTagInput] = useState("");
+
+  const { toast } = useToast();
+
+  const { mutate: createPost, isLoading } = trpc.post.createPost.useMutation();
 
   const submitHandler = async (values: z.infer<typeof formSchema>) => {
     createPost(
@@ -113,18 +80,20 @@ const CreatePostForm: React.FC<TProps> = ({
       },
       {
         onSuccess: (data) => {
-          setReponse(data);
+          setResponse(data);
 
           setCreatedPost(true);
+          setTags([]);
+          setTagInput("");
         },
         onError: (error) => {
-          setReponse({
+          setResponse({
             message: "Duh error ni bre",
           });
 
           console.log(error);
         },
-      },
+      }
     );
 
     form.reset();
@@ -140,7 +109,7 @@ const CreatePostForm: React.FC<TProps> = ({
       });
 
       // set it to default again to avoid duplicate click
-      setReponse({
+      setResponse({
         message: "",
       });
     }
@@ -148,8 +117,9 @@ const CreatePostForm: React.FC<TProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${openCreateMenu ? "flex " : "hidden"
-        }`}
+      className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
+        openCreateMenu ? "flex " : "hidden"
+      }`}
     >
       <Card>
         <CardHeader>
@@ -173,79 +143,13 @@ const CreatePostForm: React.FC<TProps> = ({
                 onSubmit={form.handleSubmit(submitHandler)}
                 className="space-y-2"
               >
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <Popover open={openTagSearch}>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="default"
-                              role="combobox"
-                              className="justify-between gap-4"
-                              onClick={() => {
-                                setOpenTagSearch(!openTagSearch)
-                              }}
-                            >
-                              Tambahin Tag (Opsional)
-                              <Plus className="w-4 h-4" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent align="start" className="w-[200px] p-0">
-                          <Command>
-                            <CommandInput
-                              placeholder="Cari tag..."
-                              className="h-9"
-                            />
-                            <CommandList>
-                              <CommandEmpty>Tag nya gak ketemu</CommandEmpty>
-                              <CommandGroup>
-                                {tagsResponse?.data.map((tag, idx) => (
-                                  <CommandItem
-                                    value={tag.id.toString()}
-                                    key={idx}
-                                    onSelect={() => {
-                                      setTags((prevTags) => {
-                                        return [...prevTags, tag];
-                                      });
-                                      setOpenTagSearch(false)
-                                    }}
-                                  >
-                                    {tag.name}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                    </FormItem>
-                  )}
+                <InputTags
+                  tags={tags}
+                  setTags={setTags}
+                  tagInput={tagInput}
+                  setTagInput={setTagInput}
+                  setResponse={setResponse}
                 />
-
-                <div className="flex flex-wrap items-center gap-2 max-w-xs">
-                  {tags.map((tag, idx) => (
-                    <Button
-                      key={idx}
-                      variant="outline"
-                      className="justify-between"
-                      type="button"
-                      onClick={() => {
-                        setTags((prevTags) => {
-                          return prevTags.filter(
-                            (prevTag) => prevTag.id !== tag.id,
-                          );
-                        });
-                      }}
-                    >
-                      #{tag.name}
-                      <X className="w-4 h-4" />
-                    </Button>
-                  ))}
-                </div>
 
                 <FormField
                   control={form.control}

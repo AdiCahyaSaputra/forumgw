@@ -6,6 +6,7 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
 import { useEffect, useState } from "react";
 
@@ -23,6 +24,9 @@ type TPost = {
     username: string;
     id: string;
   } | null;
+  tag_post: {
+    tag: Tag;
+  }[];
   _count: {
     comments: number;
   };
@@ -30,7 +34,7 @@ type TPost = {
 
 const KelolaPostingan: React.FC = () => {
   const [filter, setFilter] = useState<"Public" | "Anonymous" | "Semua">(
-    "Semua",
+    "Semua"
   );
 
   const { data: postResponse, refetch } = trpc.post.getUserPosts.useQuery({

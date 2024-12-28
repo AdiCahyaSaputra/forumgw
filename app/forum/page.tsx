@@ -12,9 +12,7 @@ import { trpc } from "@/lib/trpc";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-type TProps = {};
-
-const Forum: React.FC<TProps> = ({ }) => {
+const Forum: React.FC = () => {
   const query = useSearchParams();
   const category = query?.get("c");
   const tag_ids = query?.get("t") || null;

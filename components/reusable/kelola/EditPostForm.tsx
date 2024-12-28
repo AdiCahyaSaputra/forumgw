@@ -16,15 +16,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { VenetianMask } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import InputTags from "../forum/InputTags";
 
 type TProps = {
   post_id: string;
+  tag_post: {
+    tag: Tag;
+  }[];
   content: string;
   isAnonymous: boolean;
   openEditMenu: boolean;
@@ -46,6 +51,7 @@ const formSchema = z.object({
 const EditPostForm: React.FC<TProps> = ({
   post_id,
   content,
+  tag_post,
   isAnonymous,
   openEditMenu,
   setOpenEditMenu,
@@ -58,6 +64,9 @@ const EditPostForm: React.FC<TProps> = ({
     },
   });
 
+  const [tags, setTags] = useState<Tag[]>(tag_post.map((item) => item.tag));
+  const [tagInput, setTagInput] = useState("");
+
   const [isAnonymousPost, setIsAnonymousPost] = useState(isAnonymous);
 
   const { mutate: updatePost, isLoading } = trpc.post.updatePost.useMutation();
@@ -68,12 +77,14 @@ const EditPostForm: React.FC<TProps> = ({
         ...values,
         visibilityTo: isAnonymousPost ? "anonymous" : "public",
         post_id,
-        tags: []
+        tags,
       },
       {
         onSuccess: (data) => {
           setResponse(data);
           setOpenEditMenu(false);
+
+          setTagInput("");
         },
         onError: (error) => {
           setResponse({
@@ -83,7 +94,7 @@ const EditPostForm: React.FC<TProps> = ({
           console.log(error);
           setOpenEditMenu(false);
         },
-      },
+      }
     );
   };
 
@@ -115,7 +126,17 @@ const EditPostForm: React.FC<TProps> = ({
           </CardDescription>
           <CardContent className="p-0 pt-2">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(submitHandler)}>
+              <form
+                onSubmit={form.handleSubmit(submitHandler)}
+                className="space-y-2"
+              >
+                <InputTags
+                  tags={tags}
+                  setTags={setTags}
+                  tagInput={tagInput}
+                  setTagInput={setTagInput}
+                  setResponse={setResponse}
+                />
                 <FormField
                   control={form.control}
                   name="content"

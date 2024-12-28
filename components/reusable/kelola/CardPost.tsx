@@ -12,15 +12,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getMetaData } from "@/lib/helper/str.helper";
+import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
 import { Pencil, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import EditPostForm from "./EditPostForm";
+import Link from "next/link";
+import React, { useState } from "react";
 import Balancer from "react-wrap-balancer";
+import EditPostForm from "./EditPostForm";
 
 type TProps = {
   id: string;
@@ -36,6 +39,9 @@ type TProps = {
     username: string;
     id: string;
   } | null;
+  tag_post: {
+    tag: Tag
+  }[];
   _count: {
     comments: number;
   };
@@ -48,6 +54,7 @@ const CardPost: React.FC<TProps> = ({
   created_at,
   user,
   anonymous,
+  tag_post,
   setResponse,
 }) => {
   const [openEditMenu, setOpenEditMenu] = useState(false);
@@ -79,6 +86,7 @@ const CardPost: React.FC<TProps> = ({
         openEditMenu={openEditMenu}
         setOpenEditMenu={setOpenEditMenu}
         post_id={id}
+        tag_post={tag_post}
         content={content}
         isAnonymous={!!anonymous}
         setResponse={setResponse}
@@ -113,6 +121,28 @@ const CardPost: React.FC<TProps> = ({
             <small className="text-foreground/60 font-bold">
               Dibuat saat {getMetaData(created_at)}
             </small>
+
+            {tag_post.length > 0 && (
+              <div className="py-2 space-x-2">
+                {tag_post.map(({ tag }, idx) => {
+                  return (
+                    <Link
+                      href={`/forum?c=fyp&t=${
+                        tag.id
+                      }`}
+                      key={idx}
+                    >
+                      <Badge
+                        variant="outline"
+                        className="w-max hover:bg-muted cursor-pointer"
+                      >
+                        #{tag.name}
+                      </Badge>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
           <p className="mt-1 cst-wrap-text">
             <Balancer>{content}</Balancer>

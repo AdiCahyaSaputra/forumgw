@@ -10,7 +10,7 @@ import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
 import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Balancer } from "react-wrap-balancer";
 
@@ -49,7 +49,6 @@ const CardForum: React.FC<TProps> = ({
 
   const { toast } = useToast();
 
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const { mutate: reportPost, isLoading } = trpc.post.reportPost.useMutation();
@@ -160,22 +159,19 @@ const CardForum: React.FC<TProps> = ({
               Dibuat saat {getMetaData(created_at)}
             </small>
 
-            {tag_post.length > 1 && (
+            {tag_post.length > 0 && (
               <div className="py-2 space-x-2">
                 {tag_post.map(({ tag }, idx) => {
-                  let tagFilter = [tag.id.toString()]
+                  let tagFilter = [tag.id.toString()];
 
-                  if(searchParams?.has("t")) {
-                    tagFilter.push(...searchParams.get("t")!.split(","))
+                  if (searchParams?.has("t")) {
+                    tagFilter.push(...searchParams.get("t")!.split(","));
                   }
 
+                  const tagFilterPath = `/forum?c=${searchParams?.get("c") ?? "fyp"}&t=${tagFilter.join(",")}`;
+
                   return (
-                    <Link
-                      href={`${pathname}?t=${
-                        tag.id
-                      }&${searchParams?.toString()}`}
-                      key={idx}
-                    >
+                    <Link href={tagFilterPath} key={idx}>
                       <Badge
                         variant="outline"
                         className="w-max hover:bg-muted cursor-pointer"
