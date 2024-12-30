@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   generator: "Next.js",
   applicationName: "ForumGW",
   referrer: "origin-when-cross-origin",
-  keywords: ["Next.js", "React", "JavaScript", "ForumGW"],
-  authors: [{ name: "Adics", url: "https://adics.xyz/" }],
+  keywords: ["Next.js", "React", "JavaScript", "ForumGW", "forumgw", "adics", "Adi Cahya Saputra", "adi cahya saputra"],
+  authors: [{ name: "Adi Cahya Saputra", url: "https://adics.xyz/" }],
   creator: "Adi Cahya Saputra",
   publisher: "Adi Cahya Saputra",
 };
