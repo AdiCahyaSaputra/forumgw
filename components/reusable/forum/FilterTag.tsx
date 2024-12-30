@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
 
 const FilterTag = () => {
   const query = useSearchParams();
@@ -14,7 +13,7 @@ const FilterTag = () => {
 
   const { data: tagResponse } = trpc.post.getTags.useQuery({
     tag_ids: tag_ids?.split(",") || [],
-    tag_names: [],
+    tag_names: "",
   });
 
   return (

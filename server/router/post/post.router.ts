@@ -21,8 +21,7 @@ export const postRouter = router({
     .input(
       z.object({
         tag_ids: z.array(z.string()),
-        tag_names: z.array(z.string()),
-        take_all: z.boolean().default(false),
+        tag_names: z.string(),
       })
     )
     .query(
@@ -31,7 +30,6 @@ export const postRouter = router({
           ctx.prisma,
           input.tag_ids,
           input.tag_names,
-          input.take_all
         )
     ),
   getFeedByCategoryAndTag: procedure

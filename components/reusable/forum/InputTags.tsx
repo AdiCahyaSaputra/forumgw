@@ -34,8 +34,7 @@ const InputTags = (props: Props) => {
     refetch: refetchTags,
   } = trpc.post.getTags.useQuery({
     tag_ids: [],
-    tag_names: [],
-    take_all: true,
+    tag_names: props.tagInput,
   });
 
   const { mutate: createTag, isLoading: isLoadingCreateTag } =
@@ -97,15 +96,17 @@ const InputTags = (props: Props) => {
             />
             <CommandList>
               <CommandEmpty className="p-4">
-                <Button
-                  onClick={createNewTag}
-                  size="sm"
-                  className="w-full justify-between gap-2"
-                  disabled={isLoadingCreateTag}
-                >
-                  {isLoadingCreateTag ? "Proses..." : "Bikin tag baru"}
-                  <TagsIcon className="w-4 h-4" />
-                </Button>
+                {!isLoading && (
+                  <Button
+                    onClick={createNewTag}
+                    size="sm"
+                    className="w-full justify-between gap-2"
+                    disabled={isLoadingCreateTag}
+                  >
+                    {isLoadingCreateTag ? "Proses..." : "Bikin tag baru"}
+                    <TagsIcon className="w-4 h-4" />
+                  </Button>
+                )}
               </CommandEmpty>
               <CommandGroup>
                 {tagsResponse?.data.map((tag, idx) => (
