@@ -7,7 +7,13 @@ import { compareSync, hashSync } from "bcrypt-ts";
 import { SignJWT } from "jose";
 import { nanoid } from "nanoid";
 import { z } from "zod";
-import { mentioningUserRequest } from "./../../validation/user.validation";
+import {
+  editProfileRequest,
+  getProfileRequest,
+  mentioningUserRequest,
+  signInRequest,
+  signUpRequest,
+} from "./../../validation/user.validation";
 
 type TSignUpUser = {
   name: string;
@@ -28,7 +34,10 @@ type TUpdateUser = {
   image: string | null;
 };
 
-export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
+export const signUp = async (
+  prisma: PrismaContext,
+  input: z.infer<typeof signUpRequest>
+) => {
   const username = input.username.split(" ").join("");
   const { name, password } = input;
 
@@ -80,7 +89,10 @@ export const signUp = async (prisma: PrismaContext, input: TSignUpUser) => {
   );
 };
 
-export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
+export const signIn = async (
+  prisma: PrismaContext,
+  input: z.infer<typeof signInRequest>
+) => {
   const { username, password } = input;
   const user = await prisma.user.findUnique({
     where: {
@@ -162,7 +174,7 @@ export const signIn = async (prisma: PrismaContext, input: TSignInUser) => {
 export const getProfile = async (
   prisma: PrismaContext,
   user_id: string,
-  input: TUserUnique
+  input: z.infer<typeof getProfileRequest>
 ) => {
   const whereClause = input.username
     ? { username: input.username }
@@ -234,7 +246,7 @@ export const getProfile = async (
 export const editProfile = async (
   prisma: PrismaContext,
   user_id: string,
-  input: TUpdateUser
+  input: z.infer<typeof editProfileRequest>
 ) => {
   if (
     filterBadWord(input.username).includes("***") ||

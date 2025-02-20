@@ -1,7 +1,13 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { authProcedure, procedure, router } from "@/server/trpc";
-import { mentioningUserRequest } from "@/server/validation/user.validation";
-import { z } from "zod";
+import {
+  editProfileRequest,
+  getProfileRequest,
+  mentioningUserRequest,
+  searchUserRequest,
+  signInRequest,
+  signUpRequest,
+} from "@/server/validation/user.validation";
 import {
   editProfile,
   getProfile,
@@ -13,21 +19,10 @@ import {
 
 export const userRouter = router({
   signUp: procedure
-    .input(
-      z.object({
-        username: z.string().min(3).trim().toLowerCase(),
-        name: z.string(),
-        password: z.string(),
-      })
-    )
+    .input(signUpRequest)
     .mutation(async ({ ctx, input }) => signUp(ctx.prisma, input)),
   signIn: procedure
-    .input(
-      z.object({
-        username: z.string().min(3).trim().toLowerCase(),
-        password: z.string(),
-      })
-    )
+    .input(signInRequest)
     .mutation(async ({ ctx, input }) => signIn(ctx.prisma, input)),
   getAuthUser: authProcedure.query(async ({ ctx }) => {
     const user = await ctx.prisma.user.findUnique({
@@ -57,32 +52,17 @@ export const userRouter = router({
     );
   }),
   getProfile: authProcedure
-    .input(
-      z.object({
-        username: z.string().nullable(),
-      })
-    )
+    .input(getProfileRequest)
     .query(async ({ ctx, input }) =>
       getProfile(ctx.prisma, ctx.user.id, input)
     ),
   editProfile: authProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        username: z.string().min(3).trim().toLowerCase(),
-        bio: z.string().max(100).nullable(),
-        image: z.string().nullable(),
-      })
-    )
+    .input(editProfileRequest)
     .mutation(async ({ ctx, input }) =>
       editProfile(ctx.prisma, ctx.user.id, input)
     ),
   searchUser: authProcedure
-    .input(
-      z.object({
-        username: z.string().min(1),
-      })
-    )
+    .input(searchUserRequest)
     .mutation(async ({ ctx, input }) => searchUser(ctx.prisma, input.username)),
   getUsersForMentioning: authProcedure
     .input(mentioningUserRequest)

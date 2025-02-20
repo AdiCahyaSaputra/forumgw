@@ -1,30 +1,19 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { NotificationType } from "@/lib/helper/enum.helper";
 import { PrismaContext } from "@/server/trpc";
+import {
+  createCommentRequest,
+  deleteCommentRequest,
+  editCommentRequest,
+  replyCommentRequest,
+} from "@/server/validation/comment.validation";
+import { z } from "zod";
 import { notifyMentionedUser } from "../notification/notification.service";
-
-type TInsetComment = {
-  public_id: string;
-  text: string;
-  mention_users: string[] | null;
-};
-
-type TUpdateComment = {
-  comment_id: number;
-  text: string;
-  mention_users: string[] | null;
-};
-
-type TReplyComment = {
-  comment_id: number;
-  text: string;
-  mention_users: string[] | null;
-};
 
 export const createComment = async (
   prisma: PrismaContext,
   current_user_id: string,
-  input: TInsetComment,
+  input: z.infer<typeof createCommentRequest>
 ) => {
   const currentPost = await prisma.post.findUnique({
     where: {
@@ -92,7 +81,7 @@ export const createComment = async (
             type: NotificationType.mention,
             is_read: false,
           },
-          tx,
+          tx
         );
       }
     })
@@ -112,7 +101,7 @@ export const createComment = async (
 export const editComment = async (
   prisma: PrismaContext,
   current_user_id: string,
-  input: TUpdateComment,
+  input: z.infer<typeof editCommentRequest>
 ) => {
   const currentComment = await prisma.comment.findUnique({
     where: {
@@ -151,7 +140,7 @@ export const editComment = async (
             type: NotificationType.mention,
             is_read: false,
           },
-          tx,
+          tx
         );
       }
     })
@@ -171,7 +160,7 @@ export const editComment = async (
 export const deleteComment = async (
   prisma: PrismaContext,
   current_user_id: string,
-  input: { comment_id: number },
+  input: z.infer<typeof deleteCommentRequest>
 ) => {
   const currentComment = await prisma.comment.findUnique({
     where: {
@@ -211,7 +200,7 @@ export const deleteComment = async (
 export const replyComment = async (
   prisma: PrismaContext,
   current_user_id: string,
-  input: TReplyComment,
+  input: z.infer<typeof replyCommentRequest>
 ) => {
   const isCommentExists = await prisma.comment.findUnique({
     where: {
@@ -247,12 +236,16 @@ export const replyComment = async (
       });
 
       if (input.mention_users && input.mention_users.length > 0) {
-        await notifyMentionedUser(input.mention_users, {
-          post_id: isCommentExists.post_id,
-          user_id: current_user_id,
-          type: NotificationType.mention,
-          is_read: false,
-        }, tx);
+        await notifyMentionedUser(
+          input.mention_users,
+          {
+            post_id: isCommentExists.post_id,
+            user_id: current_user_id,
+            type: NotificationType.mention,
+            is_read: false,
+          },
+          tx
+        );
       }
     })
     .catch((err) => {

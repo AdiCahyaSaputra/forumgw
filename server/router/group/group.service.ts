@@ -1,59 +1,22 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { generateAnonymousRandomString } from "@/lib/helper/str.helper";
 import { PrismaContext } from "@/server/trpc";
-
-type TUpsertGroup = {
-  name: string;
-  description: string;
-  invitedUsername: string[] | null;
-};
-
-type TAcceptOrDeclineInvite = {
-  type: "accept" | "decline";
-  invite_id: number;
-  group_id: string;
-};
-
-type TAcceptOrDeclineJoinRequest = {
-  type: "accept" | "decline";
-  request_id: number;
-  group_id: string;
-};
-
-type TUpSertPost = {
-  user_id: string;
-  group_public_id: string;
-  content: string;
-};
-
-type TDetailPostArg = {
-  public_group_id: string;
-  public_post_id: string;
-  user_id: string;
-};
-
-type TGroupPostAuthorArg = {
-  group_public_id: string;
-  withAnonymousPosts: boolean;
-  withComments: boolean;
-};
-
-type TEditGroupArg = {
-  group_public_id: string;
-  user_id: string;
-  update_data: TUpsertGroup & {
-    logo: string | null;
-  };
-};
-
-type TDeleteGroupArg = {
-  group_public_id: string;
-  user_id: string;
-};
+import {
+  acceptOrDeclineInviteRequest,
+  acceptOrDeclineJoinRequestValidation,
+  createGroupPostRequest,
+  createGroupRequest,
+  deleteGroupRequest,
+  editGroupRequest,
+  getDetailedGroupPostRequest,
+  getGroupPostByAuthorRequest,
+} from "@/server/validation/group.validation";
+import { user } from "@prisma/client";
+import { z } from "zod";
 
 export const getAllGroupByUser = async (
   prisma: PrismaContext,
-  user_id: string,
+  user_id: string
 ) => {
   const group = await prisma.group_member.findMany({
     where: {
@@ -83,14 +46,14 @@ export const getAllGroupByUser = async (
       status: 200,
       message: "Nih bre semua sirkel nya",
     },
-    group,
+    group
   );
 };
 
 export const createGroup = async (
   prisma: PrismaContext,
-  data: TUpsertGroup,
-  leader_id: string,
+  data: z.infer<typeof createGroupRequest>,
+  leader_id: string
 ) => {
   try {
     await prisma.$transaction(async (tx) => {
@@ -145,7 +108,7 @@ export const createGroup = async (
 
 export const getGroupInvitation = async (
   prisma: PrismaContext,
-  user_id: string,
+  user_id: string
 ) => {
   const invitations = await prisma.group_invitation.findMany({
     where: {
@@ -180,14 +143,14 @@ export const getGroupInvitation = async (
       status: 200,
       message: "Ada undangan ni bre",
     },
-    invitations,
+    invitations
   );
 };
 
 export const acceptOrDeclineInvite = async (
   prisma: PrismaContext,
-  data: TAcceptOrDeclineInvite,
-  user_id: string,
+  data: z.infer<typeof acceptOrDeclineInviteRequest>,
+  user_id: string
 ) => {
   try {
     await prisma.$transaction(async (tx) => {
@@ -232,7 +195,7 @@ export const acceptOrDeclineInvite = async (
 export const getGroupByQuery = async (
   prisma: PrismaContext,
   user_id: string,
-  searchTerm: string | null,
+  searchTerm: string | null
 ) => {
   if (searchTerm) {
     const groups = await prisma.group.findMany({
@@ -292,7 +255,7 @@ export const getGroupByQuery = async (
         status: 200,
         message: "Nih sirkel nya bre",
       },
-      data,
+      data
     );
   }
 
@@ -352,14 +315,14 @@ export const getGroupByQuery = async (
       status: 200,
       message: "Nih sirkel nya bre",
     },
-    data,
+    data
   );
 };
 
 export const getGroupByPublicId = async (
   prisma: PrismaContext,
   user_id: string,
-  public_id: string,
+  public_id: string
 ) => {
   const group = await prisma.group.findFirst({
     where: {
@@ -430,7 +393,7 @@ export const getGroupByPublicId = async (
   } = {
     ...group,
     isMember: !!group.group_member.filter(
-      ({ user_id: member_user_id }) => member_user_id === user_id,
+      ({ user_id: member_user_id }) => member_user_id === user_id
     ).length,
     isLeader: group.leader.id === user_id,
   };
@@ -457,14 +420,14 @@ export const getGroupByPublicId = async (
       status: 200,
       message: "Nih bre sirkel dan post nya",
     },
-    data,
+    data
   );
 };
 
 export const createGroupPost = async (
   prisma: PrismaContext,
-  data: TUpSertPost,
-  isAnonymousPost: boolean,
+  data: z.infer<typeof createGroupPostRequest> & { user_id: user["id"] },
+  isAnonymousPost: boolean
 ) => {
   const group = await prisma.group.findFirst({
     where: {
@@ -567,7 +530,7 @@ export const createGroupPost = async (
 
 export const getDetailedGroupPost = async (
   prisma: PrismaContext,
-  data: TDetailPostArg,
+  data: z.infer<typeof getDetailedGroupPostRequest> & { user_id: user["id"] }
 ) => {
   const group = await prisma.group.findFirst({
     where: {
@@ -623,9 +586,9 @@ export const getDetailedGroupPost = async (
             select: {
               id: true,
               name: true,
-            }
-          }
-        }
+            },
+          },
+        },
       },
       comments: {
         select: {
@@ -658,14 +621,14 @@ export const getDetailedGroupPost = async (
       status: 200,
       message: "Postingan beserta komentar nya",
     },
-    existingPostWithComments,
+    existingPostWithComments
   );
 };
 
 export const getGroupPostByAuthor = async (
   prisma: PrismaContext,
-  data: TGroupPostAuthorArg,
-  user_id: string,
+  data: z.infer<typeof getGroupPostByAuthorRequest>,
+  user_id: string
 ) => {
   const group = await prisma.group.findFirst({
     where: {
@@ -737,9 +700,9 @@ export const getGroupPostByAuthor = async (
             select: {
               id: true,
               name: true,
-            }
-          }
-        }
+            },
+          },
+        },
       },
       _count: {
         select: {
@@ -764,11 +727,14 @@ export const getGroupPostByAuthor = async (
       status: 200,
       message: "Semua postingan yang orang ini posting",
     },
-    existingPosts,
+    existingPosts
   );
 };
 
-export const editGroup = async (prisma: PrismaContext, data: TEditGroupArg) => {
+export const editGroup = async (
+  prisma: PrismaContext,
+  data: z.infer<typeof editGroupRequest> & { user_id: user["id"] }
+) => {
   const group = await prisma.group.findFirst({
     where: {
       AND: [
@@ -814,7 +780,7 @@ export const editGroup = async (prisma: PrismaContext, data: TEditGroupArg) => {
 
         const kickedMember = groupMember
           .filter(
-            ({ user_id }) => !invitedUsers.some((user) => user_id === user.id),
+            ({ user_id }) => !invitedUsers.some((user) => user_id === user.id)
           )
           .map((user) => user.user_id);
 
@@ -835,7 +801,7 @@ export const editGroup = async (prisma: PrismaContext, data: TEditGroupArg) => {
 
         const data = invitedUsers.map((user) => {
           const isAlreadyMember = !!groupMember.find(
-            (member) => member.user_id === user.id,
+            (member) => member.user_id === user.id
           );
 
           return {
@@ -885,7 +851,7 @@ export const editGroup = async (prisma: PrismaContext, data: TEditGroupArg) => {
 
 export const deleteGroup = async (
   prisma: PrismaContext,
-  data: TDeleteGroupArg,
+  data: z.infer<typeof deleteGroupRequest> & { user_id: user["id"] }
 ) => {
   const group = await prisma.group.findFirst({
     where: {
@@ -929,7 +895,7 @@ export const deleteGroup = async (
 
 export const getGroupByAuthor = async (
   prisma: PrismaContext,
-  user_id: string,
+  user_id: string
 ) => {
   const groups = await prisma.group.findMany({
     where: {
@@ -960,14 +926,14 @@ export const getGroupByAuthor = async (
       status: 200,
       message: "Ni semua sirkel kamu",
     },
-    groups,
+    groups
   );
 };
 
 export const getDetailedGroupMemberByPublicId = async (
   prisma: PrismaContext,
   user_id: string,
-  public_id: string,
+  public_id: string
 ) => {
   const group = await prisma.group.findFirst({
     where: {
@@ -1009,14 +975,14 @@ export const getDetailedGroupMemberByPublicId = async (
       status: 200,
       message: "Ni sirkel kamu",
     },
-    group,
+    group
   );
 };
 
 export const askToJoinGroup = async (
   prisma: PrismaContext,
   user_id: string,
-  public_id: string,
+  public_id: string
 ) => {
   const group = await prisma.group.findFirst({
     where: {
@@ -1092,7 +1058,7 @@ export const askToJoinGroup = async (
 export const getGroupJoinRequest = async (
   prisma: PrismaContext,
   user_id: string,
-  public_id: string,
+  public_id: string
 ) => {
   const group = await prisma.group.findFirst({
     where: {
@@ -1144,14 +1110,14 @@ export const getGroupJoinRequest = async (
       status: 200,
       message: "Nih data user yg mau join",
     },
-    requestedUsers,
+    requestedUsers
   );
 };
 
 export const acceptOrDeclineJoinRequest = async (
   prisma: PrismaContext,
-  data: TAcceptOrDeclineJoinRequest,
-  user_id: string,
+  data: z.infer<typeof acceptOrDeclineJoinRequestValidation>,
+  user_id: string
 ) => {
   const isLeader = await prisma.group.findFirst({
     where: {
@@ -1233,7 +1199,7 @@ export const acceptOrDeclineJoinRequest = async (
 export const exitFromGroup = async (
   prisma: PrismaContext,
   user_id: string,
-  public_id: string,
+  public_id: string
 ) => {
   const group = await prisma.group.findFirst({
     where: {
