@@ -2,16 +2,17 @@
 
 import CardForum from "@/components/reusable/forum/CardForum";
 import Comment from "@/components/reusable/forum/Comment";
+import InputComment from "@/components/reusable/forum/InputComment";
 import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
+import { user } from "@prisma/client";
 import { Send } from "lucide-react";
 import React, { use, useEffect, useState } from "react";
 
@@ -48,15 +49,22 @@ const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
     message: "",
   });
 
+  const [mentionUserIds, setMentionUserIds] = useState<user["id"][]>([]);
+
   const { currentUser } = useAuth();
   const { toast } = useToast();
 
   const submitHandler: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+
+    const countOfMentionUserInComment = commentText.split(' ').filter(comment => comment.startsWith('@')).length;
+    const correctedMentionedUserIds = mentionUserIds.slice(0, countOfMentionUserInComment);
+
     createComment(
       {
         public_id: publicId,
         text: filterBadWord(commentText),
+        mention_users: correctedMentionedUserIds,
       },
       {
         onSuccess: (data) => {
@@ -128,12 +136,11 @@ const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
                 onSubmit={submitHandler}
                 className="flex items-center grow gap-2"
               >
-                <Input
-                  type="text"
-                  placeholder="Komentar..."
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  required
+                <InputComment
+                  commentText={commentText}
+                  setCommentText={setCommentText}
+                  mentionUserIds={mentionUserIds}
+                  setMentionUserIds={setMentionUserIds}
                 />
                 <Button size="icon" type="submit" disabled={isLoading}>
                   <Send className="w-4 aspect-square" />

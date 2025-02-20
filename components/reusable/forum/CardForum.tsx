@@ -162,13 +162,12 @@ const CardForum: React.FC<TProps> = ({
             {tag_post.length > 0 && (
               <div className="py-2 space-x-2">
                 {tag_post.map(({ tag }, idx) => {
-                  let tagFilter = [tag.id.toString()];
+                  const category = searchParams?.get("c") ?? "fyp";
+                  const existingTags = searchParams?.get("t");
+                  const newTagId = tag.id;
+                  const tagList = existingTags ? `${newTagId},${existingTags}` : newTagId;
 
-                  if (searchParams?.has("t")) {
-                    tagFilter.push(...searchParams.get("t")!.split(","));
-                  }
-
-                  const tagFilterPath = `/forum?c=${searchParams?.get("c") ?? "fyp"}&t=${tagFilter.join(",")}`;
+                  const tagFilterPath = `/forum?c=${category}&t=${tagList}`;
 
                   return (
                     <Link href={tagFilterPath} key={idx}>

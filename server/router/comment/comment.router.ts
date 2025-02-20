@@ -1,35 +1,36 @@
 import { authProcedure, router } from "@/server/trpc";
-import { z } from "zod";
-import { createComment, deleteComment, editComment } from "./comment.service";
+import {
+  createComment,
+  deleteComment,
+  editComment,
+  replyComment,
+} from "./comment.service";
+import {
+  createCommentRequest,
+  deleteCommentRequest,
+  editCommentRequest,
+  replyCommentRequest,
+} from "@/server/validation/comment.validation";
 
 export const commentRouter = router({
   createComment: authProcedure
-    .input(
-      z.object({
-        public_id: z.string(),
-        text: z.string(),
-      }),
-    )
+    .input(createCommentRequest)
     .mutation(async ({ ctx, input }) =>
       createComment(ctx.prisma, ctx.user.id, input),
     ),
   editComment: authProcedure
-    .input(
-      z.object({
-        comment_id: z.number(),
-        text: z.string(),
-      }),
-    )
+    .input(editCommentRequest)
     .mutation(async ({ ctx, input }) =>
       editComment(ctx.prisma, ctx.user.id, input),
     ),
   deleteComment: authProcedure
-    .input(
-      z.object({
-        comment_id: z.number(),
-      }),
-    )
+    .input(deleteCommentRequest)
     .mutation(async ({ ctx, input }) =>
       deleteComment(ctx.prisma, ctx.user.id, input),
+    ),
+  replyComment: authProcedure
+    .input(replyCommentRequest)
+    .mutation(async ({ ctx, input }) =>
+      replyComment(ctx.prisma, ctx.user.id, input),
     ),
 });

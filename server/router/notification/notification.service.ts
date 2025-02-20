@@ -1,6 +1,17 @@
 import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { NotificationType } from "@/lib/helper/enum.helper";
+import { prisma } from "@/prisma/db";
 import { PrismaContext } from "@/server/trpc";
+import { PrismaClient, user } from "@prisma/client";
+import { ITXClientDenyList } from "@prisma/client/runtime/library";
+
+type TInsertNotification = {
+  post_id: string;
+  user_id: string;
+  type: NotificationType;
+  is_read: boolean;
+  to_user: string;
+};
 
 export const getNotification = async (
   prisma: PrismaContext,
@@ -9,10 +20,6 @@ export const getNotification = async (
   const notifications = await prisma.notification.findMany({
     where: {
       to_user: author_id,
-      OR: [
-        { type: NotificationType.comment },
-        { type: NotificationType.report },
-      ],
     },
     select: {
       id: true,
@@ -77,4 +84,34 @@ export const notificationIsReaded = async (
     status: 201,
     message: "Ok bre, Rajin banget baca notif :)",
   });
+};
+
+export const notifyMentionedUser = async (
+  userIds: user["id"][],
+  data: Omit<TInsertNotification, "to_user">,
+  tx?: Omit<PrismaClient, ITXClientDenyList>,
+) => {
+  try {
+    const notifications = userIds.map((mentionedUserId) => ({
+      ...data,
+      to_user: mentionedUserId,
+    }));
+
+    if (tx) {
+      await tx.notification.createMany({
+        data: notifications,
+      });
+
+      return;
+    }
+
+    await prisma.notification.createMany({
+      data: notifications,
+    });
+
+    return;
+  } catch (err) {
+    console.error(err);
+    throw Error("Gak bisa notifikasiin user");
+  }
 };

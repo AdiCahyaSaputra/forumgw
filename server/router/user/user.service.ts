@@ -2,9 +2,12 @@ import { sendTRPCResponse } from "@/lib/helper/api.helper";
 import { excludeField } from "@/lib/helper/obj.helper";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
 import type { PrismaContext } from "@/server/trpc";
+import { user } from "@prisma/client";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { SignJWT } from "jose";
 import { nanoid } from "nanoid";
+import { z } from "zod";
+import { mentioningUserRequest } from "./../../validation/user.validation";
 
 type TSignUpUser = {
   name: string;
@@ -290,5 +293,48 @@ export const searchUser = async (prisma: PrismaContext, username: string) => {
       message: "Ada nih user nya",
     },
     user
+  );
+};
+
+export const getUsersForMentioning = async (
+  prisma: PrismaContext,
+  input: z.infer<typeof mentioningUserRequest>,
+  currentUserId: user["id"]
+) => {
+  const usernameString = input.username?.slice(1); // Ignore the '@' on username string
+
+  let whereClause: Object = {
+    id: {
+      not: currentUserId,
+    },
+  };
+
+  if (usernameString && usernameString.length > 0) {
+    whereClause = {
+      ...whereClause,
+      username: {
+        contains: usernameString,
+        mode: "insensitive",
+      },
+    };
+  }
+
+  const users = (await prisma.user.findMany({
+    take: 5,
+    where: whereClause,
+    select: {
+      id: true,
+      image: true,
+      name: true,
+      username: true,
+    },
+  })) as Pick<user, "id" | "username" | "name" | "image">[];
+
+  return sendTRPCResponse(
+    {
+      status: users.length > 0 ? 200 : 404,
+      message: "Ok",
+    },
+    users
   );
 };

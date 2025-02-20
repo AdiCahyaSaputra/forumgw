@@ -5,7 +5,6 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/components/ui/use-toast";
 import { NotificationType } from "@/lib/helper/enum.helper";
 import { trpc } from "@/lib/trpc";
 import Link from "next/link";
@@ -18,8 +17,6 @@ const Notifikasi = () => {
 
   const { data: notificationResponse, refetch: notificationRefetch } =
     trpc.notification.getNotification.useQuery();
-
-  const { toast } = useToast();
 
   const { mutate: thisNotificationHasBeenReaded } =
     trpc.notification.notificationIsReaded.useMutation();
@@ -34,12 +31,15 @@ const Notifikasi = () => {
   };
 
   const getNotifMessage = (type: string) => {
-    if (type === NotificationType.comment) {
-      return `mengomentari postingan anda`;
-    }
-
-    if (type === NotificationType.report) {
-      return `melaporkan postingan anda`;
+    switch(type) {
+      case NotificationType.comment:
+        return "💬 mengomentari postingan anda";
+      case NotificationType.reply:
+        return "🗨️ membalas komentar anda";
+      case NotificationType.report:
+        return "⚠️ melaporkan postingan anda";
+      case NotificationType.mention:
+        return "🫵 menyebut anda di komentar";
     }
   };
 
@@ -50,11 +50,6 @@ const Notifikasi = () => {
       },
       {
         onSuccess: (data) => {
-          toast({
-            title: "Notifikasi",
-            description: data.message,
-          });
-
           notificationRefetch();
         },
       },

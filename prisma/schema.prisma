@@ -28,6 +28,7 @@ model user {
   group_member       group_member[]
   group_invitation   group_invitation[]
   group_join_request group_join_request[]
+  reply_comment      reply_comment[]
 }
 
 model post {
@@ -98,6 +99,22 @@ model comment {
   user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String
 
+  reply_comment reply_comment[]
+
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+}
+
+model reply_comment {
+  id   Int    @id @default(autoincrement())
+  text String
+
+  comment    comment @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  comment_id Int
+
+  user    user   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
@@ -105,7 +122,7 @@ model comment {
 model notification {
   id String @id @default(uuid())
 
-  type    String // report, comment
+  type    String // report, comment, mention, reply
   is_read Boolean @default(false)
 
   to_user String
