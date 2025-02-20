@@ -247,12 +247,12 @@ export const replyComment = async (
       });
 
       if (input.mention_users && input.mention_users.length > 0) {
-        notifyMentionedUser(input.mention_users, {
+        await notifyMentionedUser(input.mention_users, {
           post_id: isCommentExists.post_id,
           user_id: current_user_id,
           type: NotificationType.mention,
           is_read: false,
-        });
+        }, tx);
       }
     })
     .catch((err) => {

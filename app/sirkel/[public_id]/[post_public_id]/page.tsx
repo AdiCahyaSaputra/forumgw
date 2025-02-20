@@ -2,36 +2,21 @@
 
 import CardForum from "@/components/reusable/forum/CardForum";
 import Comment from "@/components/reusable/forum/Comment";
+import InputComment from "@/components/reusable/forum/InputComment";
 import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
+import CommentLoaderState from "@/components/reusable/state/CommentLoaderState";
+import CreateCommentLoaderState from "@/components/reusable/state/CreateCommentLoaderState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
+import { user } from "@prisma/client";
 import { Send } from "lucide-react";
 import React, { use, useEffect, useState } from "react";
-
-const CreateCommentLoader = () => {
-  return (
-    <div className="flex items-center gap-2 mt-4">
-      <Skeleton className="w-8 h-8 rounded-md" />
-      <Skeleton className="grow h-8 rounded-md" />
-    </div>
-  );
-};
-
-const CommentLoader = () => {
-  return (
-    <div className="flex items-start gap-2 mt-4">
-      <Skeleton className="w-10 h-10 rounded-md" />
-      <Skeleton className="grow h-24 rounded-md" />
-    </div>
-  );
-};
 
 type Props = {
   params: Promise<{
@@ -57,15 +42,28 @@ const GroupPostDetailPage = ({ params }: Props) => {
     message: "",
   });
 
+  const [mentionUserIds, setMentionUserIds] = useState<user["id"][]>([]);
+
   const { currentUser } = useAuth();
   const { toast } = useToast();
 
   const submitHandler: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
+
+    const countOfMentionUserInComment = commentText
+      .split(" ")
+      .filter((comment) => comment.startsWith("@")).length;
+
+    const correctedMentionedUserIds = mentionUserIds.slice(
+      0,
+      countOfMentionUserInComment
+    );
+
     createComment(
       {
         public_id: post_public_id,
         text: filterBadWord(commentText),
+        mention_users: correctedMentionedUserIds
       },
       {
         onSuccess: (data) => {
@@ -123,7 +121,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
         </LoadingState>
         <LoadingState
           data={currentUser}
-          loadingFallback={<CreateCommentLoader />}
+          loadingFallback={<CreateCommentLoaderState />}
         >
           {currentUser && (
             <div className="mt-4 flex items-center gap-2">
@@ -137,12 +135,11 @@ const GroupPostDetailPage = ({ params }: Props) => {
                 onSubmit={submitHandler}
                 className="flex items-center grow gap-2"
               >
-                <Input
-                  type="text"
-                  placeholder="Komentar..."
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  required
+                <InputComment
+                  commentText={commentText}
+                  setCommentText={setCommentText}
+                  mentionUserIds={mentionUserIds}
+                  setMentionUserIds={setMentionUserIds}
                 />
                 <Button size="icon" type="submit" disabled={isLoading}>
                   <Send className="w-4 aspect-square" />
@@ -154,7 +151,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
         <div className="mt-4 space-y-2">
           <LoadingState
             data={postResponse?.data}
-            loadingFallback={<CommentLoader />}
+            loadingFallback={<CommentLoaderState />}
           >
             {postResponse?.data?.comments.map((comment) => (
               <Comment

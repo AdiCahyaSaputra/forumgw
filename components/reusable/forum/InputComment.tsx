@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
 import { user } from "@prisma/client";
-import React, { ChangeEventHandler, useState } from "react";
+import React, { ChangeEventHandler, useRef, useState } from "react";
 import EmptyState from "../state/EmptyState";
 import LoadingState from "../state/LoadingState";
 
@@ -23,6 +23,8 @@ const InputComment = ({
   const [usernameToMention, setUsernameToMention] = useState("");
   const [showUserOptions, setShowUserOptions] = useState(false);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const { data: userResponse } = trpc.user.getUsersForMentioning.useQuery(
     { username: usernameToMention },
     {
@@ -41,9 +43,7 @@ const InputComment = ({
         splittedCommentTextInput[splittedCommentTextInput.length - 1];
 
       setShowUserOptions(lastInputText.startsWith("@"));
-      setUsernameToMention(
-        lastInputText.startsWith("@") ? lastInputText : ""
-      );
+      setUsernameToMention(lastInputText.startsWith("@") ? lastInputText : "");
     } else {
       setShowUserOptions(false);
       setUsernameToMention("");
@@ -61,12 +61,14 @@ const InputComment = ({
 
     setCommentText(commentTextCompletion.join(" "));
 
-    if(lastMentionedUserId !== user.id) {
+    if (lastMentionedUserId !== user.id) {
       setMentionUserIds([...mentionUserIds, user.id]);
     }
 
     setShowUserOptions(false);
     setUsernameToMention("");
+
+    inputRef.current?.focus();
   };
 
   return (
@@ -77,6 +79,7 @@ const InputComment = ({
         value={commentText}
         onChange={commentChangeHandler}
         required
+        ref={inputRef}
       />
       {showUserOptions && (
         <div className="absolute -bottom-25 shadow-md p-2 bg-background inset-x-0 rounded-lg border">
@@ -84,26 +87,32 @@ const InputComment = ({
             data={userResponse?.data}
             loadingFallback={<p>Lagi di cari...</p>}
           >
-            <EmptyState status={userResponse?.status} message="Gak ada wkwkwk (btw nge tag diri sendiri is prohibited yaw)">
+            <EmptyState
+              status={userResponse?.status}
+              message="Gak ada wkwkwk (btw nge tag diri sendiri is prohibited yaw)"
+            >
               {userResponse?.data.map((user, idx) => (
-                <div
+                <button
+                  role="option"
+                  aria-selected="false"
+                  type="button"
                   key={idx}
-                  className="p-2 flex gap-4 hover:bg-secondary rounded-lg cursor-pointer"
+                  className="p-2 flex gap-4 hover:bg-secondary rounded-lg cursor-pointer w-full focus:outline-none focus:bg-secondary"
                   onClick={() => mentionUserHandler(user)}
                 >
-                  <Avatar>
-                    <AvatarImage src={user.image || ""} />
-                    <AvatarFallback>
+                  <Avatar className="rounded-lg">
+                    <AvatarImage className="rounded-lg" src={user.image || ""} />
+                    <AvatarFallback className="rounded-lg">
                       {user.username[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="text-left">
                     <h4 className="font-bold lg:text-base text-sm">
                       {user.name}
                     </h4>
                     <p className="lg:text-sm text-xs">@{user.username}</p>
                   </div>
-                </div>
+                </button>
               ))}
             </EmptyState>
           </LoadingState>
