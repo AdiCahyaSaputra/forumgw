@@ -20,7 +20,7 @@ const NavItem: React.FC<TProps> = ({ url, Icon, label }) => {
   const isActive = checkCurrentActiveUrl(pathname, url, query);
 
   return (
-    <li>
+    <li className="cursor-pointer">
       <Link href={url}>
         <Button
           variant={isActive ? "default" : "ghost"}

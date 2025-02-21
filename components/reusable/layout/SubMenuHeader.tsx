@@ -13,7 +13,7 @@ type TProps = {
 
 const SubMenuHeader: React.FC<TProps> = ({ backUrl, title, data }) => {
   return (
-    <div className="flex container z-10 border-b bg-white supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:backdrop-blur-md items-center sticky top-0 py-4 justify-between lg:justify-start gap-4">
+    <div className="flex container z-10 border-b bg-white supports-backdrop-filter:bg-white/60 supports-backdrop-filter:backdrop-blur-md items-center sticky top-0 py-4 justify-between lg:justify-start gap-4">
       <Link href={backUrl}>
         <Button variant="outline" size="icon">
           <ChevronLeft className="w-4 aspect-square" />

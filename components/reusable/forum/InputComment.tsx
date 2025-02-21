@@ -97,7 +97,7 @@ const InputComment = ({
                   aria-selected="false"
                   type="button"
                   key={idx}
-                  className="p-2 flex gap-4 hover:bg-secondary rounded-lg cursor-pointer w-full focus:outline-none focus:bg-secondary"
+                  className="p-2 flex gap-4 hover:bg-secondary rounded-lg cursor-pointer w-full focus:outline-hidden focus:bg-secondary"
                   onClick={() => mentionUserHandler(user)}
                 >
                   <Avatar className="rounded-lg">

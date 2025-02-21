@@ -51,7 +51,7 @@ const Forum: React.FC = () => {
         setOpenCreateMenu={setOpenCreateMenu}
         setCreatedPost={setCreatedPost}
       />
-      <div className="py-4 flex w-full bg-white supports-[backdrop-filter]:bg-white/60 border-b container supports-[backdrop-filter]:backdrop-blur-md sticky z-10 top-0">
+      <div className="py-4 flex w-full bg-white supports-backdrop-filter:bg-white/60 border-b container supports-backdrop-filter:backdrop-blur-md sticky z-10 top-0">
         <Input
           className="w-full"
           placeholder="Ada berita apa hari ini? Cerita yuk"

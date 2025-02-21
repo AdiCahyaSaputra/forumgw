@@ -11,7 +11,7 @@ type TProps = {
 
 const LoginLayout: React.FC<TProps> = ({ children }) => {
   return (
-    <main className="flex items-center h-screen justify-center">
+    <main className="flex items-center h-[100vh] justify-center">
       {children}
     </main>
   );
