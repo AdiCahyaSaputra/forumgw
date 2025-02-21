@@ -34,7 +34,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
       public_post_id: post_public_id,
     });
 
-  const { mutate: createComment, isLoading } =
+  const { mutate: createComment, isPending } =
     trpc.comment.createComment.useMutation();
 
   const [commentText, setCommentText] = useState("");
@@ -141,7 +141,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
                   mentionUserIds={mentionUserIds}
                   setMentionUserIds={setMentionUserIds}
                 />
-                <Button size="icon" type="submit" disabled={isLoading}>
+                <Button size="icon" type="submit" disabled={isPending}>
                   <Send className="w-4 aspect-square" />
                 </Button>
               </form>

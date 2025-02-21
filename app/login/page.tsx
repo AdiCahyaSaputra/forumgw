@@ -2,19 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -56,7 +56,7 @@ const Login: React.FC = () => {
     },
   });
 
-  const { mutate: signIn, isLoading } = trpc.user.signIn.useMutation();
+  const { mutate: signIn, isPending } = trpc.user.signIn.useMutation();
 
   const [response, setResponse] = useState({
     status: 0,
@@ -165,10 +165,10 @@ const Login: React.FC = () => {
 
                   <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isPending}
                     className="mt-4 w-full"
                   >
-                    {isLoading ? "Proses..." : "Login"}
+                    {isPending ? "Proses..." : "Login"}
                   </Button>
                 </form>
               </Form>

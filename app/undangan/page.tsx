@@ -4,11 +4,11 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +24,7 @@ type TInviteHandle = {
 const UndanganPage = () => {
   const { data: invitationResponse, refetch } =
     trpc.group.getGroupInvitation.useQuery();
-  const { mutate: acceptOrDeclineInvite, isLoading } =
+  const { mutate: acceptOrDeclineInvite, isPending } =
     trpc.group.acceptOrDeclineInvite.useMutation();
 
   const { toast } = useToast();
@@ -94,7 +94,7 @@ const UndanganPage = () => {
                     <div className="flex gap-2">
                       <Button
                         type="button"
-                        disabled={isLoading}
+                        disabled={isPending}
                         onClick={() =>
                           handleInvite({
                             type: "accept",
@@ -106,7 +106,7 @@ const UndanganPage = () => {
                         Ayo aja 😎
                       </Button>
                       <Button
-                        disabled={isLoading}
+                        disabled={isPending}
                         type="button"
                         variant="outline"
                         onClick={() =>

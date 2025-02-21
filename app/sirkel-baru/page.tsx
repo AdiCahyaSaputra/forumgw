@@ -4,18 +4,18 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -66,8 +66,8 @@ const BuatSrikelPage = () => {
   const { currentUser } = useAuth();
   const { toast } = useToast();
 
-  const { mutate: searchUser, isLoading } = trpc.user.searchUser.useMutation();
-  const { mutate: createGroup, isLoading: createGroupLoading } =
+  const { mutate: searchUser, isPending } = trpc.user.searchUser.useMutation();
+  const { mutate: createGroup, isPending: createGroupLoading } =
     trpc.group.createGroup.useMutation();
 
   const isUserAlreadyInvited = (username: string) => {
@@ -227,9 +227,9 @@ const BuatSrikelPage = () => {
                     );
                   }}
                   type="button"
-                  disabled={isLoading}
+                  disabled={isPending}
                 >
-                  {isLoading ? "Proses.." : "Cari User"}
+                  {isPending ? "Proses.." : "Cari User"}
                 </Button>
 
                 <ul>

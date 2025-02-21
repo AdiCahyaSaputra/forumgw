@@ -6,15 +6,15 @@ import CreateGroupPostForm from "@/components/reusable/sirkel/CreateGroupPostFor
 import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ const SirkelDetailPage = ({ params }: Props) => {
     });
 
   const { mutate: exitFromGroup } = trpc.group.exitFromGroup.useMutation();
-  const { mutate: askToJoinGroup, isLoading } =
+  const { mutate: askToJoinGroup, isPending } =
     trpc.group.askToJoinGroup.useMutation();
 
   const { toast } = useToast();

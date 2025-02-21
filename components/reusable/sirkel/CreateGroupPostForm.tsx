@@ -2,18 +2,18 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
@@ -58,7 +58,7 @@ const CreateGroupPostForm: React.FC<TProps> = ({
 
   const { toast } = useToast();
 
-  const { mutate: createPost, isLoading } =
+  const { mutate: createPost, isPending } =
     trpc.group.createGroupPost.useMutation();
 
   const [isAnonymousPost, setIsAnonymousPost] = useState(false);
@@ -149,8 +149,8 @@ const CreateGroupPostForm: React.FC<TProps> = ({
                   )}
                 />
                 <div className="mt-3 flex lg:flex-row flex-col lg:items-center lg:justify-start gap-2">
-                  <Button disabled={isLoading} type="submit" className="grow">
-                    {isLoading ? "Proses..." : "Buat Postingan"}
+                  <Button disabled={isPending} type="submit" className="grow">
+                    {isPending ? "Proses..." : "Buat Postingan"}
                   </Button>
                   <Button
                     onClick={() => setOpenCreateMenu(false)}

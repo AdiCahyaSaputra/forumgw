@@ -1,16 +1,16 @@
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
 } from "@/components/ui/command";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from "@/components/ui/popover";
 import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
@@ -30,14 +30,14 @@ const InputTags = (props: Props) => {
 
   const {
     data: tagsResponse,
-    isLoading,
+    isPending,
     refetch: refetchTags,
   } = trpc.post.getTags.useQuery({
     tag_ids: [],
     tag_names: props.tagInput,
   });
 
-  const { mutate: createTag, isLoading: isLoadingCreateTag } =
+  const { mutate: createTag, isPending: isPendingCreateTag } =
     trpc.post.createPostTag.useMutation();
 
   const createNewTag = async () => {
@@ -96,14 +96,14 @@ const InputTags = (props: Props) => {
             />
             <CommandList>
               <CommandEmpty className="p-4">
-                {!isLoading && (
+                {!isPending && (
                   <Button
                     onClick={createNewTag}
                     size="sm"
                     className="w-full justify-between gap-2"
-                    disabled={isLoadingCreateTag}
+                    disabled={isPendingCreateTag}
                   >
-                    {isLoadingCreateTag ? "Proses..." : "Bikin tag baru"}
+                    {isPendingCreateTag ? "Proses..." : "Bikin tag baru"}
                     <TagsIcon className="w-4 h-4" />
                   </Button>
                 )}

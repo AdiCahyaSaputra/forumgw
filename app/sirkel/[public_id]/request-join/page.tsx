@@ -31,7 +31,7 @@ const RequestJoinPage = ({ params }: Props) => {
       public_id: public_id,
     });
 
-  const { mutate: acceptOrDeclineJoinRequest, isLoading } =
+  const { mutate: acceptOrDeclineJoinRequest, isPending } =
     trpc.group.acceptOrDeclineJoinRequest.useMutation();
 
   const { toast } = useToast();
@@ -110,7 +110,7 @@ const RequestJoinPage = ({ params }: Props) => {
 
                       <div className="mt-4 flex gap-2">
                         <Button
-                          disabled={isLoading}
+                          disabled={isPending}
                           onClick={() =>
                             handleJoinRequest({
                               type: "accept",
@@ -122,7 +122,7 @@ const RequestJoinPage = ({ params }: Props) => {
                           Terima&nbsp;😁
                         </Button>
                         <Button
-                          disabled={isLoading}
+                          disabled={isPending}
                           onClick={() =>
                             handleJoinRequest({
                               type: "decline",

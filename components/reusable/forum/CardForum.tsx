@@ -51,7 +51,7 @@ const CardForum: React.FC<TProps> = ({
 
   const searchParams = useSearchParams();
 
-  const { mutate: reportPost, isLoading } = trpc.post.reportPost.useMutation();
+  const { mutate: reportPost, isPending } = trpc.post.reportPost.useMutation();
 
   const reportHandler = () => {
     reportPost(
@@ -110,11 +110,11 @@ const CardForum: React.FC<TProps> = ({
           <CardFooter className="p-4 pt-0 flex gap-2 justify-between">
             <Button
               onClick={reportHandler}
-              disabled={isLoading}
+              disabled={isPending}
               className="w-1/2"
               variant="destructive"
             >
-              {isLoading ? "Proses..." : "Laporin"}
+              {isPending ? "Proses..." : "Laporin"}
             </Button>
             <Button
               onClick={() => setOpenReason(false)}

@@ -5,10 +5,10 @@ import LoadingState from "@/components/reusable/state/LoadingState";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -30,7 +30,7 @@ const GabungSirkelPage = () => {
     searchTerm: searchTermDebounce || null,
   });
 
-  const { mutate: askToJoinGroup, isLoading } =
+  const { mutate: askToJoinGroup, isPending } =
     trpc.group.askToJoinGroup.useMutation();
 
   const handleJoinRequest = (public_id: string) => {
@@ -130,9 +130,9 @@ const GabungSirkelPage = () => {
                       <Button
                         onClick={() => handleJoinRequest(group.public_id)}
                         className="w-full mt-4"
-                        disabled={group.isMember || isLoading}
+                        disabled={group.isMember || isPending}
                       >
-                        {isLoading
+                        {isPending
                           ? "Proses..."
                           : group.isMember
                             ? "Udah Join Kok"

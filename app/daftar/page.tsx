@@ -80,7 +80,7 @@ const Daftar: React.FC = () => {
     message: "",
   });
 
-  const { mutate: signUp, isLoading } = trpc.user.signUp.useMutation();
+  const { mutate: signUp, isPending } = trpc.user.signUp.useMutation();
 
   const submitHandler = (values: z.infer<typeof formSchema>) => {
     signUp(values, {
@@ -195,11 +195,11 @@ const Daftar: React.FC = () => {
                 </div>
 
                 <Button
-                  disabled={isLoading}
+                  disabled={isPending}
                   type="submit"
                   className="mt-4 w-full"
                 >
-                  {isLoading ? "Proses.." : "Daftar"}
+                  {isPending ? "Proses.." : "Daftar"}
                 </Button>
               </form>
             </Form>

@@ -25,7 +25,7 @@ const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
     public_id: publicId,
   });
 
-  const { mutate: createComment, isLoading } =
+  const { mutate: createComment, isPending } =
     trpc.comment.createComment.useMutation();
 
   const [commentText, setCommentText] = useState("");
@@ -132,7 +132,7 @@ const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
                   mentionUserIds={mentionUserIds}
                   setMentionUserIds={setMentionUserIds}
                 />
-                <Button size="icon" type="submit" disabled={isLoading}>
+                <Button size="icon" type="submit" disabled={isPending}>
                   <Send className="w-4 aspect-square" />
                 </Button>
               </form>

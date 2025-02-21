@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -61,7 +61,7 @@ const AkunForm: React.FC = () => {
 
   const { data: userResponse, refetch } = trpc.user.getAuthUser.useQuery();
 
-  const { mutate: editProfile, isLoading } =
+  const { mutate: editProfile, isPending } =
     trpc.user.editProfile.useMutation();
 
   const submitHandler = (values: z.infer<typeof formSchema>) => {
@@ -199,11 +199,11 @@ const AkunForm: React.FC = () => {
               }
             >
               <Button
-                disabled={isLoading}
+                disabled={isPending}
                 type="submit"
                 className="mt-4 lg:w-max w-full"
               >
-                {isLoading ? "Proses..." : "Ubah Profil Akun"}
+                {isPending ? "Proses..." : "Ubah Profil Akun"}
               </Button>
             </LoadingState>
           </form>

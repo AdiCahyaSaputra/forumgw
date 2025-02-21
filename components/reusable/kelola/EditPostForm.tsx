@@ -2,18 +2,18 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import Tag from "@/lib/interface/Tag";
@@ -69,7 +69,7 @@ const EditPostForm: React.FC<TProps> = ({
 
   const [isAnonymousPost, setIsAnonymousPost] = useState(isAnonymous);
 
-  const { mutate: updatePost, isLoading } = trpc.post.updatePost.useMutation();
+  const { mutate: updatePost, isPending } = trpc.post.updatePost.useMutation();
 
   const submitHandler = (values: z.infer<typeof formSchema>) => {
     updatePost(
@@ -153,8 +153,8 @@ const EditPostForm: React.FC<TProps> = ({
                   )}
                 />
                 <div className="mt-3 flex lg:flex-row flex-col lg:items-center lg:justify-start gap-2">
-                  <Button disabled={isLoading} type="submit" className="grow">
-                    {isLoading ? "Proses..." : "Edit Postingan"}
+                  <Button disabled={isPending} type="submit" className="grow">
+                    {isPending ? "Proses..." : "Edit Postingan"}
                   </Button>
                   <Button
                     onClick={() => setOpenEditMenu(false)}

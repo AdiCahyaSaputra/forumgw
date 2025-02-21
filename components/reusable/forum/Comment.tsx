@@ -1,19 +1,20 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getMetaData } from "@/lib/helper/str.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
@@ -21,9 +22,8 @@ import { trpc } from "@/lib/trpc";
 import { CornerDownLeft } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
-import EditCommentForm from "./EditCommentForm";
-import { Badge } from "@/components/ui/badge";
 import Balancer from "react-wrap-balancer";
+import EditCommentForm from "./EditCommentForm";
 
 type TProps = {
   id: number;
@@ -49,7 +49,7 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
   setOpenDeleteDialog,
   setResponse,
 }) => {
-  const { mutate: deleteComment, isLoading } =
+  const { mutate: deleteComment, isPending } =
     trpc.comment.deleteComment.useMutation();
 
   const deleteHandler = () => {
@@ -89,11 +89,11 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
         <CardContent>
           <div className="flex justify-end gap-2">
             <Button
-              disabled={isLoading}
+              disabled={isPending}
               variant="destructive"
               onClick={deleteHandler}
             >
-              {isLoading ? "Proses..." : "Yaudah Sih"}
+              {isPending ? "Proses..." : "Yaudah Sih"}
             </Button>
             <Button
               variant="outline"

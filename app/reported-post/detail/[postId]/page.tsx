@@ -22,9 +22,9 @@ const DetailReport = ({ params }: { params: Promise<{ postId: string }> }) => {
     message: "",
   });
 
-  const { mutate: safePost, isLoading: safePostLoading } =
+  const { mutate: safePost, isPending: safePostLoading } =
     trpc.post.safePost.useMutation();
-  const { mutate: takeDown, isLoading: takeDownLoading } =
+  const { mutate: takeDown, isPending: takeDownLoading } =
     trpc.post.takeDown.useMutation();
 
   const safePostHandler = () => {

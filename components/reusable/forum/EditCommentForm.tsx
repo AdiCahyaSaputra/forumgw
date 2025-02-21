@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { user } from "@prisma/client";
@@ -31,7 +31,7 @@ const EditCommentForm: React.FC<TProps> = ({
   const [commentText, setCommentText] = useState(text);
   const [mentionUserIds, setMentionUserIds] = useState<user["id"][]>([]);
 
-  const { mutate: editComment, isLoading } =
+  const { mutate: editComment, isPending } =
     trpc.comment.editComment.useMutation();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -90,8 +90,8 @@ const EditCommentForm: React.FC<TProps> = ({
             />
 
             <div className="mt-2 flex gap-2">
-              <Button type="submit" disabled={isLoading} className="w-1/2">
-                {isLoading ? "Proses..." : "Edit Komen"}
+              <Button type="submit" disabled={isPending} className="w-1/2">
+                {isPending ? "Proses..." : "Edit Komen"}
               </Button>
               <Button
                 type="button"

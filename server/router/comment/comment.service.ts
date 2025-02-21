@@ -62,15 +62,17 @@ export const createComment = async (
         },
       });
 
-      await tx.notification.create({
-        data: {
-          post_id: currentPost.id,
-          user_id: current_user_id,
-          type: NotificationType.comment,
-          is_read: false,
-          to_user: user_id,
-        },
-      });
+      if (current_user_id !== user_id) {
+        await tx.notification.create({
+          data: {
+            post_id: currentPost.id,
+            user_id: current_user_id,
+            type: NotificationType.comment,
+            is_read: false,
+            to_user: user_id,
+          },
+        });
+      }
 
       if (input.mention_users && input.mention_users.length > 0) {
         await notifyMentionedUser(
