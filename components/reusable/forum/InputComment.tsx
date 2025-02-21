@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc";
 import { user } from "@prisma/client";
-import React, { ChangeEventHandler, useRef, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import EmptyState from "../state/EmptyState";
 import LoadingState from "../state/LoadingState";
 
@@ -71,6 +71,20 @@ const InputComment = ({
     inputRef.current?.focus();
   };
 
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowUserOptions(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscKey);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, []);
+
   return (
     <div className="relative w-full">
       <Input
@@ -82,7 +96,7 @@ const InputComment = ({
         ref={inputRef}
       />
       {showUserOptions && (
-        <div className="absolute -bottom-25 shadow-md p-2 bg-background inset-x-0 rounded-lg border">
+        <div className="absolute top-[100%] shadow-md p-2 bg-background inset-x-0 rounded-lg border">
           <LoadingState
             data={userResponse?.data}
             loadingFallback={<p>Lagi di cari...</p>}
@@ -101,7 +115,10 @@ const InputComment = ({
                   onClick={() => mentionUserHandler(user)}
                 >
                   <Avatar className="rounded-lg">
-                    <AvatarImage className="rounded-lg" src={user.image || ""} />
+                    <AvatarImage
+                      className="rounded-lg"
+                      src={user.image || ""}
+                    />
                     <AvatarFallback className="rounded-lg">
                       {user.username[0].toUpperCase()}
                     </AvatarFallback>
