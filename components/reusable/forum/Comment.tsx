@@ -4,17 +4,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getMetaData } from "@/lib/helper/str.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
@@ -69,7 +69,7 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
 
           console.log(error);
         },
-      },
+      }
     );
   };
 
@@ -121,7 +121,7 @@ const Comment: React.FC<TProps> = ({
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   return (
-    <div className="flex items-start gap-2">
+    <>
       <EditCommentForm
         setResponse={setResponse}
         openEditMenu={openEditMenu}
@@ -135,65 +135,67 @@ const Comment: React.FC<TProps> = ({
         setOpenDeleteDialog={setOpenDeleteDialog}
         comment_id={id}
       />
-      <Avatar className="w-10 h-10 rounded-md">
-        <AvatarImage src={user?.image ?? ""} />
-        <AvatarFallback className="rounded-md">
-          {user?.username[0].toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
-      <div className="py-2 px-3 bg-white border rounded-md grow">
-        <div className="flex justify-between items-start w-full">
-          <div>
-            <Link href={`/profil/${user?.username}`}>
-              <Badge
-                variant={
-                  currentUser.username === user?.username
-                    ? "default"
-                    : "outline"
-                }
-              >
-                {user?.username}
-              </Badge>
-            </Link>
-            <p className="text-xs mt-1 text-foreground/60">
-              {getMetaData(created_at)}
-            </p>
+      <div className="flex items-start gap-2">
+        <Avatar className="w-10 h-10 rounded-md">
+          <AvatarImage src={user?.image ?? ""} />
+          <AvatarFallback className="rounded-md">
+            {user?.username[0].toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="py-2 px-3 bg-white border rounded-md grow">
+          <div className="flex justify-between items-start w-full">
+            <div>
+              <Link href={`/profil/${user?.username}`}>
+                <Badge
+                  variant={
+                    currentUser.username === user?.username
+                      ? "default"
+                      : "outline"
+                  }
+                >
+                  {user?.username}
+                </Badge>
+              </Link>
+              <p className="text-xs mt-1 text-foreground/60">
+                {getMetaData(created_at)}
+              </p>
+            </div>
+
+            {currentUser.username === user?.username && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    className="w-max flex items-center gap-2"
+                    variant="outline"
+                    size="sm"
+                  >
+                    <CornerDownLeft className="w-4 aspect-square" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="right" align="start">
+                  <DropdownMenuItem
+                    onClick={() => setOpenEditMenu(true)}
+                    className="cursor-pointer"
+                  >
+                    Edit Komen
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setOpenDeleteDialog(true)}
+                    className="cursor-pointer focus:bg-destructive focus:text-white"
+                  >
+                    Hapus Komen
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
 
-          {currentUser.username === user?.username && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  className="w-max flex items-center gap-2"
-                  variant="outline"
-                  size="sm"
-                >
-                  <CornerDownLeft className="w-4 aspect-square" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="right" align="start">
-                <DropdownMenuItem
-                  onClick={() => setOpenEditMenu(true)}
-                  className="cursor-pointer"
-                >
-                  Edit Komen
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setOpenDeleteDialog(true)}
-                  className="cursor-pointer focus:bg-destructive focus:text-white"
-                >
-                  Hapus Komen
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+          <p className="mt-2 cst-wrap-text">
+            <Balancer>{text}</Balancer>
+          </p>
         </div>
-
-        <p className="mt-2 cst-wrap-text">
-          <Balancer>{text}</Balancer>
-        </p>
       </div>
-    </div>
+    </>
   );
 };
 

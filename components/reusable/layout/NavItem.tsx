@@ -21,7 +21,7 @@ const NavItem: React.FC<TProps> = ({ url, Icon, label }) => {
 
   return (
     <li className="cursor-pointer">
-      <Link href={url}>
+      <Link href={url} className="cursor-pointer">
         <Button
           variant={isActive ? "default" : "ghost"}
           className={`flex items-center justify-start space-x-2 w-full ${
