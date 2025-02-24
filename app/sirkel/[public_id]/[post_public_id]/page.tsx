@@ -15,7 +15,7 @@ import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { user } from "@prisma/client";
-import { Send } from "lucide-react";
+import { SendHorizonal } from "lucide-react";
 import React, { use, useEffect, useState } from "react";
 
 type Props = {
@@ -142,7 +142,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
                   setMentionUserIds={setMentionUserIds}
                 />
                 <Button size="icon" type="submit" disabled={isPending}>
-                  <Send className="w-4 aspect-square" />
+                  <SendHorizonal className="w-4 aspect-square" />
                 </Button>
               </form>
             </div>

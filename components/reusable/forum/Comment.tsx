@@ -19,7 +19,7 @@ import {
 import { getMetaData } from "@/lib/helper/str.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
-import { CornerDownLeft } from "lucide-react";
+import { ChevronDown, CornerDownLeft } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import Balancer from "react-wrap-balancer";
@@ -142,7 +142,7 @@ const Comment: React.FC<TProps> = ({
             {user?.username[0].toUpperCase()}
           </AvatarFallback>
         </Avatar>
-        <div className="py-2 px-3 bg-white border rounded-md grow">
+        <div className="p-2 bg-white border rounded-md grow w-full">
           <div className="flex justify-between items-start w-full">
             <div>
               <Link href={`/profil/${user?.username}`}>
@@ -193,6 +193,11 @@ const Comment: React.FC<TProps> = ({
           <p className="mt-2 cst-wrap-text">
             <Balancer>{text}</Balancer>
           </p>
+
+          <Button variant='outline' size='sm' className="text-foreground/60 flex w-full justify-between items-center mt-5">
+            <span>0 Tanggapan Komentar</span>
+            <ChevronDown className="w-4 h-4"/>
+          </Button>
         </div>
       </div>
     </>
