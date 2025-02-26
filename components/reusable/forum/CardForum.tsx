@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Balancer } from "react-wrap-balancer";
+import ReportPost from "./ReportPost";
 
 type TProps = {
   public_id: string;
@@ -72,7 +73,7 @@ const CardForum: React.FC<TProps> = ({
 
           console.log(error);
         },
-      }
+      },
     );
   };
 
@@ -91,41 +92,13 @@ const CardForum: React.FC<TProps> = ({
 
   return (
     <>
-      <div
-        className={`fixed inset-0 bg-white/80 backdrop-blur-md z-20 items-center justify-center ${
-          openReason ? "flex" : "hidden"
-        }`}
-      >
-        <Card>
-          <CardTitle className="font-bold p-4">Apa alasan lo bre ?</CardTitle>
-          <CardContent className="p-4 pt-0">
-            <Input
-              onChange={(e) => setReason(e.target.value)}
-              required
-              autoFocus={true}
-              type="text"
-              placeholder="Jangan panjang panjang..."
-            />
-          </CardContent>
-          <CardFooter className="p-4 pt-0 flex gap-2 justify-between">
-            <Button
-              onClick={reportHandler}
-              disabled={isPending}
-              className="w-1/2"
-              variant="destructive"
-            >
-              {isPending ? "Proses..." : "Laporin"}
-            </Button>
-            <Button
-              onClick={() => setOpenReason(false)}
-              className="w-1/2"
-              variant="outline"
-            >
-              Gak Jadi
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
+      <ReportPost
+        openReason={openReason}
+        setOpenReason={setOpenReason}
+        setReason={setReason}
+        isPending={isPending}
+        reportHandler={reportHandler}
+      />
       <Card>
         <Link href={`/profil/${user?.username}`}>
           <CardTitle
@@ -165,7 +138,9 @@ const CardForum: React.FC<TProps> = ({
                   const category = searchParams?.get("c") ?? "fyp";
                   const existingTags = searchParams?.get("t");
                   const newTagId = tag.id;
-                  const tagList = existingTags ? `${newTagId},${existingTags}` : newTagId;
+                  const tagList = existingTags
+                    ? `${newTagId},${existingTags}`
+                    : newTagId;
 
                   const tagFilterPath = `/forum?c=${category}&t=${tagList}`;
 

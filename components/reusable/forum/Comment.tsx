@@ -11,12 +11,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getMetaData } from "@/lib/helper/str.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
-import { ChevronDown, CornerDownLeft } from "lucide-react";
+import { ChevronDown, ChevronUp, Menu } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import Balancer from "react-wrap-balancer";
-import EditCommentForm from "./EditCommentForm";
 import DeleteCommentDialog from "./DeleteCommentDialog";
+import EditCommentForm from "./EditCommentForm";
+import ReplyCommentList from "./ReplyCommentList";
 
 type TProps = {
   id: number;
@@ -40,6 +41,7 @@ const Comment: React.FC<TProps> = ({
 
   const [openEditMenu, setOpenEditMenu] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openReplyComments, setOpenReplyComments] = useState(false);
 
   return (
     <>
@@ -57,29 +59,31 @@ const Comment: React.FC<TProps> = ({
         comment_id={id}
       />
       <div className="flex items-start gap-2">
-        <Avatar className="w-10 h-10 rounded-md">
-          <AvatarImage src={user?.image ?? ""} />
-          <AvatarFallback className="rounded-md">
-            {user?.username[0].toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="p-2 bg-white border rounded-md grow w-full">
-          <div className="flex justify-between items-start w-full">
-            <div>
-              <Link href={`/profil/${user?.username}`}>
-                <Badge
-                  variant={
-                    currentUser.username === user?.username
-                      ? "default"
-                      : "outline"
-                  }
-                >
-                  {user?.username}
-                </Badge>
-              </Link>
-              <p className="text-xs mt-1 text-foreground/60">
-                {getMetaData(created_at)}
-              </p>
+        <div className="bg-white border rounded-md grow w-full overflow-hidden">
+          <div className="flex px-3 pt-3 justify-between items-start w-full">
+            <div className="flex gap-2 items-start">
+              <Avatar className="w-10 h-10 rounded-md">
+                <AvatarImage src={user?.image ?? ""} />
+                <AvatarFallback className="rounded-md">
+                  {user?.username[0].toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <Link href={`/profil/${user?.username}`}>
+                  <Badge
+                    variant={
+                      currentUser.username === user?.username
+                        ? "default"
+                        : "outline"
+                    }
+                  >
+                    {user?.username}
+                  </Badge>
+                </Link>
+                <p className="text-xs mt-1 text-foreground/60">
+                  {getMetaData(created_at)}
+                </p>
+              </div>
             </div>
 
             {currentUser.username === user?.username && (
@@ -90,7 +94,7 @@ const Comment: React.FC<TProps> = ({
                     variant="outline"
                     size="sm"
                   >
-                    <CornerDownLeft className="w-4 aspect-square" />
+                    <Menu className="w-4 aspect-square" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side="right" align="start">
@@ -111,14 +115,26 @@ const Comment: React.FC<TProps> = ({
             )}
           </div>
 
-          <p className="mt-2 cst-wrap-text">
+          <p className="mt-2 cst-wrap-text px-3">
             <Balancer>{text}</Balancer>
           </p>
 
-          <Button variant='outline' size='sm' className="text-foreground/60 flex w-full justify-between items-center mt-5">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-foreground/60 flex w-full justify-between items-center mt-2 rounded-none"
+            type="button"
+            onClick={() => setOpenReplyComments(!openReplyComments)}
+          >
             <span>0 Tanggapan Komentar</span>
-            <ChevronDown className="w-4 h-4"/>
+            {openReplyComments ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
           </Button>
+
+          {openReplyComments && <ReplyCommentList />}
         </div>
       </div>
     </>

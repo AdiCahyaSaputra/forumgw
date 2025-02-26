@@ -12,6 +12,8 @@ type Props = {
 
   mentionUserIds: string[];
   setMentionUserIds: (value: React.SetStateAction<string[]>) => void;
+
+  inputPlaceholder?: string;
 };
 
 const InputComment = ({
@@ -19,6 +21,7 @@ const InputComment = ({
   setCommentText,
   mentionUserIds,
   setMentionUserIds,
+  inputPlaceholder
 }: Props) => {
   const [usernameToMention, setUsernameToMention] = useState("");
   const [showUserOptions, setShowUserOptions] = useState(false);
@@ -89,7 +92,7 @@ const InputComment = ({
     <div className="relative w-full">
       <Input
         type="text"
-        placeholder="Komentar..."
+        placeholder={inputPlaceholder || 'Komentar...'}
         value={commentText}
         onChange={commentChangeHandler}
         required
