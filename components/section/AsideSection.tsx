@@ -116,7 +116,7 @@ const AsideSection: React.FC = () => {
     <>
       <aside
         className={`
-        lg:pl-[2rem] lg:border-r lg:pr-4 py-4 flex flex-col justify-between lg:w-1/5 h-[100vh] lg:sticky lg:top-0 lg:px-0
+        lg:pl-[2rem] lg:border-r lg:pr-4 py-4 flex flex-col justify-between lg:w-1/5 lg:h-[100vh] h-[100dvh] lg:sticky lg:top-0 lg:px-0
         lg:z-10
         px-4 bg-secondary lg:bg-transparent lg:translate-y-0 transition-transform
         fixed inset-0 ${openAside ? "translate-y-0" : "-translate-y-[200%]"}
