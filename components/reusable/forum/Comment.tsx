@@ -27,6 +27,9 @@ type TProps = {
     username: string;
     image: string | null;
   } | null;
+  _count: {
+    reply_comment: number;
+  };
   setResponse: (value: React.SetStateAction<{ message: string }>) => void;
 };
 
@@ -36,12 +39,17 @@ const Comment: React.FC<TProps> = ({
   created_at,
   user,
   setResponse,
+  _count,
 }) => {
   const { currentUser } = useAuth();
 
   const [openEditMenu, setOpenEditMenu] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openReplyComments, setOpenReplyComments] = useState(false);
+
+  const [replyCommentCount, setReplyCommentCount] = useState(
+    _count.reply_comment
+  );
 
   return (
     <>
@@ -58,84 +66,94 @@ const Comment: React.FC<TProps> = ({
         setOpenDeleteDialog={setOpenDeleteDialog}
         comment_id={id}
       />
-      <div className="flex items-start gap-2">
-        <div className="bg-white border rounded-md grow w-full overflow-hidden">
-          <div className="flex px-3 pt-3 justify-between items-start w-full">
-            <div className="flex gap-2 items-start">
-              <Avatar className="w-10 h-10 rounded-md">
-                <AvatarImage src={user?.image ?? ""} />
-                <AvatarFallback className="rounded-md">
-                  {user?.username[0].toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <Link href={`/profil/${user?.username}`}>
-                  <Badge
-                    variant={
-                      currentUser.username === user?.username
-                        ? "default"
-                        : "outline"
-                    }
-                  >
-                    {user?.username}
-                  </Badge>
-                </Link>
-                <p className="text-xs mt-1 text-foreground/60">
-                  {getMetaData(created_at)}
-                </p>
-              </div>
+      <div
+        className={`bg-white border rounded-md grow w-full ${
+          openReplyComments ? "border-foreground" : "overflow-hidden"
+        }`}
+      >
+        <div className="flex px-3 pt-3 justify-between items-start w-full">
+          <div className="flex gap-2 items-start">
+            <Avatar className="w-10 h-10 rounded-md">
+              <AvatarImage src={user?.image ?? ""} />
+              <AvatarFallback className="rounded-md">
+                {user?.username[0].toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <Link href={`/profil/${user?.username}`}>
+                <Badge
+                  variant={
+                    currentUser.username === user?.username
+                      ? "default"
+                      : "outline"
+                  }
+                >
+                  {user?.username}
+                </Badge>
+              </Link>
+              <p className="text-xs mt-1 text-foreground/60">
+                {getMetaData(created_at)}
+              </p>
             </div>
-
-            {currentUser.username === user?.username && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    className="w-max flex items-center gap-2"
-                    variant="outline"
-                    size="sm"
-                  >
-                    <Menu className="w-4 aspect-square" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent side="right" align="start">
-                  <DropdownMenuItem
-                    onClick={() => setOpenEditMenu(true)}
-                    className="cursor-pointer"
-                  >
-                    Edit Komen
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setOpenDeleteDialog(true)}
-                    className="cursor-pointer focus:bg-destructive focus:text-white"
-                  >
-                    Hapus Komen
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
           </div>
 
-          <p className="mt-2 cst-wrap-text px-3">
-            <Balancer>{text}</Balancer>
-          </p>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-foreground/60 flex w-full justify-between items-center mt-2 rounded-none"
-            type="button"
-            onClick={() => setOpenReplyComments(!openReplyComments)}
-          >
-            <span>0 Tanggapan Komentar</span>
-            {openReplyComments ? (
-              <ChevronUp className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
-            )}
-          </Button>
-
-          {openReplyComments && <ReplyCommentList />}
+          {currentUser.username === user?.username && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  className="w-max flex items-center gap-2"
+                  variant="outline"
+                  size="sm"
+                >
+                  <Menu className="w-4 aspect-square" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="start">
+                <DropdownMenuItem
+                  onClick={() => setOpenEditMenu(true)}
+                  className="cursor-pointer"
+                >
+                  Edit Komen
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setOpenDeleteDialog(true)}
+                  className="cursor-pointer focus:bg-destructive focus:text-white"
+                >
+                  Hapus Komen
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
+
+        <p className="mt-2 cst-wrap-text px-3">
+          <Balancer>{text}</Balancer>
+        </p>
+
+        <Button
+          variant="outline"
+          size="sm"
+          className={`text-foreground/60 flex w-full justify-between items-center mt-2 rounded-none border-x-0 ${
+            !openReplyComments && "border-b-0"
+          }`}
+          type="button"
+          onClick={() => setOpenReplyComments(!openReplyComments)}
+        >
+          <span>{replyCommentCount} Tanggapan Komentar</span>
+          {openReplyComments ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </Button>
+
+        {openReplyComments && (
+          <ReplyCommentList
+            commentId={id}
+            replyCommentCount={replyCommentCount}
+            setReplyCommentCount={setReplyCommentCount}
+          />
+        )}
       </div>
     </>
   );

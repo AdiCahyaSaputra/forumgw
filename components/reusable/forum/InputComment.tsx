@@ -99,7 +99,7 @@ const InputComment = ({
         ref={inputRef}
       />
       {showUserOptions && (
-        <div className="absolute top-[100%] shadow-md p-2 bg-background inset-x-0 rounded-lg border">
+        <div className="absolute top-[105%] shadow-md p-2 bg-background inset-x-0 rounded-lg border max-h-64 overflow-y-auto">
           <LoadingState
             data={userResponse?.data}
             loadingFallback={<p>Lagi di cari...</p>}

@@ -5,7 +5,8 @@ import {
   createCommentRequest,
   deleteCommentRequest,
   editCommentRequest,
-  replyCommentRequest,
+  getReplyCommentRequest,
+  replyCommentRequest
 } from "@/server/validation/comment.validation";
 import { z } from "zod";
 import { notifyMentionedUser } from "../notification/notification.service";
@@ -262,3 +263,34 @@ export const replyComment = async (
     message: "Komentar berhasil di reply",
   });
 };
+
+export const getReplyComment = async (prisma: PrismaContext, input: z.infer<typeof getReplyCommentRequest>) => {
+  const replyComments = await prisma.reply_comment.findMany({
+    where: {
+      comment_id: input.commentId
+    },
+    select: {
+      id: true,
+      created_at: true,
+      text: true,
+      user: {
+        select: {
+          username: true,
+          image: true,
+        }
+      }
+    }
+  });
+
+  if(replyComments.length < 1) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Belum ada yang komentar balesan"
+    });
+  }
+
+  return sendTRPCResponse({
+    status: 200,
+    message: "Ok"
+  }, replyComments);
+}

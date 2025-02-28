@@ -21,3 +21,7 @@ export const replyCommentRequest = z.object({
   text: z.string(),
   mention_users: z.array(z.string()).nullable(),
 });
+
+export const getReplyCommentRequest = z.object({
+  commentId: z.number()
+});

@@ -379,6 +379,11 @@ export const getDetailedPost = async (
               image: true,
             },
           },
+          _count: {
+            select: {
+              reply_comment: true
+            }
+          }
         },
         orderBy: {
           created_at: "desc",

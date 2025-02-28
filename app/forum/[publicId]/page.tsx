@@ -60,12 +60,15 @@ const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
         onSuccess: (data) => {
           setResponse(data);
           setCommentText("");
+          setMentionUserIds([]);
         },
         onError: (error) => {
           setResponse({
             message: "Duh error bre",
           });
           setCommentText("");
+          setMentionUserIds([]);
+
           console.log(error);
         },
       }
@@ -94,7 +97,7 @@ const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
         title="Detail Postingan"
         backUrl="/forum?c=fyp"
       />
-      <div className="container mt-4 pb-10">
+      <div className="container mt-4 pb-40">
         <LoadingState
           data={postResponse?.data}
           loadingFallback={
