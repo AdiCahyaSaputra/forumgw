@@ -2,20 +2,22 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +36,7 @@ type TProps = {
   isAnonymous: boolean;
   openEditMenu: boolean;
   setOpenEditMenu: (value: React.SetStateAction<boolean>) => void;
-  setResponse: (value: React.SetStateAction<{ message: string }>) => void;
+  onPostChanges: () => void;
 };
 
 const formSchema = z.object({
@@ -55,7 +57,7 @@ const EditPostForm: React.FC<TProps> = ({
   isAnonymous,
   openEditMenu,
   setOpenEditMenu,
-  setResponse,
+  onPostChanges
 }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,6 +71,8 @@ const EditPostForm: React.FC<TProps> = ({
 
   const [isAnonymousPost, setIsAnonymousPost] = useState(isAnonymous);
 
+  const { toast } = useToast();
+
   const { mutate: updatePost, isPending } = trpc.post.updatePost.useMutation();
 
   const submitHandler = (values: z.infer<typeof formSchema>) => {
@@ -81,18 +85,26 @@ const EditPostForm: React.FC<TProps> = ({
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
           setOpenEditMenu(false);
 
           setTagInput("");
+
+          onPostChanges();
         },
         onError: (error) => {
-          setResponse({
-            message: "Duh error bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
 
-          console.log(error);
           setOpenEditMenu(false);
+
+          console.log(error);
         },
       }
     );
@@ -135,7 +147,6 @@ const EditPostForm: React.FC<TProps> = ({
                   setTags={setTags}
                   tagInput={tagInput}
                   setTagInput={setTagInput}
-                  setResponse={setResponse}
                 />
                 <FormField
                   control={form.control}

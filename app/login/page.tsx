@@ -2,29 +2,30 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { setAccessToken } from "@/lib/helper/api.helper";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -58,11 +59,6 @@ const Login: React.FC = () => {
 
   const { mutate: signIn, isPending } = trpc.user.signIn.useMutation();
 
-  const [response, setResponse] = useState({
-    status: 0,
-    message: "",
-  });
-
   const { toast } = useToast();
 
   const router = useRouter();
@@ -70,7 +66,11 @@ const Login: React.FC = () => {
   const submitHandler = (values: z.infer<typeof formSchema>) => {
     signIn(values, {
       onSuccess: async (response) => {
-        setResponse(response);
+        toast({
+          title: "Notifikasi",
+          description: response.message,
+        });
+
         form.reset();
 
         if (response.status === 200) {
@@ -80,30 +80,17 @@ const Login: React.FC = () => {
         }
       },
       onError: (error) => {
-        setResponse({
-          status: 400,
-          message: "Duh error bre",
+        toast({
+          title: "Notifikasi",
+          description: DEFAULT_ERROR_MSG,
         });
+
         form.reset();
 
         console.log(error);
       },
     });
   };
-
-  useEffect(() => {
-    if (!!response.message) {
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      setResponse({
-        ...response,
-        message: "",
-      });
-    }
-  }, [response]);
 
   return (
     <>
@@ -119,66 +106,56 @@ const Login: React.FC = () => {
             wajib login dulu
           </CardDescription>
           <CardContent className="px-0 py-0 pt-4">
-            {response.status === 200 ? (
-              <p className="py-2 px-4 bg-secondary rounded-md animate-bounce">
-                Teleport ke menu utama...
-              </p>
-            ) : (
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(submitHandler)}>
-                  <div className="space-y-2">
-                    <FormField
-                      control={form.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="Username"
-                              autoComplete="off"
-                              autoFocus={true}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(submitHandler)}>
+                <div className="space-y-2">
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="Username"
+                            autoComplete="off"
+                            autoFocus={true}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              placeholder="Password"
-                              type="password"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="Password"
+                            type="password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                  <Button
-                    type="submit"
-                    disabled={isPending}
-                    className="mt-4 w-full"
-                  >
-                    {isPending ? "Proses..." : "Login"}
-                  </Button>
-                </form>
-              </Form>
-            )}
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="mt-4 w-full"
+                >
+                  {isPending ? "Proses..." : "Login"}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
-          <CardFooter
-            className={`px-0 py-0 pt-4 flex-col ${
-              response.status === 200 && "hidden"
-            }`}
-          >
+          <CardFooter className={`px-0 py-0 pt-4 flex-col`}>
             <Separator className="mb-4" />
             <Link href="/daftar" className="w-full">
               <Button className="w-full" variant="outline">

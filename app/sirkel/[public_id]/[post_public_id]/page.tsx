@@ -11,12 +11,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { user } from "@prisma/client";
 import { SendHorizonal } from "lucide-react";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useState } from "react";
 
 type Props = {
   params: Promise<{
@@ -38,10 +39,6 @@ const GroupPostDetailPage = ({ params }: Props) => {
     trpc.comment.createComment.useMutation();
 
   const [commentText, setCommentText] = useState("");
-  const [response, setResponse] = useState({
-    message: "",
-  });
-
   const [mentionUserIds, setMentionUserIds] = useState<user["id"][]>([]);
 
   const { currentUser } = useAuth();
@@ -63,38 +60,31 @@ const GroupPostDetailPage = ({ params }: Props) => {
       {
         public_id: post_public_id,
         text: filterBadWord(commentText),
-        mention_users: correctedMentionedUserIds
+        mention_users: correctedMentionedUserIds,
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
           setCommentText("");
+          refetch();
         },
         onError: (error) => {
-          setResponse({
-            message: "Duh error bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
+
           setCommentText("");
-          console.log(error);
+
+          console.error(error);
         },
       }
     );
   };
-
-  useEffect(() => {
-    if (!!response.message) {
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      refetch();
-
-      setResponse({
-        message: "",
-      });
-    }
-  }, [response]);
 
   return (
     <>
@@ -103,7 +93,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
         title="Detail Postingan"
         backUrl={`/sirkel/${public_id}`}
       />
-      <div className="container mt-4 pb-10">
+      <div className="container mt-4 pb-40">
         <LoadingState
           data={postResponse?.data}
           loadingFallback={
@@ -155,9 +145,9 @@ const GroupPostDetailPage = ({ params }: Props) => {
           >
             {postResponse?.data?.comments.map((comment) => (
               <Comment
-                setResponse={setResponse}
                 {...comment}
                 key={comment.id}
+                onCommentChange={() => refetch()}
               />
             ))}
           </LoadingState>

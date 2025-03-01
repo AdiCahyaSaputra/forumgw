@@ -23,7 +23,6 @@ const ReplyCommentList = (props: Props) => {
 
   const { toast } = useToast();
 
-  // TODO: get reply comments
   const { data: replyComments, refetch: gimmeAFcknLatestReplyCommentsData } =
     trpc.comment.getReplyComment.useQuery({
       commentId: props.commentId,
@@ -43,11 +42,6 @@ const ReplyCommentList = (props: Props) => {
       },
       {
         onSuccess: (data) => {
-          toast({
-            title: "Notifikasi",
-            description: data.message as string,
-          });
-
           setReplyCommentText("");
           setMentionUserIds([]);
 

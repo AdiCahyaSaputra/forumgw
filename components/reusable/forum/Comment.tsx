@@ -30,7 +30,7 @@ type TProps = {
   _count: {
     reply_comment: number;
   };
-  setResponse: (value: React.SetStateAction<{ message: string }>) => void;
+  onCommentChange: () => void;
 };
 
 const Comment: React.FC<TProps> = ({
@@ -38,8 +38,8 @@ const Comment: React.FC<TProps> = ({
   text,
   created_at,
   user,
-  setResponse,
   _count,
+  onCommentChange,
 }) => {
   const { currentUser } = useAuth();
 
@@ -54,17 +54,17 @@ const Comment: React.FC<TProps> = ({
   return (
     <>
       <EditCommentForm
-        setResponse={setResponse}
         openEditMenu={openEditMenu}
         setOpenEditMenu={setOpenEditMenu}
         comment_id={id}
         text={text}
+        onCommentChange={onCommentChange}
       />
       <DeleteCommentDialog
-        setResponse={setResponse}
         openDeleteDialog={openDeleteDialog}
         setOpenDeleteDialog={setOpenDeleteDialog}
         comment_id={id}
+        onCommentChange={onCommentChange}
       />
       <div
         className={`bg-white border rounded-md grow w-full ${

@@ -6,9 +6,8 @@ import SubMenuHeader from "@/components/reusable/layout/SubMenuHeader";
 import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc";
-import { use, useEffect, useState } from "react";
+import { use, useState } from "react";
 
 type TPost = {
   id: string;
@@ -48,12 +47,6 @@ const KelolaGroupPostPage = ({ params }: Props) => {
       withAnonymousPosts: true,
     });
 
-  const [response, setResponse] = useState({
-    message: "",
-  });
-
-  const { toast } = useToast();
-
   const getFilteredPost = (post: TPost) => {
     const filteredPostCond = {
       Semua: post,
@@ -63,25 +56,6 @@ const KelolaGroupPostPage = ({ params }: Props) => {
 
     return filteredPostCond[filter];
   };
-
-  useEffect(() => {
-    if (!!response.message) {
-      refetch();
-
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      setResponse({
-        message: "",
-      });
-    }
-  }, [response]);
-
-  useEffect(() => {
-    console.log(postResponse);
-  }, [postResponse]);
 
   return (
     <>
@@ -107,7 +81,7 @@ const KelolaGroupPostPage = ({ params }: Props) => {
                 {postResponse?.data
                   ?.filter((post) => getFilteredPost(post))
                   .map((post, idx) => (
-                    <CardPost {...post} key={idx} setResponse={setResponse} />
+                    <CardPost {...post} key={idx} onPostChanges={() => refetch()} />
                   ))}
               </div>
             </LoadingState>

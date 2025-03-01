@@ -1,20 +1,30 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { trpc } from "@/lib/trpc";
 
 type TDeleteDialog = {
   comment_id: number;
   openDeleteDialog: boolean;
   setOpenDeleteDialog: (value: React.SetStateAction<boolean>) => void;
-  setResponse: (value: React.SetStateAction<{ message: string }>) => void;
+  onCommentChange: () => void;
 };
 
 const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
   comment_id,
   openDeleteDialog,
   setOpenDeleteDialog,
-  setResponse,
+  onCommentChange
 }) => {
+  const { toast } = useToast();
+
   const { mutate: deleteComment, isPending } =
     trpc.comment.deleteComment.useMutation();
 
@@ -25,15 +35,22 @@ const DeleteCommentDialog: React.FC<TDeleteDialog> = ({
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
-          setOpenDeleteDialog(false);
-        },
-        onError: (error) => {
-          setResponse({
-            message: "Duh error bre",
+          toast({
+            title: "Notifikasi",
+            description: data.message,
           });
 
-          console.log(error);
+          setOpenDeleteDialog(false);
+
+          onCommentChange();
+        },
+        onError: (error) => {
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
+          });
+
+          console.error(error);
         },
       }
     );

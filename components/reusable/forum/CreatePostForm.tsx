@@ -2,21 +2,22 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
 import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
@@ -59,9 +60,6 @@ const CreatePostForm: React.FC<TProps> = ({
   });
 
   const [isAnonymousPost, setIsAnonymousPost] = useState(false);
-  const [response, setResponse] = useState({
-    message: "",
-  });
 
   const [tags, setTags] = useState<Tag[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -80,18 +78,22 @@ const CreatePostForm: React.FC<TProps> = ({
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
 
           setCreatedPost(true);
           setTags([]);
           setTagInput("");
         },
         onError: (error) => {
-          setResponse({
-            message: "Duh error ni bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
 
-          console.log(error);
+          console.error(error);
         },
       }
     );
@@ -101,19 +103,7 @@ const CreatePostForm: React.FC<TProps> = ({
 
   useEffect(() => {
     if (openCreateMenu) form.setFocus("content");
-
-    if (!!response.message) {
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      // set it to default again to avoid duplicate click
-      setResponse({
-        message: "",
-      });
-    }
-  }, [openCreateMenu, response]);
+  }, [openCreateMenu]);
 
   return (
     <div
@@ -148,7 +138,6 @@ const CreatePostForm: React.FC<TProps> = ({
                   setTags={setTags}
                   tagInput={tagInput}
                   setTagInput={setTagInput}
-                  setResponse={setResponse}
                 />
 
                 <FormField

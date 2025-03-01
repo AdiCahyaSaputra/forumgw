@@ -10,6 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { OurFileRouter } from "@/lib/helper/uploadthing.helper";
 import { TCurrentAuthUser } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
@@ -21,15 +23,12 @@ const { uploadFiles } = generateReactHelpers<OurFileRouter>();
 
 type TProps = {
   user?: Omit<TCurrentAuthUser, "role"> | null;
-  setResponse: (
-    value: React.SetStateAction<{
-      status: number;
-      message: string;
-    }>,
-  ) => void;
+  onProfileChange: () => void;
 };
 
-const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
+const UploadPPForm: React.FC<TProps> = ({ user, onProfileChange }) => {
+  const { toast } = useToast();
+
   const { mutate: editProfile } = trpc.user.editProfile.useMutation();
 
   const [open, setOpen] = useState(false);
@@ -73,23 +72,32 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
           setFile(null);
           setFilePreview("");
           setBeginUpload(false);
           setOpen(false);
+
+          onProfileChange();
         },
         onError: (error) => {
-          setResponse({
-            status: 400,
-            message: "Duh error ni bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
+
           setFile(null);
           setFilePreview("");
-          console.log(error);
+
+          console.error(error);
+
           setBeginUpload(false);
         },
-      },
+      }
     );
   };
 
@@ -113,8 +121,9 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
       </div>
 
       <div
-        className={`${open ? "block" : "hidden"
-          } fixed inset-0 bg-black/50 z-10 flex justify-center items-center`}
+        className={`${
+          open ? "block" : "hidden"
+        } fixed inset-0 bg-black/50 z-20 flex justify-center items-center`}
       >
         <Card className="lg:w-1/5 w-8/12">
           <CardHeader>
@@ -145,8 +154,9 @@ const UploadPPForm: React.FC<TProps> = ({ user, setResponse }) => {
                 )}
                 <label
                   htmlFor="pp"
-                  className={`absolute inset-0 flex items-center justify-center cursor-pointer ${filePreview && "hidden"
-                    }`}
+                  className={`absolute inset-0 flex items-center justify-center cursor-pointer ${
+                    filePreview && "hidden"
+                  }`}
                 >
                   <Plus />
                 </label>

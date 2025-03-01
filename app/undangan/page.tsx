@@ -4,15 +4,16 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { trpc } from "@/lib/trpc";
 
 type TInviteHandle = {
@@ -48,13 +49,13 @@ const UndanganPage = () => {
         onError: (err) => {
           toast({
             title: "Notifikasi",
-            description: "Kayak nya ada error deh",
+            description: DEFAULT_ERROR_MSG,
           });
 
           console.log(err);
           refetch();
         },
-      },
+      }
     );
   };
 

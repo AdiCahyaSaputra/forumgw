@@ -16,6 +16,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { getMetaData } from "@/lib/helper/str.helper";
 import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
@@ -40,12 +42,12 @@ type TProps = {
     id: string;
   } | null;
   tag_post: {
-    tag: Tag
+    tag: Tag;
   }[];
   _count: {
     comments: number;
   };
-  setResponse: (value: React.SetStateAction<{ message: string }>) => void;
+  onPostChanges: () => void;
 };
 
 const CardPost: React.FC<TProps> = ({
@@ -55,9 +57,12 @@ const CardPost: React.FC<TProps> = ({
   user,
   anonymous,
   tag_post,
-  setResponse,
+  onPostChanges
 }) => {
   const [openEditMenu, setOpenEditMenu] = useState(false);
+
+  const { toast } = useToast();
+
   const { mutate: deletePost } = trpc.post.deletePost.useMutation();
 
   const deleteHandler = () => {
@@ -67,16 +72,22 @@ const CardPost: React.FC<TProps> = ({
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
-        },
-        onError: (error) => {
-          setResponse({
-            message: "Duh error bre",
+          toast({
+            title: "Notifikasi",
+            description: data.message,
           });
 
-          console.log(error);
+          onPostChanges();
         },
-      },
+        onError: (error) => {
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
+          });
+
+          console.error(error);
+        },
+      }
     );
   };
 
@@ -89,7 +100,7 @@ const CardPost: React.FC<TProps> = ({
         tag_post={tag_post}
         content={content}
         isAnonymous={!!anonymous}
-        setResponse={setResponse}
+        onPostChanges={onPostChanges}
       />
       <Card>
         <CardTitle
@@ -126,12 +137,7 @@ const CardPost: React.FC<TProps> = ({
               <div className="py-2 space-x-2">
                 {tag_post.map(({ tag }, idx) => {
                   return (
-                    <Link
-                      href={`/forum?c=fyp&t=${
-                        tag.id
-                      }`}
-                      key={idx}
-                    >
+                    <Link href={`/forum?c=fyp&t=${tag.id}`} key={idx}>
                       <Badge
                         variant="outline"
                         className="w-max hover:bg-muted cursor-pointer"

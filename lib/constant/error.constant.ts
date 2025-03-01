@@ -1,0 +1,1 @@
+export const DEFAULT_ERROR_MSG = "Kayak nya ada yang salah deh 😅";

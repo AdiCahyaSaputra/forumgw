@@ -4,11 +4,12 @@ import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { getMetaData } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
 import { Megaphone, MessagesSquare, Share2 } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Balancer from "react-wrap-balancer";
 
 type TProps = {
@@ -42,9 +43,6 @@ const CardForumSirkel: React.FC<TProps> = ({
 }) => {
   const [reason, setReason] = useState("");
   const [openReason, setOpenReason] = useState(false);
-  const [response, setResponse] = useState({
-    message: "",
-  });
 
   const { toast } = useToast();
 
@@ -58,33 +56,25 @@ const CardForumSirkel: React.FC<TProps> = ({
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
           setOpenReason(false);
           setReason("");
         },
         onError: (error) => {
-          setResponse({
-            message: "Duh error bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
 
-          console.log(error);
+          console.error(error);
         },
-      },
+      }
     );
   };
-
-  useEffect(() => {
-    if (!!response.message) {
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      setResponse({
-        message: "",
-      });
-    }
-  }, [response]);
 
   return (
     <>

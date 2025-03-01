@@ -6,21 +6,22 @@ import CreateGroupPostForm from "@/components/reusable/sirkel/CreateGroupPostFor
 import EmptyState from "@/components/reusable/state/EmptyState";
 import LoadingState from "@/components/reusable/state/LoadingState";
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { truncateThousand } from "@/lib/helper/str.helper";
 import { trpc } from "@/lib/trpc";
 import { ListPlusIcon, TextSelectIcon, UserCogIcon } from "lucide-react";
@@ -65,10 +66,10 @@ const SirkelDetailPage = ({ params }: Props) => {
         onError: (err) => {
           toast({
             title: "Notifikasi",
-            description: "Error bang 😅",
+            description: DEFAULT_ERROR_MSG,
           });
 
-          console.log(err);
+          console.error(err);
         },
       },
     );

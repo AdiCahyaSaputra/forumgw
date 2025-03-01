@@ -5,15 +5,16 @@ import LoadingState from "@/components/reusable/state/LoadingState";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { truncateThousand } from "@/lib/helper/str.helper";
 import { useDebounce } from "@/lib/hook/debounce.hook";
 import { trpc } from "@/lib/trpc";
@@ -48,12 +49,12 @@ const GabungSirkelPage = () => {
         onError: (err) => {
           toast({
             title: "Notifikasi",
-            description: "Error bang 😅",
+            description: DEFAULT_ERROR_MSG,
           });
 
           console.log(err);
         },
-      },
+      }
     );
   };
 
@@ -135,8 +136,8 @@ const GabungSirkelPage = () => {
                         {isPending
                           ? "Proses..."
                           : group.isMember
-                            ? "Udah Join Kok"
-                            : "Join Sekarang"}
+                          ? "Udah Join Kok"
+                          : "Join Sekarang"}
                       </Button>
                     </CardFooter>
                   </Card>

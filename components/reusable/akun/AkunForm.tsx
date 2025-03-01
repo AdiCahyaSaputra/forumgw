@@ -2,19 +2,20 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import LoadingState from "../state/LoadingState";
@@ -52,11 +53,6 @@ const AkunForm: React.FC = () => {
     },
   });
 
-  const [response, setResponse] = useState({
-    status: 0,
-    message: "",
-  });
-
   const { toast } = useToast();
 
   const { data: userResponse, refetch } = trpc.user.getAuthUser.useQuery();
@@ -74,16 +70,22 @@ const AkunForm: React.FC = () => {
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
+          refetch();
         },
         onError: (error) => {
-          setResponse({
-            status: 400,
-            message: "Duh error ni bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
-          console.log(error);
+
+          console.error(error);
         },
-      },
+      }
     );
   };
 
@@ -93,25 +95,14 @@ const AkunForm: React.FC = () => {
       form.setValue("username", userResponse.data.username);
       form.setValue("bio", userResponse.data.bio ?? "");
     }
-
-    if (!!response.message) {
-      refetch();
-
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      setResponse({
-        status: 0,
-        message: "",
-      });
-    }
-  }, [userResponse, response]);
+  }, [userResponse]);
 
   return (
     <>
-      <UploadPPForm user={userResponse?.data} setResponse={setResponse} />
+      <UploadPPForm
+        user={userResponse?.data}
+        onProfileChange={() => refetch()}
+      />
 
       <div className="mt-6 pb-10">
         <Form {...form}>

@@ -5,9 +5,10 @@ import LoadingState from "@/components/reusable/state/LoadingState";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { trpc } from "@/lib/trpc";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { use } from "react";
 
 const DetailReport = ({ params }: { params: Promise<{ postId: string }> }) => {
   const { postId } = use(params);
@@ -18,9 +19,6 @@ const DetailReport = ({ params }: { params: Promise<{ postId: string }> }) => {
 
   const router = useRouter();
   const { toast } = useToast();
-  const [response, setResponse] = useState({
-    message: "",
-  });
 
   const { mutate: safePost, isPending: safePostLoading } =
     trpc.post.safePost.useMutation();
@@ -34,14 +32,20 @@ const DetailReport = ({ params }: { params: Promise<{ postId: string }> }) => {
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
           router.push("/reported-post");
         },
         onError: (error) => {
-          setResponse({
-            message: "Duh error bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
-          console.log(error);
+
+          console.error(error);
         },
       }
     );
@@ -54,31 +58,24 @@ const DetailReport = ({ params }: { params: Promise<{ postId: string }> }) => {
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
           router.push("/reported-post");
         },
         onError: (error) => {
-          setResponse({
-            message: "Duh error bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
-          console.log(error);
+
+          console.error(error);
         },
       }
     );
   };
-
-  useEffect(() => {
-    if (!!response.message) {
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      setResponse({
-        message: "",
-      });
-    }
-  }, [response]);
 
   return (
     <>

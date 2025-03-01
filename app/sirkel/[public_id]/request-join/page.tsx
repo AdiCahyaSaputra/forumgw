@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { trpc } from "@/lib/trpc";
 import Link from "next/link";
 import { use } from "react";
@@ -59,10 +60,10 @@ const RequestJoinPage = ({ params }: Props) => {
         onError: (err) => {
           toast({
             title: "Notifikasi",
-            description: "Lagi error bre",
+            description: DEFAULT_ERROR_MSG,
           });
 
-          console.log(err);
+          console.error(err);
         },
       }
     );

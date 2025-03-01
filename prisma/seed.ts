@@ -6,7 +6,7 @@ async function main() {
   });
 
   const category = await prisma.category.createMany({
-    data: [{ name: "fyp" }, { name: "dev" }],
+    data: [{ name: "fyp" }, { name: "dev" }, { name: "group" }],
   });
 
   console.log(role, category);

@@ -120,7 +120,7 @@ const AsideSection: React.FC = () => {
         lg:z-10
         px-4 bg-secondary lg:bg-transparent lg:translate-y-0 transition-transform
         fixed inset-0 ${openAside ? "translate-y-0" : "-translate-y-[200%]"}
-        z-20
+        z-30
     `}
       >
         <div>
@@ -229,7 +229,7 @@ const AsideSection: React.FC = () => {
           </Button>
         </div>
       </aside>
-      <div className="fixed lg:hidden bottom-0 p-4 inset-x-0 z-10 bg-white supports-backdrop-filter:bg-white/60 border-t supports-backdrop-filter:backdrop-blur-md">
+      <div className="fixed lg:hidden bottom-0 p-4 inset-x-0 z-20 bg-white supports-backdrop-filter:bg-white/60 border-t supports-backdrop-filter:backdrop-blur-md">
         <Button
           onClick={() => setOpenAside(true)}
           className="w-full flex items-center justify-start space-x-2"

@@ -2,12 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { trpc } from "@/lib/trpc";
 import { user } from "@prisma/client";
 import React, { useState } from "react";
@@ -16,18 +18,20 @@ import InputComment from "./InputComment";
 type TProps = {
   openEditMenu: boolean;
   setOpenEditMenu: (value: React.SetStateAction<boolean>) => void;
-  setResponse: (value: React.SetStateAction<{ message: string }>) => void;
   comment_id: number;
   text: string;
+  onCommentChange: () => void;
 };
 
 const EditCommentForm: React.FC<TProps> = ({
   openEditMenu,
   setOpenEditMenu,
-  setResponse,
   comment_id,
   text,
+  onCommentChange
 }) => {
+  const { toast } = useToast();
+
   const [commentText, setCommentText] = useState(text);
   const [mentionUserIds, setMentionUserIds] = useState<user["id"][]>([]);
 
@@ -50,18 +54,26 @@ const EditCommentForm: React.FC<TProps> = ({
       {
         comment_id,
         text: commentText,
-        mention_users: correctedMentionedUserIds
+        mention_users: correctedMentionedUserIds,
       },
       {
         onSuccess: (data) => {
-          setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
           setOpenEditMenu(false);
+
+          onCommentChange();
         },
         onError: (error) => {
-          setResponse({
-            message: "Duh error bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
-          console.log(error);
+
+          console.error(error);
         },
       }
     );

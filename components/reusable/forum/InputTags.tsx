@@ -1,17 +1,19 @@
 import { Button } from "@/components/ui/button";
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
+import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import Tag from "@/lib/interface/Tag";
 import { trpc } from "@/lib/trpc";
 import { Plus, TagsIcon, X } from "lucide-react";
@@ -20,13 +22,14 @@ import React, { useState } from "react";
 type Props = {
   tags: Tag[];
   tagInput: string;
-  setResponse: (value: React.SetStateAction<{ message: string }>) => void;
   setTags: (value: React.SetStateAction<Tag[]>) => void;
   setTagInput: (value: React.SetStateAction<string>) => void;
 };
 
 const InputTags = (props: Props) => {
   const [openTagSearch, setOpenTagSearch] = useState(false);
+
+  const { toast } = useToast();
 
   const {
     data: tagsResponse,
@@ -51,19 +54,24 @@ const InputTags = (props: Props) => {
             props.setTags((prevTags) => [...prevTags, data.data]);
           }
 
-          props.setResponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
+
+          refetchTags();
+          setOpenTagSearch(false);
         },
         onError: (err) => {
-          props.setResponse({
-            message: "Duh error ni bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
 
           console.error(err);
         },
       }
     );
-
-    refetchTags();
   };
 
   return (

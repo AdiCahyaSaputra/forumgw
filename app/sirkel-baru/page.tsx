@@ -4,27 +4,29 @@ import EmptyState from "@/components/reusable/state/EmptyState";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserCheckIcon, UserMinusIcon, UserPlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -50,6 +52,8 @@ const BuatSrikelPage = () => {
       invitedUsername: null,
     },
   });
+
+  const router = useRouter();
 
   const [users, setUsers] = useState<TUser[]>([]);
   const [responseUser, setResponseUser] = useState<{
@@ -90,16 +94,18 @@ const BuatSrikelPage = () => {
 
           form.reset();
           setUsers([]);
+
+          router.push('/sirkel');
         },
         onError: (err) => {
           toast({
             title: "Notifikasi",
-            description: "Ada error bre",
+            description: DEFAULT_ERROR_MSG,
           });
 
-          console.log(err);
+          console.error(err);
         },
-      },
+      }
     );
   };
 
@@ -179,7 +185,7 @@ const BuatSrikelPage = () => {
                       type="button"
                       onClick={() => {
                         const usersList = users.filter(
-                          (_, userIdx) => userIdx !== idx,
+                          (_, userIdx) => userIdx !== idx
                         );
                         setUsers(usersList);
                       }}
@@ -223,7 +229,7 @@ const BuatSrikelPage = () => {
                         onError: (err) => {
                           console.log(err);
                         },
-                      },
+                      }
                     );
                   }}
                   type="button"

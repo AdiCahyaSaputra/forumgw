@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { trpc } from "@/lib/trpc";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
@@ -47,14 +48,16 @@ const KelolaSirkelPage = () => {
             title: "Notifikasi",
             description: response.message,
           });
+
           refetch();
         },
         onError: (err) => {
-          console.log(err);
           toast({
             title: "Notifikasi",
-            description: "Duh ada error bre",
+            description: DEFAULT_ERROR_MSG,
           });
+
+          console.log(err);
         },
       },
     );

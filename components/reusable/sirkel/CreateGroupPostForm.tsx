@@ -2,21 +2,22 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,9 +63,6 @@ const CreateGroupPostForm: React.FC<TProps> = ({
     trpc.group.createGroupPost.useMutation();
 
   const [isAnonymousPost, setIsAnonymousPost] = useState(false);
-  const [response, setReponse] = useState({
-    message: "",
-  });
 
   const submitHandler = async (values: z.infer<typeof formSchema>) => {
     createPost(
@@ -75,18 +73,22 @@ const CreateGroupPostForm: React.FC<TProps> = ({
       },
       {
         onSuccess: (data) => {
-          setReponse(data);
+          toast({
+            title: "Notifikasi",
+            description: data.message,
+          });
 
           setCreatedPost(true);
         },
         onError: (error) => {
-          setReponse({
-            message: "Duh error ni bre",
+          toast({
+            title: "Notifikasi",
+            description: DEFAULT_ERROR_MSG,
           });
 
           console.log(error);
         },
-      },
+      }
     );
 
     form.reset();
@@ -94,19 +96,7 @@ const CreateGroupPostForm: React.FC<TProps> = ({
 
   useEffect(() => {
     if (openCreateMenu) form.setFocus("content");
-
-    if (!!response.message) {
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      // set it to default again to avoid duplicate click
-      setReponse({
-        message: "",
-      });
-    }
-  }, [openCreateMenu, response]);
+  }, [openCreateMenu]);
 
   return (
     <div

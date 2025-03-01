@@ -19,12 +19,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { DEFAULT_ERROR_MSG } from "@/lib/constant/error.constant";
 import { filterBadWord } from "@/lib/helper/sensor.helper";
 import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -71,58 +72,37 @@ const Daftar: React.FC = () => {
     },
   });
 
+  const [isSuccessfullyCreated, setIsSuccessfullyCreated] = useState(false);
+
   const { toast } = useToast();
 
   const router = useRouter();
-
-  const [response, setResponse] = useState({
-    status: 0,
-    message: "",
-  });
 
   const { mutate: signUp, isPending } = trpc.user.signUp.useMutation();
 
   const submitHandler = (values: z.infer<typeof formSchema>) => {
     signUp(values, {
-      onSuccess: (data) => {
-        setResponse(data);
+      onSuccess: (response) => {
+        setIsSuccessfullyCreated(true);
+
+        setTimeout(() => {
+          if (response.status === 201) router.push("/login");
+        }, 1000);
+
         form.reset();
       },
       onError: (error) => {
-        setResponse({
-          ...response,
-          message: "Duh error bre",
+        toast({
+          title: "Notifikasi",
+          description: DEFAULT_ERROR_MSG,
         });
+
         form.reset();
 
         console.log(error);
       },
     });
   };
-
-  useEffect(() => {
-    if (!!response.message) {
-      toast({
-        title: "Notifikasi",
-        description: response.message,
-      });
-
-      if (response.status === 201) {
-        const to = setTimeout(() => {
-          router.push("/login");
-        }, 500);
-
-        return () => {
-          clearTimeout(to);
-        };
-      }
-
-      setResponse({
-        status: 0,
-        message: "",
-      });
-    }
-  }, [response]);
 
   return (
     <Card className="w-max border-none shadow-none">
@@ -133,7 +113,7 @@ const Daftar: React.FC = () => {
           anggota baru nih ?<br />
         </CardDescription>
         <CardContent className="px-0 py-0 pt-4">
-          {response.status === 201 ? (
+          {isSuccessfullyCreated ? (
             <p className="py-2 px-4 bg-secondary rounded-md animate-bounce">
               Teleport ke menu login...
             </p>
@@ -207,7 +187,7 @@ const Daftar: React.FC = () => {
         </CardContent>
         <CardFooter
           className={`px-0 py-0 pt-4 flex-col ${
-            response.status === 201 && "hidden"
+            isSuccessfullyCreated && "hidden"
           }`}
         >
           <Separator className="mb-4" />
