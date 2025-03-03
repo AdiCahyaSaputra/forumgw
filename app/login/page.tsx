@@ -57,7 +57,7 @@ const Login: React.FC = () => {
     },
   });
 
-  const { mutate: signIn, isPending } = trpc.user.signIn.useMutation();
+  const { mutate: signIn, isPending, isSuccess } = trpc.user.signIn.useMutation();
 
   const { toast } = useToast();
 
@@ -147,10 +147,10 @@ const Login: React.FC = () => {
 
                 <Button
                   type="submit"
-                  disabled={isPending}
+                  disabled={isPending || isSuccess}
                   className="mt-4 w-full"
                 >
-                  {isPending ? "Proses..." : "Login"}
+                  {isPending ? "Proses..." : isSuccess ? "Teleport ke menu utama..." : "Login"}
                 </Button>
               </form>
             </Form>

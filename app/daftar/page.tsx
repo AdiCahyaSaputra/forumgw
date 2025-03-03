@@ -72,19 +72,15 @@ const Daftar: React.FC = () => {
     },
   });
 
-  const [isSuccessfullyCreated, setIsSuccessfullyCreated] = useState(false);
-
   const { toast } = useToast();
 
   const router = useRouter();
 
-  const { mutate: signUp, isPending } = trpc.user.signUp.useMutation();
+  const { mutate: signUp, isPending, isSuccess } = trpc.user.signUp.useMutation();
 
   const submitHandler = (values: z.infer<typeof formSchema>) => {
     signUp(values, {
       onSuccess: (response) => {
-        setIsSuccessfullyCreated(true);
-
         setTimeout(() => {
           if (response.status === 201) router.push("/login");
         }, 1000);
@@ -113,7 +109,7 @@ const Daftar: React.FC = () => {
           anggota baru nih ?<br />
         </CardDescription>
         <CardContent className="px-0 py-0 pt-4">
-          {isSuccessfullyCreated ? (
+          {isSuccess ? (
             <p className="py-2 px-4 bg-secondary rounded-md animate-bounce">
               Teleport ke menu login...
             </p>
@@ -187,7 +183,7 @@ const Daftar: React.FC = () => {
         </CardContent>
         <CardFooter
           className={`px-0 py-0 pt-4 flex-col ${
-            isSuccessfullyCreated && "hidden"
+            isSuccess && "hidden"
           }`}
         >
           <Separator className="mb-4" />
