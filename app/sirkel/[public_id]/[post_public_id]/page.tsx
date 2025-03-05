@@ -130,6 +130,7 @@ const GroupPostDetailPage = ({ params }: Props) => {
                   setCommentText={setCommentText}
                   mentionUserIds={mentionUserIds}
                   setMentionUserIds={setMentionUserIds}
+                  groupPublicId={public_id}
                 />
                 <Button size="icon" type="submit" disabled={isPending}>
                   <SendHorizonal className="w-4 aspect-square" />
@@ -145,6 +146,10 @@ const GroupPostDetailPage = ({ params }: Props) => {
           >
             {postResponse?.data?.comments.map((comment) => (
               <Comment
+                replyCommentOpenByDefault={
+                  comment.id.toString() ===
+                  new URLSearchParams(window.location.search).get("commentId")
+                }
                 {...comment}
                 key={comment.id}
                 onCommentChange={() => refetch()}

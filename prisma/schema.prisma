@@ -101,8 +101,10 @@ model comment {
 
   reply_comment reply_comment[]
 
-  created_at    DateTime        @default(now())
-  updated_at    DateTime        @updatedAt
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+
+  notification notification[]
 }
 
 model reply_comment {
@@ -132,6 +134,9 @@ model notification {
 
   post    post   @relation(fields: [post_id], references: [id], onDelete: Cascade)
   post_id String
+
+  comment   comment? @relation(fields: [comment_id], references: [id])
+  comment_id Int?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

@@ -35,6 +35,7 @@ export const getNotification = async (
           username: true,
         },
       },
+      comment_id: true // Just for mention
     },
   });
 

@@ -4,7 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc";
 import { user } from "@prisma/client";
 import { Reply } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import EmptyState from "../state/EmptyState";
 import LoadingState from "../state/LoadingState";
 import InputComment from "./InputComment";
@@ -41,13 +41,11 @@ const ReplyCommentList = (props: Props) => {
         comment_id: props.commentId,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           setReplyCommentText("");
           setMentionUserIds([]);
 
           gimmeAFcknLatestReplyCommentsData();
-
-          props.setReplyCommentCount(props.replyCommentCount + 1);
         },
         onError: (error) => {
           toast({
@@ -64,12 +62,20 @@ const ReplyCommentList = (props: Props) => {
     );
   };
 
+  useEffect(() => {
+    props.setReplyCommentCount(
+      replyComments?.data ? replyComments.data.length : 0
+    );
+  }, [replyComments]);
+
   return (
     <div className="relative">
       <ul className="flex flex-col gap-2 max-h-44 overflow-y-auto">
         <LoadingState
           data={replyComments}
-          loadingFallback={<Skeleton className="p-4 w-full bg-secondary"></Skeleton>}
+          loadingFallback={
+            <Skeleton className="p-4 w-full bg-secondary"></Skeleton>
+          }
         >
           <EmptyState
             status={replyComments?.status}
@@ -77,12 +83,16 @@ const ReplyCommentList = (props: Props) => {
             className="w-full rounded-none"
           >
             {replyComments?.data?.map((replyComment, idx) => (
-              <ReplyCommentCard key={idx} {...replyComment} />
+              <ReplyCommentCard
+                key={idx}
+                {...replyComment}
+                onReplyCommentChange={() => gimmeAFcknLatestReplyCommentsData()}
+              />
             ))}
           </EmptyState>
         </LoadingState>
       </ul>
-      <div className="p-3 sticky bottom-0 border-t z-10">
+      <div className="p-3 sticky bg-white rounded-b-md bottom-0 border-t z-10">
         <form className="flex gap-2 items-start" onSubmit={handleReplyComment}>
           <InputComment
             commentText={replyCommentText}

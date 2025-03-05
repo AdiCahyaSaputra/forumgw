@@ -30,6 +30,7 @@ type TProps = {
   _count: {
     reply_comment: number;
   };
+  replyCommentOpenByDefault: boolean;
   onCommentChange: () => void;
 };
 
@@ -39,13 +40,14 @@ const Comment: React.FC<TProps> = ({
   created_at,
   user,
   _count,
+  replyCommentOpenByDefault,
   onCommentChange,
 }) => {
   const { currentUser } = useAuth();
 
   const [openEditMenu, setOpenEditMenu] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openReplyComments, setOpenReplyComments] = useState(false);
+  const [openReplyComments, setOpenReplyComments] = useState(replyCommentOpenByDefault);
 
   const [replyCommentCount, setReplyCommentCount] = useState(
     _count.reply_comment

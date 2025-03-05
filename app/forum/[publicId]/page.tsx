@@ -17,10 +17,12 @@ import { useAuth } from "@/lib/hook/auth.hook";
 import { trpc } from "@/lib/trpc";
 import { user } from "@prisma/client";
 import { SendHorizonal } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import React, { use, useState } from "react";
 
 const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
   const { publicId } = use(params);
+  const searchParams = useSearchParams();
 
   const { data: postResponse, refetch } = trpc.post.getDetailedPost.useQuery({
     public_id: publicId,
@@ -30,7 +32,6 @@ const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
     trpc.comment.createComment.useMutation();
 
   const [commentText, setCommentText] = useState("");
-
   const [mentionUserIds, setMentionUserIds] = useState<user["id"][]>([]);
 
   const { currentUser } = useAuth();
@@ -138,13 +139,26 @@ const PostDetail = ({ params }: { params: Promise<{ publicId: string }> }) => {
             data={postResponse?.data}
             loadingFallback={<CommentLoaderState />}
           >
-            {postResponse?.data?.comments.map((comment) => (
-              <Comment
-                {...comment}
-                key={comment.id}
-                onCommentChange={() => refetch()}
-              />
-            ))}
+            {postResponse?.data?.comments.map((comment) => {
+              const commentIdParams = searchParams?.get("commentId");
+
+              console.log(
+                comment,
+                comment.id.toString() === commentIdParams,
+                commentIdParams
+              );
+
+              return (
+                <Comment
+                  {...comment}
+                  replyCommentOpenByDefault={
+                    comment.id.toString() === searchParams?.get("commentId")
+                  }
+                  key={comment.id}
+                  onCommentChange={() => refetch()}
+                />
+              );
+            })}
           </LoadingState>
         </div>
       </div>

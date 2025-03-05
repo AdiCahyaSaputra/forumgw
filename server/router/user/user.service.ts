@@ -315,6 +315,46 @@ export const getUsersForMentioning = async (
 ) => {
   const usernameString = input.username?.slice(1); // Ignore the '@' on username string
 
+  if (input.groupPublicId !== null) { // Check when mention users on sirkel post comment 
+    const isMemberOfGroup = await prisma.group_member.findMany({
+      take: 5,
+      where: {
+        group: {
+          public_id: input.groupPublicId
+        },
+        user: {
+          username: {
+            contains: usernameString,
+            mode: "insensitive",
+          },
+          id: {
+            not: currentUserId
+          }
+        },
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            image: true,
+            name: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    const users = isMemberOfGroup.map((member) => member.user);
+
+    return sendTRPCResponse(
+      {
+        status: users.length > 0 ? 200 : 404,
+        message: "Ok",
+      },
+      users
+    );
+  }
+
   let whereClause: Object = {
     id: {
       not: currentUserId,

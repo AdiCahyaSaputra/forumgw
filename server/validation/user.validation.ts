@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const mentioningUserRequest = z.object({
   username: z.string().nullable(),
+  groupPublicId: z.string().nullable().default(null),
 });
 
 export const signUpRequest = z.object({

@@ -4,9 +4,11 @@ import { PrismaContext } from "@/server/trpc";
 import {
   createCommentRequest,
   deleteCommentRequest,
+  deleteReplyCommentRequest,
   editCommentRequest,
+  editReplyCommentRequest,
   getReplyCommentRequest,
-  replyCommentRequest
+  replyCommentRequest,
 } from "@/server/validation/comment.validation";
 import { z } from "zod";
 import { notifyMentionedUser } from "../notification/notification.service";
@@ -16,6 +18,38 @@ export const createComment = async (
   current_user_id: string,
   input: z.infer<typeof createCommentRequest>
 ) => {
+  let memberGroupIds: string[] = [];
+
+  if (input.groupPublicId !== null) {
+    const isGroupMember = await prisma.group.findFirst({
+      where: {
+        public_id: input.groupPublicId,
+      },
+      select: {
+        group_member: {
+          select: {
+            user_id: true,
+          },
+        },
+      },
+    });
+
+    memberGroupIds =
+      isGroupMember?.group_member.map((member) => member.user_id) || [];
+
+    // Authorize user action, check if the user is member of this group
+    const isUserExistInGroup = memberGroupIds.find(
+      (memberId) => memberId === current_user_id
+    );
+
+    if (!isUserExistInGroup) {
+      return sendTRPCResponse({
+        status: 403,
+        message: "Gak boleh gitu kocak",
+      });
+    }
+  }
+
   const currentPost = await prisma.post.findUnique({
     where: {
       public_id: input.public_id,
@@ -76,16 +110,28 @@ export const createComment = async (
       }
 
       if (input.mention_users && input.mention_users.length > 0) {
-        await notifyMentionedUser(
-          input.mention_users,
-          {
-            post_id: currentPost.id,
-            user_id: current_user_id,
-            type: NotificationType.mention,
-            is_read: false,
-          },
-          tx
-        );
+        // Do not create double notification (on comment + on mention)
+        let allowedMentionUsers = input.mention_users.filter((userId) => userId !== user_id);
+
+        if (memberGroupIds.length > 0) {
+          // Validate mentioned users, check if the each user is member of this group
+          allowedMentionUsers = input.mention_users.filter((userId) =>
+            memberGroupIds.find((memberId) => memberId === userId)
+          );
+        }
+
+        if (allowedMentionUsers.length > 0) {
+          await notifyMentionedUser(
+            allowedMentionUsers,
+            {
+              post_id: currentPost.id,
+              user_id: current_user_id,
+              type: NotificationType.mention,
+              is_read: false,
+            },
+            tx
+          );
+        }
       }
     })
     .catch((err) => {
@@ -209,6 +255,11 @@ export const replyComment = async (
     where: {
       id: input.comment_id,
     },
+    select: {
+      id: true,
+      post_id: true,
+      user_id: true,
+    },
   });
 
   if (!isCommentExists) {
@@ -228,15 +279,18 @@ export const replyComment = async (
         },
       });
 
-      await tx.notification.create({
-        data: {
-          post_id: isCommentExists.post_id,
-          user_id: current_user_id,
-          type: NotificationType.reply,
-          is_read: false,
-          to_user: isCommentExists.user_id,
-        },
-      });
+      if (isCommentExists.user_id !== current_user_id) {
+        await tx.notification.create({
+          data: {
+            post_id: isCommentExists.post_id,
+            user_id: current_user_id,
+            type: NotificationType.reply,
+            is_read: false,
+            to_user: isCommentExists.user_id,
+            comment_id: isCommentExists.id,
+          },
+        });
+      }
 
       if (input.mention_users && input.mention_users.length > 0) {
         await notifyMentionedUser(
@@ -264,10 +318,110 @@ export const replyComment = async (
   });
 };
 
-export const getReplyComment = async (prisma: PrismaContext, input: z.infer<typeof getReplyCommentRequest>) => {
+export const editReplyComment = async (
+  prisma: PrismaContext,
+  current_user_id: string,
+  input: z.infer<typeof editReplyCommentRequest>
+) => {
+  const isCommentExists = await prisma.reply_comment.findUnique({
+    where: {
+      id: input.reply_comment_id,
+    },
+    select: {
+      user_id: true,
+    },
+  });
+
+  if (!isCommentExists) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Komentar nya nggak nemu",
+    });
+  }
+
+  if (isCommentExists?.user_id !== current_user_id) {
+    return sendTRPCResponse({
+      status: 403,
+      message: "Gak boleh gitu kocak",
+    });
+  }
+
+  prisma.reply_comment
+    .update({
+      where: {
+        id: input.reply_comment_id,
+      },
+      data: {
+        text: input.text,
+      },
+    })
+    .catch((err) => {
+      return sendTRPCResponse({
+        status: 500,
+        message: "Gak bisa edit reply ini",
+      });
+    });
+
+  return sendTRPCResponse({
+    status: 201,
+    message: "Berhasil edit reply comment",
+  });
+};
+
+export const deleteReplyComment = async (
+  prisma: PrismaContext,
+  current_user_id: string,
+  input: z.infer<typeof deleteReplyCommentRequest>
+) => {
+  const isCommentExists = await prisma.reply_comment.findUnique({
+    where: {
+      id: input.reply_comment_id,
+    },
+    select: {
+      user_id: true,
+    },
+  });
+
+  if (!isCommentExists) {
+    return sendTRPCResponse({
+      status: 404,
+      message: "Komentar nya nggak nemu",
+    });
+  }
+
+  if (isCommentExists?.user_id !== current_user_id) {
+    return sendTRPCResponse({
+      status: 403,
+      message: "Gak boleh gitu kocak",
+    });
+  }
+
+  prisma.reply_comment
+    .delete({
+      where: {
+        id: input.reply_comment_id,
+      },
+    })
+    .catch((err) => {
+      return sendTRPCResponse({
+        status: 500,
+        message: "Gak bisa hapus reply ini",
+      });
+    });
+
+  return sendTRPCResponse({
+    status: 201,
+    message: "Berhasil hapus reply comment",
+  });
+};
+
+export const getReplyComment = async (
+  prisma: PrismaContext,
+  input: z.infer<typeof getReplyCommentRequest>
+) => {
   const replyComments = await prisma.reply_comment.findMany({
     where: {
-      comment_id: input.commentId
+      comment_id: input.commentId,
     },
     select: {
       id: true,
@@ -277,20 +431,23 @@ export const getReplyComment = async (prisma: PrismaContext, input: z.infer<type
         select: {
           username: true,
           image: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
 
-  if(replyComments.length < 1) {
+  if (replyComments.length < 1) {
     return sendTRPCResponse({
       status: 404,
-      message: "Belum ada yang komentar balesan"
+      message: "Belum ada yang komentar balesan",
     });
   }
 
-  return sendTRPCResponse({
-    status: 200,
-    message: "Ok"
-  }, replyComments);
-}
+  return sendTRPCResponse(
+    {
+      status: 200,
+      message: "Ok",
+    },
+    replyComments
+  );
+};

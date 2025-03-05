@@ -14,6 +14,7 @@ type Props = {
   setMentionUserIds: (value: React.SetStateAction<string[]>) => void;
 
   inputPlaceholder?: string;
+  groupPublicId?: string; // When input comment in sirkel
 };
 
 const InputComment = ({
@@ -21,7 +22,8 @@ const InputComment = ({
   setCommentText,
   mentionUserIds,
   setMentionUserIds,
-  inputPlaceholder
+  inputPlaceholder,
+  groupPublicId
 }: Props) => {
   const [usernameToMention, setUsernameToMention] = useState("");
   const [showUserOptions, setShowUserOptions] = useState(false);
@@ -29,7 +31,7 @@ const InputComment = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: userResponse } = trpc.user.getUsersForMentioning.useQuery(
-    { username: usernameToMention },
+    { username: usernameToMention, groupPublicId },
     {
       enabled: showUserOptions,
     }
@@ -99,14 +101,14 @@ const InputComment = ({
         ref={inputRef}
       />
       {showUserOptions && (
-        <div className="absolute top-[105%] shadow-md p-2 bg-background inset-x-0 rounded-lg border max-h-64 overflow-y-auto">
+        <div className="absolute top-[105%] z-10 shadow-md p-2 bg-background inset-x-0 rounded-lg border max-h-64 overflow-y-auto">
           <LoadingState
             data={userResponse?.data}
             loadingFallback={<p>Lagi di cari...</p>}
           >
             <EmptyState
               status={userResponse?.status}
-              message="Gak ada wkwkwk (btw nge tag diri sendiri is prohibited yaw)"
+              message="Gak ada wkwkwk"
             >
               {userResponse?.data.map((user, idx) => (
                 <button

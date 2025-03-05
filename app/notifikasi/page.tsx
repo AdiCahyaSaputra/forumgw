@@ -12,7 +12,7 @@ import { useState } from "react";
 
 const Notifikasi = () => {
   const [filter, setFilter] = useState<"Dibaca" | "Belum Dibaca" | "Semua">(
-    "Belum Dibaca",
+    "Belum Dibaca"
   );
 
   const { data: notificationResponse, refetch: notificationRefetch } =
@@ -31,7 +31,7 @@ const Notifikasi = () => {
   };
 
   const getNotifMessage = (type: string) => {
-    switch(type) {
+    switch (type) {
       case NotificationType.comment:
         return "💬 mengomentari postingan anda";
       case NotificationType.reply:
@@ -52,7 +52,7 @@ const Notifikasi = () => {
         onSuccess: (data) => {
           notificationRefetch();
         },
-      },
+      }
     );
   };
 
@@ -83,7 +83,9 @@ const Notifikasi = () => {
                   key={idx}
                 >
                   <Link
-                    href={`/forum/${notif.post.public_id}`}
+                    href={`/forum/${notif.post.public_id}${
+                      notif.comment_id ? `?commentId=${notif.comment_id}` : ""
+                    }`}
                     onClick={() => !notif.is_read && makeItReaded(notif.id)}
                   >
                     <span className="font-bold">{notif.user.username}</span>{" "}

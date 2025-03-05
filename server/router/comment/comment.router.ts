@@ -2,14 +2,18 @@ import { authProcedure, router } from "@/server/trpc";
 import {
   createCommentRequest,
   deleteCommentRequest,
+  deleteReplyCommentRequest,
   editCommentRequest,
+  editReplyCommentRequest,
   getReplyCommentRequest,
   replyCommentRequest,
 } from "@/server/validation/comment.validation";
 import {
   createComment,
   deleteComment,
+  deleteReplyComment,
   editComment,
+  editReplyComment,
   getReplyComment,
   replyComment,
 } from "./comment.service";
@@ -34,6 +38,16 @@ export const commentRouter = router({
     .input(replyCommentRequest)
     .mutation(async ({ ctx, input }) =>
       replyComment(ctx.prisma, ctx.user.id, input),
+    ),
+  editReplyComment: authProcedure
+    .input(editReplyCommentRequest)
+    .mutation(async ({ ctx, input }) =>
+      editReplyComment(ctx.prisma, ctx.user.id, input),
+    ),
+  deleteReplyComment: authProcedure
+    .input(deleteReplyCommentRequest)
+    .mutation(async ({ ctx, input }) =>
+      deleteReplyComment(ctx.prisma, ctx.user.id, input),
     ),
   getReplyComment: authProcedure
     .input(getReplyCommentRequest)
