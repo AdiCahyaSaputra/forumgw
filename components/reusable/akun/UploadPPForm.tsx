@@ -140,7 +140,7 @@ const UploadPPForm: React.FC<TProps> = ({ user, onProfileChange }) => {
                 }}
               >
                 {filePreview && (
-                  <div className="absolute inset-0 bg-black/80 hidden transition-all flex items-center group-hover:flex justify-center">
+                  <div className="absolute inset-0 bg-black/80 hidden transition-all items-center group-hover:flex justify-center">
                     <Button
                       variant="destructive"
                       onClick={() => {
