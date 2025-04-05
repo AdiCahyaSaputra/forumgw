@@ -1,3 +1,7 @@
+# ForumGW Redesign
+[v2](https://forumgw.vercel.app)
+[github](https://github.com/AdiCahyaSaputra/forumgw-v2)
+
 # ForumGw
 
 Sebuah Forum non-formal buat tempat nongkrong lu pada.
